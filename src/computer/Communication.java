@@ -18,15 +18,17 @@ public class Communication {
         
     }
     
-    public void connect() throws IOException {
+    public boolean connect() {
+        bluetoothLink = new NXTCommBluecove();
+        info = new NXTInfo(NXTCommFactory.BLUETOOTH, null, "0016530BB5A3");
         try {
-            bluetoothLink = new NXTCommBluecove();
-            info = new NXTInfo(NXTCommFactory.BLUETOOTH, null, "0016530BB5A3");
             bluetoothLink.open(info);
         } catch (NXTCommException e) {
-            throw new IOException("Failed to connect " + e.toString());
+            System.out.println(e.toString());
+            return false;
         }
         inStream = bluetoothLink.getInputStream();
         outStream = bluetoothLink.getOutputStream();
+        return true;
     }
 }

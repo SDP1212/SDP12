@@ -4,17 +4,42 @@
  */
 package computer;
 
-import java.io.IOException;
 
 /**
  *
  * @author s0935251
  */
 public class ApplicationController {
-    public static void main(String[] args) throws IOException {
-        Communication comms = new Communication();
-        comms.connect();
-        MainWindow window = new MainWindow();
-        window.setup();
+    private MainWindow window;
+    private Communication communication;
+    private static ApplicationController appController;
+    
+    public static void main(String[] args) {
+        appController = new ApplicationController();
+    }
+    public ApplicationController() {
+        MainWindow.setup(this);
+        communication = new Communication();
+    }
+    
+    public void connect(){
+        window.setStatus(MainWindow.STATUS_CONNECTING);
+        if (communication.connect()) {
+            window.setStatus(MainWindow.STATUS_CONNECTED);
+        } else {
+            window.setStatus(MainWindow.STATUS_DISCONNECTED);
+            window.showRetryDialog();
+        }
+    }
+    
+    public void setWindow(MainWindow newWindow) {
+        window = newWindow;
+    }
+    
+    public MainWindow getWindow() {
+        return window;
+    }
+    public Communication getCommunication() {
+        return communication;
     }
 }
