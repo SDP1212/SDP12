@@ -1,6 +1,6 @@
-<project name="org.lejos.example" default="uploadandrun">
+<project name="sdp12.football" default="uploadandrun">
 	<description>
-    	org.lejos.example.HelloWorld build file
+    	SDP12 build file
     </description>
 
 	<!-- set properties for this build -->
@@ -38,7 +38,7 @@
             </javac>
         </target>
         <target name="runComputer" depends="compileComputer">
-            <java classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
+            <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />
