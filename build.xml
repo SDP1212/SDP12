@@ -6,7 +6,8 @@
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
-	<property name="src" location="src" />
+	<property name="brickSrc" location="src/brick" />
+        <property name="computerSrc" location="src/computer" />
 	<property name="build" location="build" />
 	<property name="full.main.class" value="${package}.${main.class}" />
 	<property name="binary" value="${build}/${main.class}.nxj" />
@@ -30,14 +31,21 @@
 	</condition>
 
 	<!-- deletes generated files -->
+        <target name="compileComputer">
+            <mkdir dir="${build}" />
+            <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false" />
+        </target>
+        <target name="runComputer" depends="compileComputer">
+            <java classname="computer.MainWindow" dir="${build}" />
+        </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />
 	</target>
 
 	<target name="compile" depends="clean" description="compile the source ">
-		<!-- Compile the java code from ${src} to ${build}  -->
+		<!-- Compile the java code from ${brickSrc} to ${build}  -->
 		<mkdir dir="${build}" />
-		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+		<javac srcdir="${brickSrc}" destdir="${build}" includeantruntime="false" verbose="false">
 			<bootclasspath refid="lejos.nxt" />
 			<!--
 				Without this, there are some JDK jars in the classpath.
@@ -186,7 +194,7 @@
 			<arg value="-quiet"/>
 			
 			<packageset
-				dir="${src}"
+				dir="${brickSrc}"
 			/>
 		</javadoc>
 	</target>
