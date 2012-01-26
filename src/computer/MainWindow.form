@@ -132,7 +132,7 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jRadioButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="214" max="32767" attributes="0"/>
+                      <EmptySpace pref="339" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>

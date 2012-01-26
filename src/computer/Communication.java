@@ -4,12 +4,29 @@
  */
 package computer;
 import lejos.pc.comm.*;
+import java.io.*;
 /**
  *
  * @author s0935251
  */
 public class Communication {
+    private NXTComm bluetoothLink;
+    private NXTInfo info;
+    private OutputStream outStream;
+    private InputStream inStream;
     public void switchModeTo(int mode) {
         
+    }
+    
+    public void connect() throws IOException {
+        try {
+            bluetoothLink = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+            info = new NXTInfo(NXTCommFactory.BLUETOOTH, null, "0016530BB5A3");
+            bluetoothLink.open(info);
+        } catch (NXTCommException e) {
+            throw new IOException("Failed to connect " + e.toString());
+        }
+        inStream = bluetoothLink.getInputStream();
+        outStream = bluetoothLink.getOutputStream();
     }
 }

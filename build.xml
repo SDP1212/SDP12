@@ -33,10 +33,12 @@
 	<!-- deletes generated files -->
         <target name="compileComputer">
             <mkdir dir="${build}" />
-            <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false" />
+            <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false">
+                <classpath path="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/nxt/classes.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar"/>
+            </javac>
         </target>
         <target name="runComputer" depends="compileComputer">
-            <java classname="computer.MainWindow" dir="${build}" />
+            <java classname="computer.ApplicationController" dir="${build}" />
         </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />
