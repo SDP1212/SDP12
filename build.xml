@@ -34,11 +34,11 @@
         <target name="compileComputer">
             <mkdir dir="${build}" />
             <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false">
-                <classpath path="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/nxt/classes.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar"/>
+                <classpath path="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
             </javac>
         </target>
         <target name="runComputer" depends="compileComputer">
-            <java classname="computer.ApplicationController" dir="${build}" />
+            <java classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />

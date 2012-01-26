@@ -10,7 +10,7 @@ import java.io.*;
  * @author s0935251
  */
 public class Communication {
-    private NXTComm bluetoothLink;
+    private NXTCommBluecove bluetoothLink;
     private NXTInfo info;
     private OutputStream outStream;
     private InputStream inStream;
@@ -20,7 +20,7 @@ public class Communication {
     
     public void connect() throws IOException {
         try {
-            bluetoothLink = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+            bluetoothLink = new NXTCommBluecove();
             info = new NXTInfo(NXTCommFactory.BLUETOOTH, null, "0016530BB5A3");
             bluetoothLink.open(info);
         } catch (NXTCommException e) {
