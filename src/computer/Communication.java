@@ -1,27 +1,29 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package computer;
 import brick.Brick;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 /**
- *
+ * Instances of this class provide communication with the NXT brick.
+ * 
+ * The class will be instantiated once for each application.
+ * 
  * @author s0935251
  */
-public class Communication {
+public class Communication implements Runnable {
     private NXTCommBluecove bluetoothLink;
     private NXTInfo info;
     private OutputStream outStream;
     private InputStream inStream;
+    private Thread listener;
     public void switchModeTo(int mode) {
         
     }
-    
+    /**
+     * Connects to the brick
+     * 
+     * @return True if connection successful, false otherwise
+     */
     public boolean connect() {
         bluetoothLink = new NXTCommBluecove();
         info = new NXTInfo(NXTCommFactory.BLUETOOTH, null, "0016530BB5A3");
@@ -33,10 +35,15 @@ public class Communication {
         }
         inStream = bluetoothLink.getInputStream();
         outStream = bluetoothLink.getOutputStream();
+        listener = new Thread(this);
+        listener.start();
         return true;
     }
-    
+    /**
+     * Disconnects from the brick
+     */
     public void disconnect() {
+        listener.interrupt();
         try {
             sendMessage(Brick.QUIT);
             bluetoothLink.close();
@@ -79,5 +86,27 @@ public class Communication {
         } catch (IOException e) {
             System.out.println(e.toString());
         }
+    }
+
+    public void run() {
+        while(!Thread.interrupted()) {
+            byte[] byteBuffer = new byte[1];
+            int n = Brick.DO_NOTHING;
+            try {
+                inStream.read(byteBuffer);
+                n = byteBuffer[0];
+                System.out.println(Integer.toString(n));
+//                int opcode = ((n << 24) >> 24);
+                int opcode = n;
+                switch (opcode){
+                    case -96:
+                        System.out.println("Collision!");
+                        break;
+                }
+            } catch (IOException e) {
+                System.err.println(e.toString());
+            }
+        }
+        System.out.println("Interupted");
     }
 }
