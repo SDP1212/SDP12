@@ -22,7 +22,7 @@ public class ApplicationController {
         communication = new Communication();
     }
     
-    public void connect(){
+    public void connect() {
         window.setStatus(MainWindow.STATUS_CONNECTING);
         if (communication.connect()) {
             window.setStatus(MainWindow.STATUS_CONNECTED);
@@ -30,6 +30,11 @@ public class ApplicationController {
             window.setStatus(MainWindow.STATUS_DISCONNECTED);
             window.showRetryDialog();
         }
+    }
+    
+    public void disconnect() {
+        communication.disconnect();
+        window.setStatus(MainWindow.STATUS_DISCONNECTED);
     }
     
     public void setWindow(MainWindow newWindow) {
