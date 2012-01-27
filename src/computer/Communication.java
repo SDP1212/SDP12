@@ -5,6 +5,7 @@
 package computer;
 import lejos.pc.comm.*;
 import java.io.*;
+import java.nio.ByteBuffer;
 /**
  *
  * @author s0935251
@@ -34,6 +35,9 @@ public class Communication {
     
     public void disconnect() {
         try {
+            byte[] buf = ByteBuffer.allocate(4).putInt(0x01).array();
+            outStream.write(buf);
+            outStream.flush();
             bluetoothLink.close();
             outStream.close();
             inStream.close();
