@@ -27,6 +27,7 @@ public class Brick {
     public final static int ROTATELEFT = 0x06;
     public final static int ROTATERIGHT = 0x07;
     
+    public final static int COLLISION = 0xa0;
     
     public final static double trackWidth = 10.9;
     public final static double wheelDiameter = 6;
@@ -76,8 +77,8 @@ public class Brick {
 
                     case KICK:
                         Motor.C.setSpeed(720);
-                        Motor.C.rotate(60);
-                        Motor.C.rotate(-60);
+                        Motor.C.rotate(25);
+                        Motor.C.rotate(-25);
                         Motor.C.stop();
                         break;
 
