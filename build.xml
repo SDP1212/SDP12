@@ -44,7 +44,7 @@
 		<delete dir="${build}" />
 	</target>
 
-	<target name="compile" depends="clean" description="compile the source ">
+	<target name="compile" description="compile the source ">
 		<!-- Compile the java code from ${brickSrc} to ${build}  -->
 		<mkdir dir="${build}" />
 		<javac srcdir="${brickSrc}" destdir="${build}" includeantruntime="false" verbose="false">
