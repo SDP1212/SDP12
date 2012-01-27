@@ -5,6 +5,7 @@ import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import java.io.InputStream;
 import java.io.OutputStream;
+import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * Example leJOS Project with an ant build file
@@ -15,6 +16,7 @@ public class Brick {
     private static NXTConnection connection = null;
     private static InputStream in;
     private static OutputStream out;
+    private static DifferentialPilot pilot;
     // NXT Opcodes
     public final static int DO_NOTHING = 0X00;
     public final static int QUIT = 0X01;
@@ -22,8 +24,15 @@ public class Brick {
     public final static int BACKWARDS = 0X03;
     public final static int STOP = 0X04;
     public final static int KICK = 0X05;
-
+    public final static int ROTATELEFT = 0x06;
+    public final static int ROTATERIGHT = 0x07;
+    
+    
+    public final static double trackWidth = 10.9;
+    public final static double wheelDiameter = 6;
+    
     public static void main(String[] args) {
+        pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         waitForConnection();
         int n = DO_NOTHING;
 
@@ -37,27 +46,42 @@ public class Brick {
                 switch (opcode) {
 
                     case FORWARDS:
-                        Motor.A.forward();
-                        Motor.B.forward();
+                        pilot.setRotateSpeed(720);
+                        pilot.forward();
+                        //Motor.A.forward();
+                        //Motor.B.forward();
+                        break;
 
                     case BACKWARDS:
-                        Motor.A.backward();
-                        Motor.B.backward();
+                        pilot.setRotateSpeed(720);
+                        pilot.backward();
+                        //Motor.A.backward();
+                        //Motor.B.backward();
+                        break;
+                        
+                    case ROTATELEFT:
+                        pilot.rotateLeft();
+                        break;
+                    
+                    case ROTATERIGHT:
+                        pilot.rotateRight();
+                        break;
 
                     case STOP:
-                        Motor.A.stop();
-                        Motor.B.stop();
-                        Motor.C.stop();
+                        pilot.stop();
+                        //Motor.A.stop();
+                        //Motor.B.stop();
+                        //Motor.C.stop();
                         break;
 
                     case KICK:
                         Motor.C.setSpeed(720);
                         Motor.C.rotate(60);
                         Motor.C.rotate(-60);
-
+                        Motor.C.stop();
+                        break;
 
                     case QUIT: // close connection
-                        closeConnection();
                         break;
 
                 }
@@ -65,10 +89,11 @@ public class Brick {
                 // respond to say command was acted on
                 out.write('o');
                 out.flush();
-
-            } catch (IOException e) {
-                LCD.clear();
-                LCD.drawString("Exception " + e.toString(), 0, 0);
+                if (n == QUIT) {
+                    closeConnection();
+                }
+            } catch (Throwable e) {
+                n = QUIT;
             }
         }
 
@@ -83,13 +108,19 @@ public class Brick {
         LCD.drawString("Connected", 0, 0);
     }
 
-    public static void closeConnection() throws IOException {
+    public static void closeConnection() {
         LCD.clear();
         LCD.drawString("Quitting", 0, 0);
-        in.close();
-        out.close();
-        connection.close();
-        LCD.clear();
+        try {
+            in.close();
+            out.close();
+            connection.close();
+            LCD.clear();
+
+        } catch (IOException ex) {
+            System.err.println("Error " + ex.toString());
+        }
+
     }
 
     /**

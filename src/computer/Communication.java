@@ -63,6 +63,14 @@ public class Communication {
         sendMessage(Brick.KICK);
     }
     
+    public void rotateLeft () {
+        sendMessage(Brick.ROTATELEFT);
+    }
+    
+    public void rotateRight () {
+        sendMessage(Brick.ROTATERIGHT);
+    }
+    
     public void sendMessage(int message) {
         try {
             byte[] buf = ByteBuffer.allocate(4).putInt(message).array();

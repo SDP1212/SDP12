@@ -282,6 +282,10 @@ public class MainWindow extends javax.swing.JFrame {
             commController.backward();
         } else if (kickRadio.isSelected()) {
             commController.kick();
+        } else if (leftRadio.isSelected()) {
+            commController.rotateLeft();
+        } else if (rightRadio.isSelected()) {
+            commController.rotateRight();
         }
     }//GEN-LAST:event_goButtonActionPerformed
 
@@ -294,15 +298,15 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void backwardRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardRadioActionPerformed
-        // TODO add your handling code here:
+  
     }//GEN-LAST:event_backwardRadioActionPerformed
 
     private void leftRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leftRadioActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_leftRadioActionPerformed
 
     private void rightRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightRadioActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_rightRadioActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
