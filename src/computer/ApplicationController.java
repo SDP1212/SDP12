@@ -22,6 +22,10 @@ public class ApplicationController {
         communication = new Communication();
     }
     
+    public Communication getCommunicationController() {
+        return communication;
+    }
+    
     public void connect() {
         window.setStatus(MainWindow.STATUS_CONNECTING);
         if (communication.connect()) {
@@ -44,7 +48,5 @@ public class ApplicationController {
     public MainWindow getWindow() {
         return window;
     }
-    public Communication getCommunication() {
-        return communication;
-    }
+
 }

@@ -3,6 +3,9 @@
  * and open the template in the editor.
  */
 package computer;
+import brick.Brick;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -35,12 +38,36 @@ public class Communication {
     
     public void disconnect() {
         try {
-            byte[] buf = ByteBuffer.allocate(4).putInt(0x01).array();
-            outStream.write(buf);
-            outStream.flush();
+            sendMessage(Brick.QUIT);
             bluetoothLink.close();
             outStream.close();
             inStream.close();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    public void forward() {
+        sendMessage(Brick.FORWARDS);
+    }
+    
+    public void backward() {
+        sendMessage(Brick.BACKWARDS);
+    }
+    
+    public void stop() {
+        sendMessage(Brick.STOP);
+    }
+    
+    public void kick() {
+        sendMessage(Brick.KICK);
+    }
+    
+    public void sendMessage(int message) {
+        try {
+            byte[] buf = ByteBuffer.allocate(4).putInt(message).array();
+            outStream.write(buf);
+            outStream.flush();
         } catch (IOException e) {
             System.out.println(e.toString());
         }
