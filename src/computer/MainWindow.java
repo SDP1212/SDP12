@@ -53,6 +53,9 @@ public class MainWindow extends javax.swing.JFrame {
     public void showRetryDialog() {
         Object[] values = {"Retry", "Cancel"};
         int answer = JOptionPane.showOptionDialog(this.rootPane, "Connecting failed", "Connection", JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE, null, values, values[0]);
+        if (answer == 0) {
+            appController.connect();
+        }
     }
 
     /** This method is called from within the constructor to
@@ -221,7 +224,11 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        appController.connect();
+        if (status() == STATUS_DISCONNECTED) {
+            appController.connect();
+        } else if (status() == STATUS_CONNECTED) {
+            appController.disconnect();
+        }
     }//GEN-LAST:event_connectButtonActionPerformed
 
     /**

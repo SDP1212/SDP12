@@ -31,4 +31,14 @@ public class Communication {
         outStream = bluetoothLink.getOutputStream();
         return true;
     }
+    
+    public void disconnect() {
+        try {
+            bluetoothLink.close();
+            outStream.close();
+            inStream.close();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+    }
 }
