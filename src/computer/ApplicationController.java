@@ -7,7 +7,8 @@ package computer;
 
 /**
  *
- * @author s0935251
+ * @author Diana Crisan
+ * @author Matt Jeffryes
  */
 public class ApplicationController {
     private MainWindow window;
