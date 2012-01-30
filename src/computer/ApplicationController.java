@@ -49,5 +49,9 @@ public class ApplicationController {
     public MainWindow getWindow() {
         return window;
     }
+    
+    public void close() {
+        disconnect();
+    }
 
 }

@@ -16,6 +16,7 @@ package computer;
  * @author Matt Jeffryes
  */
 import java.awt.Cursor;
+import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -35,6 +36,11 @@ public class MainWindow extends javax.swing.JFrame {
         appController = controller;
         commController = controller.getCommunicationController();
         initComponents();
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                appController.close();
+                System.exit(0);
+            }});
     }
     
     public void setStatus(int newConnected) {
