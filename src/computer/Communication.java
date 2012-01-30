@@ -8,7 +8,8 @@ import java.nio.ByteBuffer;
  * 
  * The class will be instantiated once for each application.
  * 
- * @author s0935251
+ * @author Diana Crisan
+ * @author Matt Jeffryes
  */
 public class Communication implements Runnable {
     private NXTCommBluecove bluetoothLink;
@@ -90,17 +91,18 @@ public class Communication implements Runnable {
 
     public void run() {
         while(!Thread.interrupted()) {
-            byte[] byteBuffer = new byte[1];
+            byte[] byteBuffer = new byte[4];
+            ByteBuffer buffer = ByteBuffer.allocate(4);
             int n = Brick.DO_NOTHING;
             try {
-                inStream.read(byteBuffer);
-                n = byteBuffer[0];
-                System.out.println(Integer.toString(n));
-//                int opcode = ((n << 24) >> 24);
-                int opcode = n;
-                switch (opcode){
-                    case -96:
+                inStream.read(buffer.array());
+                n = buffer.getInt();                
+                switch (n){
+                    case (Brick.COLLISION):
                         System.out.println("Collision!");
+                        break;
+                    case (Brick.OK):
+                        System.out.println("Acknowledged");
                         break;
                 }
             } catch (IOException e) {

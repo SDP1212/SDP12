@@ -10,6 +10,8 @@ import lejos.robotics.navigation.DifferentialPilot;
 /**
  * Example leJOS Project with an ant build file
  *
+ * @author Diana Crisan
+ * @author Matt Jeffryes
  */
 public class Brick {
 
@@ -28,6 +30,7 @@ public class Brick {
     public final static int ROTATERIGHT = 0x07;
     
     public final static int COLLISION = 0xa0;
+    public final static int OK = 0xa1;
     
     public final static double trackWidth = 10.9;
     public final static double wheelDiameter = 6;
@@ -88,8 +91,7 @@ public class Brick {
                 }
 
                 // respond to say command was acted on
-                out.write('o');
-                out.flush();
+                sendMessage(OK);
                 if (n == QUIT) {
                     closeConnection();
                 }
@@ -123,6 +125,15 @@ public class Brick {
         }
 
     }
+    
+    public static void sendMessage(int message) {
+        try {
+            out.write(intToByteArray(message));
+            out.flush();
+        } catch (IOException e) {
+            System.err.println("Exception " + e.toString());
+        }
+    }
 
     /**
      * Returns an integer from a byte array
@@ -134,5 +145,14 @@ public class Brick {
             value += (b[i] & 0x000000FF) << shift;
         }
         return value;
+    }
+    
+    public static byte[] intToByteArray(int in) {
+        byte[] b = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            int shift = (3 - i) * 8;
+            b[i] = (byte)((in & 0xFF) >> shift);
+        }
+        return b;
     }
 }

@@ -12,7 +12,8 @@ package computer;
 
 /**
  *
- * @author s0935251
+ * @author Diana Crisan
+ * @author Matt Jeffryes
  */
 import java.awt.Cursor;
 import javax.swing.JFrame;

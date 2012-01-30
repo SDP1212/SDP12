@@ -213,4 +213,28 @@
 			<exclude name=".classpath" />
 		</zip>
 	</target>
+        
+        <target name="compile-tests">
+            <mkdir dir="${build}" />
+            <javac srcdir="src/test" destdir="${build}" includeantruntime="false" verbose="false">
+                <classpath path="lib/junit-4.10.jar:."/>
+            </javac>
+        </target>
+        
+        <target name="test" description="Execute unit tests" depends="compile-tests">
+            <mkdir dir="tmp/rawtestoutput"/>
+            <junit printsummary="true" failureproperty="junit.failure" showoutput="true">
+              <classpath path="build:lib" />
+              <batchtest todir="tmp/rawtestoutput">
+                <fileset dir="src/test"/>
+                <formatter type="xml"/>
+              </batchtest>
+            </junit>
+            <junitreport todir="tmp">
+              <fileset dir="tmp/rawtestoutput"/>
+              <report todir="test-reports"/>
+            </junitreport>
+            <fail if="junit.failure" message="Unit test(s) failed.  See reports!"/>
+          </target>
+
 </project>
