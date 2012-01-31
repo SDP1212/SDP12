@@ -40,9 +40,10 @@ public class Brick {
     public final static int OK = 0xa1;
     public final static double trackWidth = 10.9;
     public final static double wheelDiameter = 6;
+    public static FileOutputStream outLog = null;
 
     public static void main(String[] args) {
-        FileOutputStream outLog = null;
+        
         File file = new File("log.dat");
         if (!file.exists()) {
             try {
@@ -58,7 +59,7 @@ public class Brick {
             System.exit(1);
         }
 
-        logToFile(outLog, "Testing");
+        //logToFile(outLog, "Testing");
 
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
@@ -79,6 +80,7 @@ public class Brick {
                     case FORWARDS:
                         pilot.setRotateSpeed(720);
                         pilot.forward();
+                        //logToFile(outLog, "forwards");
                         //Motor.A.forward();
                         //Motor.B.forward();
                         break;
@@ -86,6 +88,7 @@ public class Brick {
                     case BACKWARDS:
                         pilot.setRotateSpeed(720);
                         pilot.backward();
+                        //logToFile(outLog, "backwards");
                         //Motor.A.backward();
                         //Motor.B.backward();
                         break;
@@ -118,9 +121,9 @@ public class Brick {
                 }
 
                 // respond to say command was acted on
-                sendMessage(outLog, OK);
+                sendMessage(OK);
                 if (n == QUIT) {
-                    closeConnection(outLog);
+                    closeConnection();
                     outLog.close();
                 }
             } catch (Throwable e) {
@@ -141,7 +144,7 @@ public class Brick {
         LCD.drawString("Connected", 0, 0);
     }
 
-    public static void closeConnection(FileOutputStream outLog) {
+    public static void closeConnection() {
         LCD.clear();
         LCD.drawString("Quitting", 0, 0);
         try {
@@ -156,7 +159,7 @@ public class Brick {
 
     }
 
-    public static void sendMessage(FileOutputStream outLog, int message) {
+    public static void sendMessage(int message) {
         try {
             out.write(intToByteArray(message));
             out.flush();
