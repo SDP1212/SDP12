@@ -153,7 +153,7 @@ public class Brick {
         } catch (InterruptedException ex) {
             
         }
-        pilot.rotate(300);
+        pilot.rotate(260);
         pilot.setRotateSpeed(720);
     }
     
