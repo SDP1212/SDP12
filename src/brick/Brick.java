@@ -1,5 +1,9 @@
 package brick;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
@@ -28,19 +32,38 @@ public class Brick {
     public final static int KICK = 0X05;
     public final static int ROTATELEFT = 0x06;
     public final static int ROTATERIGHT = 0x07;
-    
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
-    
     public final static double trackWidth = 10.9;
     public final static double wheelDiameter = 6;
-    
+
     public static void main(String[] args) {
-        pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
+        FileOutputStream outLog = null;
+        File file = new File("log.dat");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                // TODO  
+            }
+        }
+        try {
+            outLog = new FileOutputStream(file, true);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Failed to create output stream");
+            System.exit(1);
+        }
+
+        logToFile(outLog, "Testing");
+
+        pilot = new DifferentialPilot(wheelDiameter, trackWidth, Motor.A, Motor.B);
+
         waitForConnection();
         int n = DO_NOTHING;
+        //logToFile("Testing2");
 
-        while (n != QUIT) {
+        while (n
+                != QUIT) {
             try {
                 byte[] byteBuffer = new byte[4];
                 in.read(byteBuffer);
@@ -62,11 +85,11 @@ public class Brick {
                         //Motor.A.backward();
                         //Motor.B.backward();
                         break;
-                        
+
                     case ROTATELEFT:
                         pilot.rotateLeft();
                         break;
-                    
+
                     case ROTATERIGHT:
                         pilot.rotateRight();
                         break;
@@ -91,11 +114,13 @@ public class Brick {
                 }
 
                 // respond to say command was acted on
-                sendMessage(OK);
+                sendMessage(outLog, OK);
                 if (n == QUIT) {
-                    closeConnection();
+                    closeConnection(outLog);
+                    outLog.close();
                 }
             } catch (Throwable e) {
+                logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
                 n = QUIT;
             }
         }
@@ -111,7 +136,7 @@ public class Brick {
         LCD.drawString("Connected", 0, 0);
     }
 
-    public static void closeConnection() {
+    public static void closeConnection(FileOutputStream outLog) {
         LCD.clear();
         LCD.drawString("Quitting", 0, 0);
         try {
@@ -120,18 +145,29 @@ public class Brick {
             connection.close();
             LCD.clear();
 
-        } catch (IOException ex) {
-            System.err.println("Error " + ex.toString());
+        } catch (IOException e) {
+            logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
         }
 
     }
-    
-    public static void sendMessage(int message) {
+
+    public static void sendMessage(FileOutputStream outLog, int message) {
         try {
             out.write(intToByteArray(message));
             out.flush();
         } catch (IOException e) {
-            System.err.println("Exception " + e.toString());
+            logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+        }
+    }
+
+    public static void logToFile(FileOutputStream outLog, String message) {
+        DataOutputStream dataOut = new DataOutputStream(outLog);
+        try { // write
+            dataOut.writeChars(message+"\n");
+
+            outLog.flush(); // flush the buffer and write the file
+        } catch (IOException e) {
+            System.err.println("Failed to write to output stream");
         }
     }
 
@@ -146,12 +182,12 @@ public class Brick {
         }
         return value;
     }
-    
+
     public static byte[] intToByteArray(int in) {
         byte[] b = new byte[4];
         for (int i = 0; i < 4; i++) {
             int shift = (3 - i) * 8;
-            b[i] = (byte)((in & 0xFF) >> shift);
+            b[i] = (byte) ((in & 0xFF) >> shift);
         }
         return b;
     }
