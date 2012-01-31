@@ -6,6 +6,9 @@ import lejos.nxt.comm.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.objectdetection.TouchFeatureDetector;
+import lejos.nxt.Sound;
 
 /**
  * Example leJOS Project with an ant build file
@@ -19,6 +22,7 @@ public class Brick {
     private static InputStream in;
     private static OutputStream out;
     private static DifferentialPilot pilot;
+    private static SensorListener sensorListener;
     // NXT Opcodes
     public final static int DO_NOTHING = 0X00;
     public final static int QUIT = 0X01;
@@ -37,6 +41,7 @@ public class Brick {
     
     public static void main(String[] args) {
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
+        sensorListener = new SensorListener();
         waitForConnection();
         int n = DO_NOTHING;
 
@@ -72,7 +77,7 @@ public class Brick {
                         break;
 
                     case STOP:
-                        pilot.stop();
+                        stop();
                         //Motor.A.stop();
                         //Motor.B.stop();
                         //Motor.C.stop();
@@ -104,6 +109,7 @@ public class Brick {
 
     public static void waitForConnection() {
         LCD.drawString("Waiting for connection", 0, 0);
+        Sound.playTone(2000, 1000);
         connection = Bluetooth.waitForConnection();
         LCD.clear();
         in = connection.openInputStream();
@@ -134,7 +140,23 @@ public class Brick {
             System.err.println("Exception " + e.toString());
         }
     }
-
+    
+    public static void stop() {
+        pilot.stop();
+    }
+    
+    public static void backOff() {
+        pilot.setRotateSpeed(300);
+        pilot.backward();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException ex) {
+            
+        }
+        pilot.rotate(300);
+        pilot.setRotateSpeed(720);
+    }
+    
     /**
      * Returns an integer from a byte array
      */
