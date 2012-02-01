@@ -77,14 +77,19 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
-        forwardRadio = new javax.swing.JRadioButton();
-        kickRadio = new javax.swing.JRadioButton();
-        backwardRadio = new javax.swing.JRadioButton();
-        leftRadio = new javax.swing.JRadioButton();
-        rightRadio = new javax.swing.JRadioButton();
         goButton = new javax.swing.JButton();
         connectButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        radioRun = new javax.swing.JRadioButton();
+        radioPenalty = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        radioForward = new javax.swing.JRadioButton();
+        radioBackward = new javax.swing.JRadioButton();
+        radioLeft = new javax.swing.JRadioButton();
+        radioRight = new javax.swing.JRadioButton();
+        kickRadio = new javax.swing.JRadioButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -101,41 +106,6 @@ public class MainWindow extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        buttonGroup.add(forwardRadio);
-        forwardRadio.setText("Forward");
-
-        buttonGroup.add(kickRadio);
-        kickRadio.setText("Kick");
-        kickRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kickRadioActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(backwardRadio);
-        backwardRadio.setText("Backward");
-        backwardRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backwardRadioActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(leftRadio);
-        leftRadio.setText("Turn Left");
-        leftRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                leftRadioActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(rightRadio);
-        rightRadio.setText("Turn Right");
-        rightRadio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rightRadioActionPerformed(evt);
-            }
-        });
 
         goButton.setText("Go");
         goButton.addActionListener(new java.awt.event.ActionListener() {
@@ -157,6 +127,110 @@ public class MainWindow extends javax.swing.JFrame {
                 stopButtonActionPerformed(evt);
             }
         });
+
+        buttonGroup.add(radioRun);
+        radioRun.setText("Run");
+
+        buttonGroup.add(radioPenalty);
+        radioPenalty.setText("Penalty");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radioRun)
+                    .addComponent(radioPenalty))
+                .addContainerGap(305, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(radioRun)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioPenalty)
+                .addContainerGap(107, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Play", jPanel1);
+
+        buttonGroup.add(radioForward);
+        radioForward.setText("Forward");
+
+        buttonGroup.add(radioBackward);
+        radioBackward.setText("Backward");
+        radioBackward.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioBackwardActionPerformed(evt);
+            }
+        });
+
+        buttonGroup.add(radioLeft);
+        radioLeft.setText("Turn Left");
+        radioLeft.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioLeftActionPerformed(evt);
+            }
+        });
+
+        buttonGroup.add(radioRight);
+        radioRight.setText("Turn Right");
+        radioRight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioRightActionPerformed(evt);
+            }
+        });
+
+        buttonGroup.add(kickRadio);
+        kickRadio.setText("Kick");
+        kickRadio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kickRadioActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioBackward)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(kickRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                .addGap(26, 26, 26))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(radioLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                        .addGap(263, 263, 263))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(radioForward)
+                        .addContainerGap(301, Short.MAX_VALUE))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(radioForward)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioBackward)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
+                .addComponent(kickRadio)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Test", jPanel2);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -227,43 +301,25 @@ public class MainWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(forwardRadio)
-                        .addContainerGap(325, Short.MAX_VALUE))
-                    .addComponent(backwardRadio)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(connectButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(kickRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                                .addGap(26, 26, 26))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(rightRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(leftRadio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                        .addGap(287, 287, 287))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(goButton, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(171, 171, 171))))
+                .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addGap(287, 287, 287))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(goButton, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(171, 171, 171))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(connectButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(forwardRadio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(backwardRadio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(leftRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(rightRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
-                .addComponent(kickRadio)
+                .addGap(22, 22, 22)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(goButton)
@@ -278,20 +334,16 @@ public class MainWindow extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void kickRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kickRadioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_kickRadioActionPerformed
-
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        if (forwardRadio.isSelected()) {
+        if (radioForward.isSelected() || radioRun.isSelected()) {
             commController.forward();
-        } else if (backwardRadio.isSelected()) {
+        } else if (radioBackward.isSelected()) {
             commController.backward();
-        } else if (kickRadio.isSelected()) {
+        } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
             commController.kick();
-        } else if (leftRadio.isSelected()) {
+        } else if (radioLeft.isSelected()) {
             commController.rotateLeft();
-        } else if (rightRadio.isSelected()) {
+        } else if (radioRight.isSelected()) {
             commController.rotateRight();
         }
     }//GEN-LAST:event_goButtonActionPerformed
@@ -304,22 +356,26 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_connectButtonActionPerformed
 
-    private void backwardRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardRadioActionPerformed
-  
-    }//GEN-LAST:event_backwardRadioActionPerformed
-
-    private void leftRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leftRadioActionPerformed
-
-    }//GEN-LAST:event_leftRadioActionPerformed
-
-    private void rightRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightRadioActionPerformed
-
-    }//GEN-LAST:event_rightRadioActionPerformed
-
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
         commController.stop();
     }//GEN-LAST:event_stopButtonActionPerformed
 
+    private void radioBackwardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioBackwardActionPerformed
+
+    }//GEN-LAST:event_radioBackwardActionPerformed
+
+    private void radioLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioLeftActionPerformed
+
+    }//GEN-LAST:event_radioLeftActionPerformed
+
+    private void radioRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioRightActionPerformed
+
+    }//GEN-LAST:event_radioRightActionPerformed
+
+    private void kickRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kickRadioActionPerformed
+
+        // TODO add your handling code here:}//GEN-LAST:event_kickRadioActionPerformed
+    }
     /**
      * @param args the command line arguments
      */
@@ -359,7 +415,6 @@ public class MainWindow extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    private javax.swing.JRadioButton backwardRadio;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
@@ -369,15 +424,21 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JRadioButton forwardRadio;
     private javax.swing.JButton goButton;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JRadioButton kickRadio;
-    private javax.swing.JRadioButton leftRadio;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
-    private javax.swing.JRadioButton rightRadio;
+    private javax.swing.JRadioButton radioBackward;
+    private javax.swing.JRadioButton radioForward;
+    private javax.swing.JRadioButton radioLeft;
+    private javax.swing.JRadioButton radioPenalty;
+    private javax.swing.JRadioButton radioRight;
+    private javax.swing.JRadioButton radioRun;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JButton stopButton;

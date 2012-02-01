@@ -36,11 +36,17 @@ public class Brick {
     public final static int KICK = 0X05;
     public final static int ROTATELEFT = 0x06;
     public final static int ROTATERIGHT = 0x07;
+    
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
+    
+    public final static char LEFT = 'l';
+    public final static char RIGHT = 'r';
+    
     public final static double trackWidth = 10.9;
     public final static double wheelDiameter = 6;
     public static FileOutputStream outLog = null;
+    public static boolean connected = false;
 
     public static void main(String[] args) {
         
@@ -122,7 +128,7 @@ public class Brick {
 
                 // respond to say command was acted on
                 sendMessage(OK);
-                if (n == QUIT) {
+                if (n == QUIT || !isConnected()) {
                     closeConnection();
                     outLog.close();
                 }
@@ -141,6 +147,7 @@ public class Brick {
         LCD.clear();
         in = connection.openInputStream();
         out = connection.openOutputStream();
+        setConnected(true);
         LCD.drawString("Connected", 0, 0);
     }
 
@@ -156,15 +163,25 @@ public class Brick {
         } catch (IOException e) {
             logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
         }
-
+        setConnected(false);
+    }
+    
+    public static boolean isConnected() {
+        return connected;
+    }
+    
+    public static void setConnected(boolean newConnected) {
+        connected = newConnected;
     }
 
     public static void sendMessage(int message) {
-        try {
-            out.write(intToByteArray(message));
-            out.flush();
-        } catch (IOException e) {
-            logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+        if (isConnected()) {
+            try {
+                out.write(intToByteArray(message));
+                out.flush();
+            } catch (IOException e) {
+                logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+            }
         }
     }
 
@@ -183,7 +200,7 @@ public class Brick {
         pilot.stop();
     }
     
-    public static void backOff() {
+    public static void backOff(char direction) {
         pilot.setRotateSpeed(300);
         pilot.backward();
         try {
@@ -191,7 +208,11 @@ public class Brick {
         } catch (InterruptedException ex) {
             
         }
-        pilot.rotate(260);
+        if (direction == 'l') {
+            pilot.rotate(-260);
+        } else {
+            pilot.rotate(260);
+        }
         pilot.setRotateSpeed(720);
     }
     
