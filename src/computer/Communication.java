@@ -17,6 +17,7 @@ public class Communication implements Runnable {
     private OutputStream outStream;
     private InputStream inStream;
     private Thread listener;
+    private boolean connected = false;
     public void switchModeTo(int mode) {
         
     }
@@ -38,21 +39,27 @@ public class Communication implements Runnable {
         outStream = bluetoothLink.getOutputStream();
         listener = new Thread(this);
         listener.start();
+        connected = true;
         return true;
     }
     /**
      * Disconnects from the brick
      */
     public void disconnect() {
-        listener.interrupt();
+        if (listener != null && listener.isAlive()) {
+            listener.interrupt();
+        }
         try {
-            sendMessage(Brick.QUIT);
-            bluetoothLink.close();
-            outStream.close();
-            inStream.close();
+            if (connected) {
+                sendMessage(Brick.QUIT);
+                bluetoothLink.close();
+                outStream.close();
+                inStream.close();
+            }
         } catch (IOException e) {
             System.out.println(e.toString());
         }
+        connected = false;
     }
     
     public void forward() {
