@@ -20,9 +20,9 @@ public class SensorListener implements FeatureListener {
     public void featureDetected(Feature ftr, FeatureDetector fd) {
         Brick.sendMessage(Brick.COLLISION);
         if (fd == touchSensorL) {
-            Brick.backOff(Brick.LEFT);
+            Brick.stop();
         } else {
-            Brick.backOff(Brick.RIGHT);
+            Brick.stop();
         }
     }
 }
