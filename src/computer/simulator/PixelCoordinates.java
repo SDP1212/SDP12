@@ -8,16 +8,17 @@ package computer.simulator;
  *
  * @author Dimo Petroff
  */
-public class PixelCoordinates {
+public final class PixelCoordinates {
     
     private Integer x,y;
     private boolean barrelCorrected, orientationCorrected;
     
     public PixelCoordinates(){
-        this.x=null;
-        this.y=null;
-        barrelCorrected=false;
-        orientationCorrected=false;
+        this(null,null,false,false);
+    }
+    
+    public PixelCoordinates(Integer x, Integer y, boolean barrelCorrected, boolean orientationCorrected){
+        this.set(x, y, barrelCorrected, orientationCorrected);
     }
     
     /**
@@ -25,8 +26,8 @@ public class PixelCoordinates {
      * 
      * @param x
      * @param y
-     * @param barrelCorrected - true specifies that the given coordinates have been corrected for barrel/fish-eye distortion
-     * @param orientationCorrected - true specifies that the given coordinates have been corrected so that the table is perfectly aligned in the x and y directions
+     * @param barrelCorrected true specifies that the given coordinates have been corrected for barrel/fish-eye distortion
+     * @param orientationCorrected true specifies that the given coordinates have been corrected so that the table is perfectly aligned in the x and y directions
      */
     public void set(int x, int y, boolean barrelCorrected, boolean orientationCorrected){
         this.x=x;

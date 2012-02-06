@@ -29,11 +29,11 @@ public class Coordinates {
         this.y=y;
     }
     
-    public float getX(float x){
+    public float getX(){
         return this.x;
     }
 
-    public float getY(float y){
+    public float getY(){
         return this.y;
     }
 }
