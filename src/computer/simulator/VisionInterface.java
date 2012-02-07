@@ -10,6 +10,11 @@ package computer.simulator;
  */
 public interface VisionInterface {
     
+    /**
+     * Provides coordinates for the four corners.
+     * 
+     * @return the coordinates for the four corners, starting with top-left and going clockwise until bottom-left
+     */
     public PixelCoordinates[] getPitchCornerCoordinates();
     
     public PixelCoordinates getYellowRobotCoordinates();

@@ -8,8 +8,20 @@ package computer.simulator;
  *
  * @author Dimo Petroff
  */
-public class Ball {
+public class Ball extends SimulatableObject{
     
-    private Coordinates position;
+    protected Ball(){
+        this(1f,0.5f,false);
+    }
+
+    protected Ball(float x, float y, boolean real) {
+        this.position=new Coordinates(x, y);
+        this.real=real;
+    }
+    
+    protected Ball(Coordinates coordinates, boolean real){
+        this.position=coordinates;
+        this.real=real;
+    }
     
 }
