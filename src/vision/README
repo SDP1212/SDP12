@@ -1,0 +1,9 @@
+Follow the steps given at:
+https://www.forums.ed.ac.uk/viewtopic.php?f=641&t=7182, 
+
+making sure to export your library path:
+[lada]s0934115: export LD_LIBRARY_PATH=~/SD/v4l4j-0.8.10/
+
+To compile the vision system code, type'./compile.sh'.
+
+To run the visiom system code, run './runVision.sh'.
