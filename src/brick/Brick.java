@@ -27,6 +27,7 @@ public class Brick {
     private static OutputStream out;
     private static DifferentialPilot pilot;
     private static SensorListener sensorListener;
+    private static Thread listenerThread;
     // NXT Opcodes
     public final static int DO_NOTHING = 0X00;
     public final static int QUIT = 0X01;
@@ -69,6 +70,8 @@ public class Brick {
 
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
+        listenerThread = new Thread(sensorListener);
+        listenerThread.start();
         waitForConnection();
         int n = DO_NOTHING;
         //logToFile("Testing2");
@@ -84,40 +87,29 @@ public class Brick {
                 switch (opcode) {
 
                     case FORWARDS:
-                        pilot.setRotateSpeed(720);
-                        pilot.forward();
-                        //logToFile(outLog, "forwards");
-                        //Motor.A.forward();
-                        //Motor.B.forward();
+                        forwards();
                         break;
 
                     case BACKWARDS:
-                        pilot.setRotateSpeed(720);
-                        pilot.backward();
-                        //logToFile(outLog, "backwards");
-                        //Motor.A.backward();
-                        //Motor.B.backward();
+                        backwards();
                         break;
 
                     case ROTATELEFT:
-                        pilot.rotateLeft();
+                        rotateLeft();
                         break;
 
                     case ROTATERIGHT:
-                        pilot.rotateRight();
+                        rotateRight();
                         break;
 
                     case STOP:
                         stop();
-                        //Motor.A.stop();
-                        //Motor.B.stop();
-                        //Motor.C.stop();
                         break;
 
                     case KICK:
                         Motor.C.setSpeed(720);
-                        Motor.C.rotate(25);
-                        Motor.C.rotate(-25);
+                        Motor.C.rotate(-35);
+                        Motor.C.rotate(35);
                         Motor.C.stop();
                         break;
 
@@ -137,7 +129,7 @@ public class Brick {
                 n = QUIT;
             }
         }
-
+        listenerThread.interrupt();
     }
 
     public static void waitForConnection() {
@@ -194,6 +186,24 @@ public class Brick {
         } catch (IOException e) {
             System.err.println("Failed to write to output stream");
         }
+    }
+    
+    public static void forwards() {
+        pilot.setRotateSpeed(720);
+        pilot.forward();
+    }
+    
+    public static void backwards() {
+        pilot.setRotateSpeed(720);
+        pilot.backward();
+    }
+    
+    public static void rotateRight() {
+        pilot.rotateRight();
+    }
+    
+    public static void rotateLeft() {
+        pilot.rotateLeft();
     }
     
     public static void stop() {

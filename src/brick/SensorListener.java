@@ -2,27 +2,45 @@ package brick;
 
 import lejos.nxt.*;
 import lejos.robotics.objectdetection.*;
+import lejos.util.Timer;
+import lejos.util.TimerListener;
 
 /**
  *
  * @author Matthew Jeffryes
  */
-public class SensorListener implements FeatureListener {
-    private TouchFeatureDetector touchSensorL;
-    private TouchFeatureDetector touchSensorR;
+public class SensorListener implements Runnable {
+//    private TouchFeatureDetector touchSensorDL;
+//    private TouchFeatureDetector touchSensorDR;
+    private TouchSensor touchSensorL;
+    private TouchSensor touchSensorR;
+    private boolean pressed;
     public SensorListener() {
-        touchSensorL = new TouchFeatureDetector(new TouchSensor(SensorPort.S1));
-        touchSensorR = new TouchFeatureDetector(new TouchSensor(SensorPort.S2));
-        touchSensorL.addListener(this);
-        touchSensorR.addListener(this);
+        touchSensorL = new TouchSensor(SensorPort.S1);
+        touchSensorR = new TouchSensor(SensorPort.S2);
+//        touchSensorDL = new TouchFeatureDetector(touchSensorL);
+//        touchSensorDR = new TouchFeatureDetector(touchSensorR);
+//        touchSensorDL.addListener(this);
+//        touchSensorDR.addListener(this);
+        
     }
 
-    public void featureDetected(Feature ftr, FeatureDetector fd) {
-        Brick.sendMessage(Brick.COLLISION);
-        if (fd == touchSensorL) {
-            Brick.stop();
-        } else {
-            Brick.stop();
+    public void run() {
+        try {
+            while(!Thread.interrupted()) {
+                if (pressed) {
+                    Brick.sendMessage(Brick.COLLISION);
+                    Brick.backOff(Brick.LEFT);
+                    pressed = false;
+                } else if (touchSensorL.isPressed() || touchSensorR.isPressed()) {
+                    pressed = true;
+                }
+                Thread.sleep(500);
+            }
+        } catch (InterruptedException ex) {
+                return;
         }
     }
+
+
 }
