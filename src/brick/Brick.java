@@ -38,6 +38,13 @@ public class Brick {
     public final static int ROTATELEFT = 0x06;
     public final static int ROTATERIGHT = 0x07;
     
+    public final static int SLOW = 0X100;
+    public final static int MEDIUM = 0X200;
+    public final static int FAST = 0X300;
+    
+    public final static int OPCODE = 0X00FF;
+    public final static int ARG = 0XFF00;
+    
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
     
@@ -83,15 +90,16 @@ public class Brick {
                 in.read(byteBuffer);
 
                 n = byteArrayToInt(byteBuffer);
-                int opcode = ((n << 24) >> 24);
+                int opcode = n & OPCODE;
+                int arg = n & ARG;
                 switch (opcode) {
 
                     case FORWARDS:
-                        forwards();
+                        forwards(arg);
                         break;
 
                     case BACKWARDS:
-                        backwards();
+                        backwards(arg);
                         break;
 
                     case ROTATELEFT:
@@ -188,14 +196,27 @@ public class Brick {
         }
     }
     
-    public static void forwards() {
-        pilot.setRotateSpeed(720);
+    public static void forwards(int speed) {
         pilot.forward();
+        if (speed == SLOW) {
+            pilot.setRotateSpeed(180);
+        } else if (speed == MEDIUM) {
+            pilot.setRotateSpeed(360);
+        } else if (speed == FAST) {
+            pilot.setRotateSpeed(720);
+        }
     }
     
-    public static void backwards() {
-        pilot.setRotateSpeed(720);
+    public static void backwards(int speed) {
         pilot.backward();
+        if (speed == SLOW) {
+            pilot.setRotateSpeed(180);
+        } else if (speed == MEDIUM) {
+            Sound.playTone(2000, 500);
+            pilot.setRotateSpeed(360);
+        } else if (speed == FAST) {
+            pilot.setRotateSpeed(720);
+        }
     }
     
     public static void rotateRight() {

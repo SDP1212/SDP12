@@ -3,6 +3,7 @@ import brick.Brick;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -63,11 +64,12 @@ public class Communication implements Runnable {
     }
     
     public void forward() {
-        sendMessage(Brick.FORWARDS);
+        sendMessage(Brick.FORWARDS | Brick.FAST);
     }
     
     public void backward() {
-        sendMessage(Brick.BACKWARDS);
+        sendMessage(Brick.BACKWARDS | Brick.SLOW);
+        System.out.println(Integer.toBinaryString(((Brick.BACKWARDS | Brick.SLOW) & Brick.OPCODE )));
     }
     
     public void stop() {
@@ -89,6 +91,7 @@ public class Communication implements Runnable {
     public void sendMessage(int message) {
         try {
             byte[] buf = ByteBuffer.allocate(4).putInt(message).array();
+            System.out.println(Arrays.toString(buf));
             outStream.write(buf);
             outStream.flush();
         } catch (IOException e) {
