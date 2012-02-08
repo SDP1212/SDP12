@@ -10,12 +10,10 @@ import lejos.nxt.comm.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.objectdetection.FeatureListener;
-import lejos.robotics.objectdetection.TouchFeatureDetector;
 import lejos.nxt.Sound;
 
 /**
- * Example leJOS Project with an ant build file
+ * Controller of the brick.
  *
  * @author Diana Crisan
  * @author Matt Jeffryes
@@ -28,7 +26,10 @@ public class Brick {
     private static DifferentialPilot pilot;
     private static SensorListener sensorListener;
     private static Thread listenerThread;
-    // NXT Opcodes
+    /*
+     * Opcodes. The opcode occupies the last 2 bytes, its argument the first 2
+     * They are extracted by bitmasking
+     */
     public final static int DO_NOTHING = 0X00;
     public final static int QUIT = 0X01;
     public final static int FORWARDS = 0X02;
@@ -38,12 +39,12 @@ public class Brick {
     public final static int ROTATELEFT = 0x06;
     public final static int ROTATERIGHT = 0x07;
     
-    public final static int SLOW = 0X100;
-    public final static int MEDIUM = 0X200;
-    public final static int FAST = 0X300;
+    public final static int SLOW = 0X00010000;
+    public final static int MEDIUM = 0X00020000;
+    public final static int FAST = 0X00030000;
     
-    public final static int OPCODE = 0X00FF;
-    public final static int ARG = 0XFF00;
+    public final static int OPCODE = 0X0000FFFF;
+    public final static int ARG = 0XFFFF0000;
     
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
@@ -55,15 +56,19 @@ public class Brick {
     public final static double wheelDiameter = 6;
     public static FileOutputStream outLog = null;
     public static boolean connected = false;
-
+    
+    /**
+     * Loops continuously until told to quit, which causes the brick to reboot.
+     */
     public static void main(String[] args) {
         
+        // Create the log file
         File file = new File("log.dat");
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
-                // TODO  
+                
             }
         }
         try {
@@ -72,23 +77,22 @@ public class Brick {
             System.err.println("Failed to create output stream");
             System.exit(1);
         }
-
-        //logToFile(outLog, "Testing");
-
+        
+        // Set up robotics objects
+        
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
         listenerThread = new Thread(sensorListener);
         listenerThread.start();
         waitForConnection();
         int n = DO_NOTHING;
-        //logToFile("Testing2");
 
-        while (n
-                != QUIT) {
+        while (n != QUIT) {
             try {
+                // Read in 4 bytes from the bluetooth stream
                 byte[] byteBuffer = new byte[4];
                 in.read(byteBuffer);
-
+                // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
                 int opcode = n & OPCODE;
                 int arg = n & ARG;
@@ -115,10 +119,7 @@ public class Brick {
                         break;
 
                     case KICK:
-                        Motor.C.setSpeed(720);
-                        Motor.C.rotate(-35);
-                        Motor.C.rotate(35);
-                        Motor.C.stop();
+                        kick();
                         break;
 
                     case QUIT: // close connection
@@ -133,13 +134,16 @@ public class Brick {
                     outLog.close();
                 }
             } catch (Throwable e) {
-                logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+                logToFile(outLog, e.toString());
                 n = QUIT;
             }
         }
         listenerThread.interrupt();
     }
-
+    
+    /**
+     * Wait for a connection, and give feedback on status.
+     */
     public static void waitForConnection() {
         LCD.drawString("Waiting for connection", 0, 0);
         Sound.playTone(2000, 1000);
@@ -149,8 +153,12 @@ public class Brick {
         out = connection.openOutputStream();
         setConnected(true);
         LCD.drawString("Connected", 0, 0);
+        logToFile(outLog, "Connected");
     }
-
+    
+    /**
+     * Close the connection, and give feedback on status.
+     */
     public static void closeConnection() {
         LCD.clear();
         LCD.drawString("Quitting", 0, 0);
@@ -161,42 +169,69 @@ public class Brick {
             LCD.clear();
 
         } catch (IOException e) {
-            logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+            logToFile(outLog, e.toString());
         }
         setConnected(false);
     }
     
+    /**
+     * The status of the connection.
+     * 
+     * @return True when connected, false otherwise.
+     */
     public static boolean isConnected() {
         return connected;
     }
     
-    public static void setConnected(boolean newConnected) {
+    
+    /**
+     * Update the status of the connection.
+     * 
+     * @param newConnected True if connected, false otherwise. 
+     */
+    private static void setConnected(boolean newConnected) {
         connected = newConnected;
     }
-
+    
+    /**
+     * Send an opcode message to the computer.
+     * 
+     * @param message An opcode.
+     */
     public static void sendMessage(int message) {
         if (isConnected()) {
             try {
                 out.write(intToByteArray(message));
                 out.flush();
             } catch (IOException e) {
-                logToFile(outLog, System.currentTimeMillis() + " " + e.toString());
+                logToFile(outLog, e.toString());
             }
         }
     }
-
+    
+    /** 
+     * Write a message to the log file. This will be prepended with the current time.
+     * @param outLog The log file to write to.
+     * @param message The message to write.
+     */
     public static void logToFile(FileOutputStream outLog, String message) {
         DataOutputStream dataOut = new DataOutputStream(outLog);
-        try { // write
-            dataOut.writeChars(message+"\n");
+        try { 
+            // write
+            dataOut.writeChars(System.currentTimeMillis() + " " + message+"\n");
 
             outLog.flush(); // flush the buffer and write the file
         } catch (IOException e) {
             System.err.println("Failed to write to output stream");
         }
     }
-    
+    /**
+     * Send the robot forwards.
+     * 
+     * @param speed A travel speed opcode.
+     */
     public static void forwards(int speed) {
+        logToFile(outLog, "Forwards");
         pilot.forward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -207,7 +242,13 @@ public class Brick {
         }
     }
     
+    /**
+     * Send the robot backwards.
+     * 
+     * @param speed A travel speed opcode.
+     */
     public static void backwards(int speed) {
+        logToFile(outLog, "Backwards");
         pilot.backward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -219,19 +260,47 @@ public class Brick {
         }
     }
     
+    /**
+     * Pivot the robot on a point clockwise.
+     */
     public static void rotateRight() {
+        logToFile(outLog, "Right");
         pilot.rotateRight();
     }
     
+    /**
+     * Pivot the robot on a point anti-clockwise.
+     */
     public static void rotateLeft() {
+        logToFile(outLog, "Left");
         pilot.rotateLeft();
     }
     
+    /**
+     * Stop movement activity.
+     */
     public static void stop() {
+        logToFile(outLog, "Stop");
         pilot.stop();
     }
     
+    /**
+     * Kick the ball (if we are lucky).
+     */
+    public static void kick() {
+        logToFile(outLog, "Kick");
+        Motor.C.setSpeed(720);
+        Motor.C.rotate(-35);
+        Motor.C.rotate(35);
+        Motor.C.stop();
+    }
+    
+    /**
+     * Reverse away from an obstruction.
+     * @param The direction to pivot. 
+     */
     public static void backOff(char direction) {
+        logToFile(outLog, "Backoff");
         pilot.setRotateSpeed(300);
         pilot.backward();
         try {
@@ -248,20 +317,32 @@ public class Brick {
     }
     
     /**
-     * Returns an integer from a byte array
+     * Convert a byte array to an integer.
+     * 
+     * @param b An array of bytes.
+     * @return An integer.
      */
     public static int byteArrayToInt(byte[] b) {
         int value = 0;
+        // For each position in the array
         for (int i = 0; i < 4; i++) {
+            // Shift by an amount corresponding to our current position the byte at that position
             int shift = (4 - 1 - i) * 8;
             value += (b[i] & 0x000000FF) << shift;
         }
         return value;
     }
-
+    /**
+     * Convert an integer to a byte array.
+     * 
+     * @param in An integer that can be stored within 4 bytes.
+     * @return A byte array.
+     */
     public static byte[] intToByteArray(int in) {
         byte[] b = new byte[4];
+        // For each position in the array
         for (int i = 0; i < 4; i++) {
+            // Shift the integer by out current position in the array
             int shift = (3 - i) * 8;
             b[i] = (byte) ((in & 0xFF) >> shift);
         }
