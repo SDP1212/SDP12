@@ -13,6 +13,7 @@
 	<property name="full.main.class" value="${package}.${main.class}" />
 	<property name="binary" value="${build}/${main.class}.nxj" />
 	<property name="debug" value="${build}/${main.class}.nxd" />
+        <property name="java.library.path" value="lib/v4l4j.jar" />
 
 	<path id="lejos.pc">
 		<fileset dir="${nxj.home}/lib/pc">
@@ -51,7 +52,9 @@
             <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
         <target name="runVision" depends="compileVision">
-            <java fork="true" classname="vision.RunVision" dir="${build}" classpath="lib/v4l4j.jar:build" />
+            <java fork="true" classname="vision.RunVision" dir="${build}" classpath="lib/v4l4j.jar:build">
+                <env key="java.library.path" value="lib/v4l4j.jar:build" />
+            </java>
         </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />
