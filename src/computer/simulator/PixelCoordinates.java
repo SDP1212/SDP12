@@ -54,7 +54,7 @@ public final class PixelCoordinates {
         return orientationCorrected;
     }
     
-    public double euclideanDistance(Coordinates p1, Coordinates p2) {
+    public static double euclideanDistance(Coordinates p1, Coordinates p2) {
         return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
     }
     

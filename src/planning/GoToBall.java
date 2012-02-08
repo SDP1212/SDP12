@@ -6,6 +6,7 @@ package planning;
 
 import computer.ai.AI;
 import computer.simulator.*;
+import computer.simulator.PixelCoordinates;
 /**
  *
  * @author s0907806
@@ -38,13 +39,21 @@ public class GoToBall extends AI{
         
     }
     
-    private void correctPlan () {
+    private void correctPlan() {
         Robot robotinho = this.pitch.robotinho;
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(ball.getCoordinates());
+        } else if (PixelCoordinates.euclideanDistance(this.actionPlan.get(0), ball.getCoordinates())>10){
+            this.actionPlan.set(0, ball.getCoordinates().clone());
         }
         
     }
+    
+    private void issueCommands() {
+        
+    }
+        
+    
     
 }
