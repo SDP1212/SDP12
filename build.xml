@@ -43,6 +43,9 @@
             <javac srcdir="${visionSrc}" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="lib/v4l4j.jar"/>
             </javac>
+            <copy todir= "${build}/constants">
+                <fileset dir = "${visionSrc}/constants"/>
+            </copy>
         </target>
         <target name="runComputer" depends="compileComputer">
             <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
