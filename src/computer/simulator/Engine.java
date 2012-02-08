@@ -4,6 +4,8 @@
  */
 package computer.simulator;
 
+import brick.Brick;
+import computer.Communication;
 import computer.ai.AI;
 
 /**
@@ -232,6 +234,23 @@ public class Engine implements Runnable{
             pitch.robotinho.brain.run();
             if(pitch.robotinho.isReal()){
                 //TODO: Obtain action plan and pass to communicator.
+                PixelCoordinates newCoordinates;
+                Direction newDirection;
+                switch(pitch.robotinho.getColour()){
+                    case Robot.BLUE_PLATE:{
+                        newCoordinates=vision.getBlueRobotCoordinates();
+                        newDirection=vision.getBlueRobotOrientation();
+                        break;
+                    }
+                    case Robot.YELLOW_PLATE:{
+                        newCoordinates=vision.getYellowRobotCoordinates();
+                        newDirection=vision.getYellowRobotOrientation();
+                        break;
+                    }
+                    default:throw new Error("FATAL ERROR: Robotinho has invalid colour plate.");
+                }
+                pitch.updateRobotinho(newCoordinates, newDirection);
+                //TODO: recalculate velocity and trajcectory
             }else{
                 //TODO: Interpret next instruction of Ronaldinho's action plan and simulate.
             }
@@ -272,6 +291,5 @@ public class Engine implements Runnable{
             System.out.println("Simulation iteration "+i+" complete.");
         }
     }
-
     
 }
