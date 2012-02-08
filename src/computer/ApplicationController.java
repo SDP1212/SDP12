@@ -4,6 +4,8 @@
  */
 package computer;
 
+import vision.WorldState;
+
 /**
  *
  * @author Diana Crisan
@@ -28,6 +30,7 @@ public class ApplicationController {
      */
     public ApplicationController() {
         MainWindow.setup(this);
+        vision.RunVision.main(null);
         communication = new Communication();
     }
 
@@ -82,5 +85,9 @@ public class ApplicationController {
      */
     public void close() {
         disconnect();
+    }
+    
+    public WorldState getWorldState() {
+        return vision.RunVision.getWorldState();
     }
 }

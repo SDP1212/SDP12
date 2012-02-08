@@ -10,6 +10,7 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
  */
 public class RunVision {
     private static ControlGUI thresholdsGUI;
+    private static WorldState worldState;
     
     /**
      * The main method for the class. Creates the control
@@ -18,7 +19,7 @@ public class RunVision {
      * @param args        Program arguments. Not used.
      */
     public static void main(String[] args) {
-        WorldState worldState = new WorldState();
+        worldState = new WorldState();
         ThresholdsState thresholdsState = new ThresholdsState();
 
         /* Default to main pitch. */
@@ -46,5 +47,8 @@ public class RunVision {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static WorldState getWorldState() {
+        return worldState;
     }
 }
