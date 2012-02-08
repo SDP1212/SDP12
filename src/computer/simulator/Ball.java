@@ -24,4 +24,7 @@ public class Ball extends SimulatableObject{
         this.real=real;
     }
     
+    public Coordinates getCoordinates () {
+        return this.position;
+    }
 }

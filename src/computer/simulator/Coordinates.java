@@ -8,7 +8,7 @@ package computer.simulator;
  *
  * @author Dimo Petroff
  */
-public class Coordinates {
+public class Coordinates implements Cloneable {
     
     private float x,y;
     
@@ -36,4 +36,12 @@ public class Coordinates {
     public float getY(){
         return this.y;
     }
+    
+    public Coordinates clone (){
+        Coordinates c = (Coordinates) this.clone();
+        c.setX(this.getX());
+        c.setY(this.getY());
+        return c;
+    }
+    
 }

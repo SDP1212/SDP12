@@ -31,4 +31,44 @@ public class Robot extends SimulatableObject{
         return this.colour;
     }
     
+    public void forward(int speed) {
+        
+    }
+    
+    /**
+     * Send a message to the brick to go backward using the given speed
+     * @param speed 
+     */
+    public void backward(int speed) {
+        
+    }
+    
+    /**
+     * Send a stop message to the brick
+     */
+    public void stop() {
+        
+    }
+    
+    /**
+     * Send a kick message to the brick
+     */
+    public void kick() {
+        
+    }
+    
+    /**
+     * Send a rotate left message to the brick
+     */
+    public void rotateLeft () {
+        
+    }
+    
+    /**
+     * Send a rotate left message to the brick
+     */
+    public void rotateRight () {
+        
+    }
+    
 }

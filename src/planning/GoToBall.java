@@ -4,8 +4,9 @@
  */
 package planning;
 
+import computer.ai.AI;
+import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
-import vision.WorldState;
 /**
  *
  * @author s0907806
@@ -15,38 +16,44 @@ import vision.WorldState;
  * This class will get the ball coordinates and direct the robot towards it.
  */
 
-public class GoToBall {
-    
-    private static WorldState worldState;
-    
+public class GoToBall extends AI{
+   
     public PixelCoordinates blue;
     public PixelCoordinates yellow;
     public PixelCoordinates ball;
     
-    public GoToBall (boolean isBlue) {
-        worldState = new WorldState();
-        if (isBlue == true) {
-            this.blue = findBlueRobot();
-        } else {
-            this.yellow = findYellowRobot();
+    
+    public GoToBall (Pitch pitch) {
+        super(pitch);
+    }
+    
+
+
+    @Override
+    public void run() {
+        
+        
+        
+        
+        
+        
+    }
+    
+    private void correctPlan() {
+        Robot robotinho = this.pitch.robotinho;
+        Ball ball = this.pitch.ball;
+        if (this.actionPlan.isEmpty()) {
+            actionPlan.add(ball.getCoordinates());
+        } else if (PixelCoordinates.euclideanDistance(this.actionPlan.get(0), ball.getCoordinates())>10){
+            this.actionPlan.set(0, ball.getCoordinates().clone());
         }
-        this.ball = findBallLocation();
+        
     }
     
-    public PixelCoordinates findBallLocation () {
-        PixelCoordinates loc = worldState.getBallCoordinates();
-        return loc;
+    private void issueCommands() {
+        
     }
-    
-    public PixelCoordinates findBlueRobot () {
-        PixelCoordinates loc = worldState.getBlueRobotCoordinates();
-        return loc;
-    }
-    
-    public PixelCoordinates findYellowRobot () {
-        PixelCoordinates loc = worldState.getYellowRobotCoordinates();
-        return loc;
-    }
+        
     
     
 }

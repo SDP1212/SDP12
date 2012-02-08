@@ -4,8 +4,9 @@
  */
 package computer.ai;
 
-import computer.simulator.*;
+import computer.simulator.Coordinates;
 import computer.simulator.Pitch;
+import computer.simulator.Robot;
 import java.util.ArrayList;
 
 /**
@@ -14,17 +15,20 @@ import java.util.ArrayList;
  * @author Dimo Petroff
  */
 public abstract class AI implements Runnable{
-    
-    private Pitch pitch=null;
-    private ArrayList<Coordinates> actionPlan;
-    
+
+    protected Pitch pitch=null;
+    protected Robot self=null;
+    protected ArrayList<Coordinates> actionPlan;
+
     /**
      * This should be the only constructor. Subclasses should call this, so that the simulator can provide a reference to the pitch for easy access to the current state of the simulation/world/whatever.
      * 
      * @param pitch a reference to the pitch
+     * @param self a reference to the robot being controlled
      */
-    public AI(Pitch pitch){
+    public AI(Pitch pitch, Robot self){
         this.pitch=pitch;
+        this.self=self;
     }
     
     /**
