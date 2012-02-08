@@ -273,7 +273,7 @@ public class ControlGUI implements ChangeListener {
 				if (result == JOptionPane.NO_OPTION || result == JOptionPane.CANCEL_OPTION) return;
 				
 				try {
-					FileWriter writer = new FileWriter(new File("constants/pitch" + pitchNum));
+					FileWriter writer = new FileWriter(new File("/afs/inf.ed.ac.uk/user/s09/s0943941/Desktop/SDP12/src/vision/constants/pitch" + pitchNum));
 					
 					/* Ball */
 					writer.write(String.valueOf(ball_r.getValue()) + "\n");
