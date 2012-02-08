@@ -288,11 +288,13 @@ public class Brick {
      * Kick the ball (if we are lucky).
      */
     public static void kick() {
+        sensorListener.setKicking(true);
         logToFile(outLog, "Kick");
         Motor.C.setSpeed(720);
-        Motor.C.rotate(-35);
-        Motor.C.rotate(35);
+        Motor.C.rotate(-25);
+        Motor.C.rotate(25);
         Motor.C.stop();
+        sensorListener.setKicking(false);
     }
     
     /**
@@ -301,19 +303,14 @@ public class Brick {
      */
     public static void backOff(char direction) {
         logToFile(outLog, "Backoff");
-        pilot.setRotateSpeed(300);
+        pilot.stop();
         pilot.backward();
         try {
             Thread.sleep(300);
         } catch (InterruptedException ex) {
             
         }
-        if (direction == 'l') {
-            pilot.rotate(-260);
-        } else {
-            pilot.rotate(260);
-        }
-        pilot.setRotateSpeed(720);
+        pilot.stop();
     }
     
     /**
