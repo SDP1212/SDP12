@@ -42,7 +42,7 @@ public class GoToBall extends AI{
         Robot robotinho = this.pitch.robotinho;
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
-            //actionPlan.a
+            actionPlan.add(ball.getCoordinates());
         }
         
     }

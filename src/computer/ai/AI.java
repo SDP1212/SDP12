@@ -4,6 +4,7 @@
  */
 package computer.ai;
 
+import computer.simulator.*;
 import computer.simulator.Pitch;
 import java.util.ArrayList;
 
@@ -13,10 +14,10 @@ import java.util.ArrayList;
  * @author Dimo Petroff
  */
 public abstract class AI implements Runnable{
-    
+
     protected Pitch pitch=null;
-    protected ArrayList<Integer> actionPlan;
-    
+    protected ArrayList<Coordinates> actionPlan;
+
     /**
      * This should be the only constructor. Subclasses should call this, so that the simulator can provide a reference to the pitch for easy access to the current state of the simulation/world/whatever.
      * 
@@ -38,7 +39,7 @@ public abstract class AI implements Runnable{
      */
     public abstract void run();
     
-    public ArrayList<Integer> getActionPlan(){
+    public ArrayList<Coordinates> getActionPlan(){
         return actionPlan;
     }
 }

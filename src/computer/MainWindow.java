@@ -86,6 +86,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         radioRun = new javax.swing.JRadioButton();
         radioPenalty = new javax.swing.JRadioButton();
+        buttonWorld = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
@@ -139,6 +140,13 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioPenalty);
         radioPenalty.setText("Penalty");
 
+        buttonWorld.setText("Print World State");
+        buttonWorld.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonWorldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -148,15 +156,20 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(radioRun)
                     .addComponent(radioPenalty))
-                .addContainerGap(305, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                .addComponent(buttonWorld)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(radioRun)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioPenalty)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buttonWorld)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(radioRun)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radioPenalty)))
                 .addContainerGap(107, Short.MAX_VALUE))
         );
 
@@ -417,6 +430,10 @@ public class MainWindow extends javax.swing.JFrame {
         private void radioFastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioFastActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_radioFastActionPerformed
+
+    private void buttonWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonWorldActionPerformed
+        System.out.println("X: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getX()) + " Y: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getY()));
+    }//GEN-LAST:event_buttonWorldActionPerformed
     
     /**
      * @param args the command line arguments
@@ -458,6 +475,7 @@ public class MainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JButton buttonWorld;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
