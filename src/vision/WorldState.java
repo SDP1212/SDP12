@@ -1,6 +1,9 @@
 package vision;
 
-public class WorldState {
+import computer.simulator.Direction;
+import computer.simulator.PixelCoordinates;
+
+public class WorldState implements computer.simulator.VisionInterface {
 	
 	private int direction; // 0 = right, 1 = left.
 	private int colour; // 0 = yellow, 1 = blue
@@ -117,5 +120,37 @@ public class WorldState {
   public long getCounter() {
     return this.counter;
   }
+
+    public PixelCoordinates[] getPitchCornerCoordinates() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PixelCoordinates getYellowRobotCoordinates() {
+        return new PixelCoordinates(getYellowX(), getYellowY(), false, false);
+    }
+
+    public Direction getYellowRobotOrientation() {
+        return new Direction(getYellowOrientation());
+    }
+
+    public PixelCoordinates getBlueRobotCoordinates() {
+        return new PixelCoordinates(getBlueX(), getBlueY(), false, false);
+    }
+
+    public Direction getBlueRobotOrientation() {
+        return new Direction(getBlueOrientation());
+    }
+
+    public PixelCoordinates[] getLeftGoalCoordinates() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PixelCoordinates[] getRightGoalCoordinates() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PixelCoordinates getBallCoordinates() {
+        return new PixelCoordinates(getBallX(), getBallY(), false, false);
+    }
 	
 }
