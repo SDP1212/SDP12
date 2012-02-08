@@ -14,8 +14,8 @@ import java.util.ArrayList;
  */
 public abstract class AI implements Runnable{
     
-    private Pitch pitch=null;
-    private ArrayList<Integer> actionPlan;
+    protected Pitch pitch=null;
+    protected ArrayList<Integer> actionPlan;
     
     /**
      * This should be the only constructor. Subclasses should call this, so that the simulator can provide a reference to the pitch for easy access to the current state of the simulation/world/whatever.
