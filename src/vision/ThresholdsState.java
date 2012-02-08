@@ -1,4 +1,4 @@
-
+package vision;
 /**
  * Stores the states of the various thresholds.
  *

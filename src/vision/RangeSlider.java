@@ -1,3 +1,4 @@
+package vision;
 
 import javax.swing.JSlider;
 

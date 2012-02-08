@@ -1,3 +1,5 @@
+package vision;
+
 public class WorldState {
 	
 	private int direction; // 0 = right, 1 = left.

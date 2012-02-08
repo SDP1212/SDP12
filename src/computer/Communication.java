@@ -63,13 +63,12 @@ public class Communication implements Runnable {
         connected = false;
     }
     
-    public void forward() {
-        sendMessage(Brick.FORWARDS | Brick.FAST);
+    public void forward(int speed) {
+        sendMessage(Brick.FORWARDS | speed);
     }
     
-    public void backward() {
-        sendMessage(Brick.BACKWARDS | Brick.SLOW);
-        System.out.println(Integer.toBinaryString(((Brick.BACKWARDS | Brick.SLOW) & Brick.OPCODE )));
+    public void backward(int speed) {
+        sendMessage(Brick.BACKWARDS | speed);
     }
     
     public void stop() {

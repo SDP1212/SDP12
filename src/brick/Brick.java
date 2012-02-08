@@ -51,7 +51,7 @@ public class Brick {
     public final static char LEFT = 'l';
     public final static char RIGHT = 'r';
     
-    public final static double trackWidth = 10.9;
+    public final static double trackWidth = 15.6;
     public final static double wheelDiameter = 6;
     public static FileOutputStream outLog = null;
     public static boolean connected = false;

@@ -31,7 +31,7 @@
 	</condition>
 
 	<!-- deletes generated files -->
-        <target name="compileComputer">
+        <target name="compileComputer" depends="compile">
             <mkdir dir="${build}" />
             <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
