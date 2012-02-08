@@ -1,27 +1,26 @@
 package brick;
 
 import lejos.nxt.*;
-import lejos.robotics.objectdetection.*;
-import lejos.util.Timer;
-import lejos.util.TimerListener;
 
 /**
  *
  * @author Matthew Jeffryes
  */
+
+/**
+ * A thread that listens for input from the sensors. 
+ */
 public class SensorListener implements Runnable {
-//    private TouchFeatureDetector touchSensorDL;
-//    private TouchFeatureDetector touchSensorDR;
     private TouchSensor touchSensorL;
     private TouchSensor touchSensorR;
-    private boolean pressed;
+    private boolean pressed = false;
+    
+    /**
+     * Constructor to initialise the touch sensors
+     */
     public SensorListener() {
         touchSensorL = new TouchSensor(SensorPort.S1);
         touchSensorR = new TouchSensor(SensorPort.S2);
-//        touchSensorDL = new TouchFeatureDetector(touchSensorL);
-//        touchSensorDR = new TouchFeatureDetector(touchSensorR);
-//        touchSensorDL.addListener(this);
-//        touchSensorDR.addListener(this);
         
     }
 
@@ -35,6 +34,9 @@ public class SensorListener implements Runnable {
                 } else if (touchSensorL.isPressed() || touchSensorR.isPressed()) {
                     pressed = true;
                 }
+                /**
+                 * It backs off if the sensors have been pressed for half a second.
+                 */
                 Thread.sleep(500);
             }
         } catch (InterruptedException ex) {

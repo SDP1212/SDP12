@@ -63,30 +63,55 @@ public class Communication implements Runnable {
         connected = false;
     }
     
+    /**
+     * Send a message to the brick to go forward using the given speed
+     * @param speed 
+     */
     public void forward(int speed) {
         sendMessage(Brick.FORWARDS | speed);
     }
     
+    /**
+     * Send a message to the brick to go backward using the given speed
+     * @param speed 
+     */
     public void backward(int speed) {
         sendMessage(Brick.BACKWARDS | speed);
     }
     
+    /**
+     * Send a stop message to the brick
+     */
     public void stop() {
         sendMessage(Brick.STOP);
     }
     
+    /**
+     * Send a kick message to the brick
+     */
     public void kick() {
         sendMessage(Brick.KICK);
     }
     
+    /**
+     * Send a rotate left message to the brick
+     */
     public void rotateLeft () {
         sendMessage(Brick.ROTATELEFT);
     }
     
+    /**
+     * Send a rotate left message to the brick
+     */
     public void rotateRight () {
         sendMessage(Brick.ROTATERIGHT);
     }
     
+    /**
+     * Send message method. Creates a 4 byte buffer in which it adds the message 
+     * and writes it to the output stream.
+     * @param message 
+     */
     public void sendMessage(int message) {
         try {
             byte[] buf = ByteBuffer.allocate(4).putInt(message).array();
@@ -98,6 +123,9 @@ public class Communication implements Runnable {
         }
     }
 
+    /**
+     * Thread to read any answer that comes from the brick. 
+     */
     public void run() {
         while(!Thread.interrupted()) {
             byte[] byteBuffer = new byte[4];
@@ -106,6 +134,11 @@ public class Communication implements Runnable {
             try {
                 inStream.read(buffer.array());
                 n = buffer.getInt();                
+                /**
+                 * If there is a collision or an acknowledged message 
+                 * it prints it to standard output
+                 */
+     
                 switch (n){
                     case (Brick.COLLISION):
                         System.out.println("Collision!");
