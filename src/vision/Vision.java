@@ -338,7 +338,7 @@ public class Vision extends WindowAdapter {
             }
         } catch (NoAngleException e) {
             worldState.setBlueOrientation(worldState.getBlueOrientation());
-            System.out.println("Blue robot: " + e.getMessage());
+//            System.out.println("Blue robot: " + e.getMessage());
         }
 
 
@@ -352,7 +352,7 @@ public class Vision extends WindowAdapter {
             }
         } catch (NoAngleException e) {
             worldState.setYellowOrientation(worldState.getYellowOrientation());
-            System.out.println("Yellow robot: " + e.getMessage());
+//            System.out.println("Yellow robot: " + e.getMessage());
         }
 
 

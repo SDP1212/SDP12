@@ -33,13 +33,13 @@
 	</condition>
 
 	<!-- deletes generated files -->
-        <target name="compileComputer" depends="compile">
+        <target name="compileComputer" depends="compileVision">
             <mkdir dir="${build}" />
             <javac srcdir="${computerSrc}" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
             </javac>
         </target>
-         <target name="compileVision">
+         <target name="compileVision" depends="compile">
             <mkdir dir="${build}" />
             <javac srcdir="${visionSrc}" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="lib/v4l4j.jar"/>
@@ -49,7 +49,7 @@
             </copy>
         </target>
         <target name="runComputer" depends="compileComputer">
-            <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
+            <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
         <target name="runVision" depends="compileVision">
             <java fork="true" classname="vision.RunVision" dir="${build}" classpath="lib/v4l4j.jar:build:lib/libv4l4j.so:lib/libvideo.so.0" />
