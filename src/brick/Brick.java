@@ -38,12 +38,12 @@ public class Brick {
     public final static int KICK = 0X05;
     public final static int ROTATE = 0x06;
     
-    public final static int SLOW = 0X00010000;
-    public final static int MEDIUM = 0X00020000;
-    public final static int FAST = 0X00030000;
+    public final static int SLOW = 0X000100;
+    public final static int MEDIUM = 0X000200;
+    public final static int FAST = 0X000300;
     
-    public final static int OPCODE = 0X0000FFFF;
-    public final static int ARG = 0XFFFF0000;
+    public final static int OPCODE = 0X000000FF;
+    public final static int ARG = 0XFFFFFF00;
     
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
@@ -93,8 +93,11 @@ public class Brick {
                 in.read(byteBuffer);
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
+                logToFile(outLog, "Message " + Integer.toBinaryString(n));
                 int opcode = n & OPCODE;
+                logToFile(outLog, "Opcode " + opcode);
                 int arg = n & ARG;
+                logToFile(outLog, "Arg " + arg);
                 switch (opcode) {
 
                     case FORWARDS:
@@ -106,7 +109,7 @@ public class Brick {
                         break;
 
                     case ROTATE:
-                        rotate(arg);
+                        rotate(arg >> 8);
                         break;
 
                     case STOP:
@@ -260,7 +263,7 @@ public class Brick {
      */
     public static void rotate(int angle) {
         logToFile(outLog, "Rotate");
-        pilot.rotate(angle);
+        pilot.rotate((angle - 180) * 2);
     }
     
     /**
@@ -312,7 +315,7 @@ public class Brick {
         for (int i = 0; i < 4; i++) {
             // Shift by an amount corresponding to our current position the byte at that position
             int shift = (4 - 1 - i) * 8;
-            value += (b[i] & 0x000000FF) << shift;
+            value += ((b[i] & 0xFFFFFFFF) << shift) & 0x00000000FFFFFFFF;
         }
         return value;
     }

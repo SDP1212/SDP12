@@ -99,11 +99,12 @@ public class Communication implements Runnable {
      * clockwise.
      */
 
-    public void rotate (Direction direction) {
+    public void rotate (double angle) {
         int opcode = Brick.ROTATE;
         System.out.println("Opcode: " + opcode);
-        int arg = ByteBuffer.allocate(2).putInt(composeAngleArgument(direction)).get();
+        int arg = composeAngleArgument(angle) << 8;
         System.out.println("Arg " + arg);
+        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
     
@@ -114,8 +115,7 @@ public class Communication implements Runnable {
      */
     public void sendMessage(int message) {
         try {
-            byte[] buf = ByteBuffer.allocate(4).putInt(message).array();
-            System.out.println(Arrays.toString(buf));
+            byte[] buf = intToByteArray(message);
             outStream.write(buf);
             outStream.flush();
         } catch (IOException e) {
@@ -123,8 +123,8 @@ public class Communication implements Runnable {
         }
     }
     
-    public int composeAngleArgument(Direction direction) {
-        int out = Math.round((float)direction.getDirectionDegrees());
+    public int composeAngleArgument(double angle) {
+        int out = Math.round((float)Math.toDegrees(angle) + 180);
         System.out.println("Angle " + Integer.toString(out));
         return out;
         
@@ -159,5 +159,15 @@ public class Communication implements Runnable {
             }
         }
         System.out.println("Interupted");
+    }
+    public static byte[] intToByteArray(int in) {
+        byte[] b = new byte[4];
+        // For each position in the array
+        for (int i = 0; i < 4; i++) {
+            // Shift the integer by out current position in the array
+            int shift = (3 - i) * 8;
+            b[i] = (byte) (((in & 0xFFFFFFFF) >> shift) & 0x00000000FFFFFFFF);
+        }
+        return b;
     }
 }
