@@ -10,7 +10,7 @@ package computer.simulator;
  */
 public class LineTools {
     
-    public Coordinates intersectionOfLines(Line l, Line m){
+    public static Coordinates intersectionOfLines(Line l, Line m){
         
         Coordinates intersectionPoint;
         intersectionPoint = new Coordinates();
@@ -25,7 +25,7 @@ public class LineTools {
         return intersectionPoint;
     }
         
-    public Coordinates symmetricalPoint(Coordinates point, Line line){
+    public static Coordinates symmetricalPoint(Coordinates point, Line line){
         Coordinates newPoint;
         newPoint = new Coordinates();
         
@@ -44,7 +44,7 @@ public class LineTools {
         return newPoint;
     }
     
-    public double distanceFromPointToLine(Coordinates point, Line line){
+    public static double distanceFromPointToLine(Coordinates point, Line line){
  
         double distance;
         if(line.getGradient() == Double.POSITIVE_INFINITY){
@@ -56,7 +56,7 @@ public class LineTools {
         return distance;
     }
     
-    public double angleBetweenLineAndDirection(Line l, Direction direction){
+    public static double angleBetweenLineAndDirection(Line l, Direction direction){
         double gamma;
  
         gamma = Math.acos((Math.cos(direction.getDirectionRadians())+l.getGradient()*Math.sin(direction.getDirectionRadians()))/Math.sqrt(1+l.getGradient()*l.getGradient()));
@@ -70,7 +70,7 @@ public class LineTools {
      * @return 0 : on the line
      * @return -1: on the right
      */
-    public int sideOfLine(Coordinates point, Line line){
+    public static int sideOfLine(Coordinates point, Line line){
         double x1 = 1;
         double y1 = line.getGradient();
         if(line.getDirection()){
@@ -98,7 +98,7 @@ public class LineTools {
      * Side 0 is always the side perpendicular to the vector defined by the direction of the rectangle.
      * The sides are numbered counterclockwise.
      */
-    public Line[] formRectagleAroundPoint(Coordinates point, Direction direction, double length, double width){
+    public static Line[] formRectagleAroundPoint(Coordinates point, Direction direction, double length, double width){
         Coordinates point1, point2;
         
         point1 = new Coordinates(point.getX()+Math.cos(direction.getDirectionRadians()-Math.atan(width/length))*0.5*Math.sqrt(width*width+length*length), point.getY()+Math.sin(direction.getDirectionRadians()-Math.atan(width/length))*0.5*Math.sqrt(width*width+length*length));
@@ -122,7 +122,7 @@ public class LineTools {
         return arrayOfLines;
     }
     
-    public int lineIntersectingLines(Line line, Line[] lines){
+    public static int lineIntersectingLines(Line line, Line[] lines){
         double distanceQuotient = Double.POSITIVE_INFINITY;
         int lineNum = -1;
         
