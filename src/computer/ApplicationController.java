@@ -4,7 +4,7 @@
  */
 package computer;
 
-import vision.WorldState;
+import computer.vision.WorldState;
 
 /**
  *
@@ -30,7 +30,7 @@ public class ApplicationController {
      */
     public ApplicationController() {
         communication = new Communication();
-        vision.RunVision.main(null);
+        computer.vision.RunVision.main(null);
         MainWindow.setup(this);
     }
 
@@ -88,6 +88,6 @@ public class ApplicationController {
     }
     
     public WorldState getWorldState() {
-        return vision.RunVision.getWorldState();
+        return computer.vision.RunVision.getWorldState();
     }
 }

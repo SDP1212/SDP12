@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package planning;
+package computer.ai;
 
 import computer.ai.AI;
 import computer.simulator.*;

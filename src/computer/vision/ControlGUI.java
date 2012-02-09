@@ -1,4 +1,4 @@
-package vision;
+package computer.vision;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

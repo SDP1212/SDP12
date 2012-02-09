@@ -1,4 +1,4 @@
-package vision;
+package computer.vision;
 
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;

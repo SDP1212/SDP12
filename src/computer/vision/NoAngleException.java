@@ -1,4 +1,4 @@
-package vision;
+package computer.vision;
 
 public class NoAngleException extends Exception {
 	public NoAngleException() {

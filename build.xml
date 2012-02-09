@@ -8,7 +8,7 @@
 	<property file="build.properties" />
 	<property name="brickSrc" location="src/brick" />
         <property name="computerSrc" location="src/computer" />
-        <property name="visionSrc" location="src/vision" />
+        <property name="visionSrc" location="src/computer/vision" />
 	<property name="build" location="build" />
 	<property name="full.main.class" value="${package}.${main.class}" />
 	<property name="binary" value="${build}/${main.class}.nxj" />
