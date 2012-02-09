@@ -250,10 +250,10 @@ public class PitchConstants {
 		this.blue_b_high = 255;
 		this.blue_h_low = 0;
 		this.blue_h_high = 150;
-		this.blue_s_low = 100;
+		this.blue_s_low = 120;
 		this.blue_s_high = 250;
-		this.blue_v_low = 100;
-		this.blue_v_high = 150;
+		this.blue_v_low = 150;
+		this.blue_v_high = 250;
 
 		/* Yellow Robot */
 		this.yellow_r_low = 0;
@@ -266,8 +266,8 @@ public class PitchConstants {
 		this.yellow_h_high = 10;
 		this.yellow_s_low = 0;
 		this.yellow_s_high = 10;
-		this.yellow_v_low = 0;
-		this.yellow_v_high = 10;
+		this.yellow_v_low = 180;
+		this.yellow_v_high = 250;
 		
 		/* Grey Circles */
 		this.grey_r_low = 0;
@@ -292,11 +292,11 @@ public class PitchConstants {
 		this.green_b_low = 0;
 		this.green_b_high = 255;
 		this.green_h_low = 0;
-		this.green_h_high = 10;
+		this.green_h_high = 255;
 		this.green_s_low = 0;
-		this.green_s_high = 10;
+		this.green_s_high = 255;
 		this.green_v_low = 0;
-		this.green_v_high = 10;
+		this.green_v_high = 255;
 
 		/* Pitch Dimensions */
 		this.topBuffer = 0;

@@ -606,7 +606,7 @@ public class Vision extends WindowAdapter {
 	}
 	
 
-//	System.out.println(angle2);
+
 
         //Look in a cone in the opposite direction to try to find the grey circle
         ArrayList<Integer> greyXPoints = new ArrayList<Integer>();
@@ -764,20 +764,51 @@ public class Vision extends WindowAdapter {
          */
 
         /* Calculate new angle using just the center of the T and the grey circle */
+        length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
+                + Math.pow(frontY - backY, 2));
+        ax = (frontX - backX) / length;
+        ay = (frontY - backY) / length;
+	angle = (float) Math.acos(ax);
+        double angle3 = Math.toDegrees((double) Math.acos(ax));
+
+        if (frontY < meanY) {
+            angle3 = -angle3;
+        }
+
+	if(angle3<0) {
+		angle3 = Math.abs(angle3);
+	}
+	else {
+	   angle3 = 360 - angle3;
+	}
+	
+
+
+
         length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
                 + Math.pow(meanY - backY, 2));
         ax = (meanX - backX) / length;
         ay = (meanY - backY) / length;
+        double angle4 = Math.toDegrees((double) Math.acos(ax));
         angle = (float) Math.acos(ax);
 
         if (frontY < meanY) {
-            angle = -angle;
+            angle4 = -angle4;
         }
+
+	if(angle4<0) {
+		angle4 = Math.abs(angle4);
+	}
+	else {
+	   angle4 = 360 - angle4;
+	}
 
         if (showImage) {
             image.getGraphics().drawLine((int)backX, (int)backY, (int)(backX+ax*70), (int)(backY+ay*70));
             image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
         }
+
+	System.out.println("F/M: "+angle2+". F/B: "+angle3+". M/B: "+angle4);
 
         if (angle == 0) {
             return (float) 0.001;
