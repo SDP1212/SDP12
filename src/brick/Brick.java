@@ -79,8 +79,8 @@ public class Brick {
         }
         
         // Set up robotics objects
-      //  buttonListener = new ButtonListener();
-//        Button.ESCAPE.addButtonListener(buttonListener);
+        buttonListener = new ButtonListener();
+        Button.ESCAPE.addButtonListener(buttonListener);
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
         listenerThread = new Thread(sensorListener);
