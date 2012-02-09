@@ -1,4 +1,7 @@
 package computer.vision;
+
+import computer.simulator.Direction;
+import computer.simulator.PixelCoordinates;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.WindowAdapter;
@@ -17,6 +20,7 @@ import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.ImageFormatException;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import computer.simulator.VisionInterface;
 
 /**
  * The main class for showing the video feed and processing the video
