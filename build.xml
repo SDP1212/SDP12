@@ -45,6 +45,9 @@
         <target name="runComputer" depends="compileComputer">
             <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
+        <target name="runSim" depends="compileComputer">
+               <java fork="true" classname="computer.simulator.test.SimulationTest" dir="${build}" classpath="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
+        </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />
 	</target>
