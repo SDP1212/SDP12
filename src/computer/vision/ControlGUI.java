@@ -274,6 +274,7 @@ public class ControlGUI implements ChangeListener {
 				
 				try {
 					FileWriter writer = new FileWriter(new File("/group/teaching/sdp/sdp12/secure/constants/pitch" + pitchNum));
+
 					
 					/* Ball */
 					writer.write(String.valueOf(ball_r.getValue()) + "\n");
