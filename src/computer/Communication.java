@@ -100,7 +100,11 @@ public class Communication implements Runnable {
      */
 
     public void rotate (Direction direction) {
-        sendMessage(Brick.ROTATE | ByteBuffer.allocate(2).putInt(composeAngleArgument(direction)).get() << 16);
+        int opcode = Brick.ROTATE;
+        System.out.println("Opcode: " + opcode);
+        int arg = ByteBuffer.allocate(2).putInt(composeAngleArgument(direction)).get();
+        System.out.println("Arg " + arg);
+        sendMessage(arg | opcode);
     }
     
     /**
@@ -120,7 +124,10 @@ public class Communication implements Runnable {
     }
     
     public int composeAngleArgument(Direction direction) {
-        return Math.round((float)Math.toDegrees(direction.radians));
+        int out = Math.round((float)direction.getDirectionDegrees());
+        System.out.println("Angle " + Integer.toString(out));
+        return out;
+        
     }
 
     /**

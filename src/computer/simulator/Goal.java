@@ -5,7 +5,9 @@
 package computer.simulator;
 
 /**
- *
+ * This represents a goal as the coordinates of the two posts. Also defines
+ * if this is the target goal or not.
+ * 
  * @author Dimo Petroff
  */
 public class Goal {
@@ -13,7 +15,7 @@ public class Goal {
     private Coordinates upperPost,lowerPost;
     private Boolean isTarget=null;
     
-    public Goal(float xUpper, float yUpper, float xLower, float yLower){
+    public Goal(double xUpper, double yUpper, double xLower, double yLower){
         this.upperPost=new Coordinates(xUpper, yUpper);
         this.lowerPost=new Coordinates(xLower, yLower);
     }
@@ -26,11 +28,11 @@ public class Goal {
         return this.isTarget==null ? false : this.isTarget;
     }
     
-    public float getUpperPostCoordinates(){
-        return this.upperPost.getY();
+    public Coordinates getUpperPostCoordinates(){
+        return this.upperPost;
     }
     
-    public float getLowerPostCoordinates(){
-        return this.lowerPost.getY();
+    public Coordinates getLowerPostCoordinates(){
+        return this.lowerPost;
     }
 }

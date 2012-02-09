@@ -17,9 +17,9 @@ public class Line {
      * lineDirection is true if the direction of the line is in the direction in which x increases
      * The range of x is [rangeXmin, rangeXmax]
      */    
-    private float lineGradient, lineOffset;
+    private double lineGradient, lineOffset;
     private boolean lineDirection;
-    private float rangeXmin, rangeXmax;
+    private double rangeXmin, rangeXmax;
     private Coordinates linePointA, linePointB;
     
     /**
@@ -84,19 +84,19 @@ public class Line {
         linePointB = new Coordinates(2,lineGradient*2+lineOffset);
     }
     
-    public float getGradient(){
+    public double getGradient(){
         return lineGradient;
     }
-    public float getOffset(){
+    public double getOffset(){
         return lineOffset;
     }
     public boolean getDirection(){
         return lineDirection;
     }
-    public float getXmin(){
+    public double  getXmin(){
         return rangeXmin;
     }
-    public float getXmax(){
+    public double  getXmax(){
         return rangeXmax;
     }
     public Coordinates getFirstPoint(){

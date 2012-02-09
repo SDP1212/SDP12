@@ -44,7 +44,7 @@ public class GoToBall extends AI{
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(ball.getCoordinates());
-        } else if (PixelCoordinates.euclideanDistance(this.actionPlan.get(0), ball.getCoordinates())>10){
+        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10){
             this.actionPlan.set(0, ball.getCoordinates().clone());
         }
         

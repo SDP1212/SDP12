@@ -373,14 +373,14 @@ public class Vision extends WindowAdapter {
         if (!(thresholdsState.isBall_debug() || thresholdsState.isBlue_debug()
                 || thresholdsState.isYellow_debug() || thresholdsState.isGreen_debug()
                 || thresholdsState.isGrey_debug())) {
-            imageGraphics.setColor(Color.red);
-            imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
-            imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
-            imageGraphics.setColor(Color.blue);
-            imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
-            imageGraphics.setColor(Color.yellow);
-            imageGraphics.drawOval(yellow.getX()-15, yellow.getY()-15, 30,30);
-            imageGraphics.setColor(Color.white);
+            //imageGraphics.setColor(Color.red);
+            //imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
+            //imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
+            //imageGraphics.setColor(Color.blue);
+            //imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
+            //imageGraphics.setColor(Color.yellow);
+            //imageGraphics.drawOval(yellow.getX()-15, yellow.getY()-15, 30,30);
+            //imageGraphics.setColor(Color.white);
 
             /*
             float ax = (float) Math.cos(worldState.getBlueOrientation());
@@ -524,6 +524,7 @@ public class Vision extends WindowAdapter {
         assert (xpoints.size() == ypoints.size()) :
             "Error: Must be equal number of x and y points!";
 
+	 Graphics imageGraphics = image.getGraphics();
         if (xpoints.size() == 0) {
             throw new NoAngleException("No T pixels");
         }
@@ -567,6 +568,20 @@ public class Vision extends WindowAdapter {
         /* Otherwise, get the frontX and Y. */
         frontX /= frontCount;
         frontY /= frontCount;
+	try{
+	double deltaY = meanY-frontY;
+	double deltaX = meanX-frontX;
+	
+	//System.out.println("This is the slope: "+deltaY/deltaX);
+	//System.out.println("The blue X: "+meanX+" and the blue Y: "+meanY+" and the white x: "+frontX+" and the white y: "+frontY+" and the slope is: "+deltaY/deltaX);
+	}
+	catch(Exception e) {
+	}
+        imageGraphics.setColor(Color.white);
+        imageGraphics.drawOval(frontX-15, frontY-15, 30,30);
+	imageGraphics.setColor(Color.blue);
+	imageGraphics.drawOval(meanX-15, meanY-15, 30, 30);
+	image.getGraphics().drawLine(frontX, frontY, meanX, meanY);
 
         /* In here, calculate the vector between meanX/frontX and
          * meanY/frontY, and then get the angle of that vector. */
@@ -576,11 +591,22 @@ public class Vision extends WindowAdapter {
                 + Math.pow(frontY - meanY, 2));
         float ax = (frontX - meanX) / length;
         float ay = (frontY - meanY) / length;
-        float angle = (float) Math.acos(ax);
+	float angle = (float) Math.acos(ax);
+        double angle2 = Math.toDegrees((double) Math.acos(ax));
 
         if (frontY < meanY) {
-            angle = -angle;
+            angle2 = -angle2;
         }
+
+	if(angle2<0) {
+		angle2 = Math.abs(angle2);
+	}
+	else {
+	   angle2 = 360 - angle2;
+	}
+	
+
+//	System.out.println(angle2);
 
         //Look in a cone in the opposite direction to try to find the grey circle
         ArrayList<Integer> greyXPoints = new ArrayList<Integer>();
@@ -624,6 +650,9 @@ public class Vision extends WindowAdapter {
         /* Center of grey circle */
         float backX = totalX / greyXPoints.size();
         float backY = totalY / greyXPoints.size();
+
+        imageGraphics.setColor(Color.red);
+        imageGraphics.drawOval((int)backX-15, (int) backY-15, 30,30);
 
         /* Check that the circle is surrounded by the green plate
          * Currently checks above and below the circle */

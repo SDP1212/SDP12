@@ -4,24 +4,27 @@
  */
 package computer.simulator;
 
-import brick.Brick;
 import computer.Communication;
-import computer.ai.AI;
+import computer.control.ControlInterface;
 
 /**
- *
+ * Implements the entire simulator logic.
+ * 
  * @author Dimo Petroff
  */
 public class Engine implements Runnable{
     
+    public static final short SIMULATOR_TICK_LENGTH_IN_MILLISECONDS=40;
     private boolean barrelEffectPresent=false,tableMisalignmentPresent=false;
     private Pitch pitch=null;
     private VisionInterface vision;
     
     /**
-     * This initializes the simulator.
+     * Allocates a simulator Engine object and initializes it with
+     * the appropriate settings.
      * 
      * @param vision a VisionInterface implementation, through which we get the real-world data
+     * @param control a ControlInterface through which to send commands to the brick
      * @param simulateRobot true if the simulator should simulate Robotinho
      * @param simulateNemesis true if the adversary is virtual and needs to be simulated
      * @param simulateBall true if the ball is virtual and should be simulated
@@ -30,7 +33,7 @@ public class Engine implements Runnable{
      * @param ourAI the class of AI that should be used for Robotinho's operation
      * @param nemesisAI the class of AI that should be used for nemesis' operation
      */
-    public Engine(VisionInterface vision, boolean simulateRobot, boolean simulateNemesis, boolean simulateBall, short targetGoal, short nemesisColour, Class ourAI, Class nemesisAI){
+    public Engine(VisionInterface vision, ControlInterface control, boolean simulateRobot, boolean simulateNemesis, boolean simulateBall, short targetGoal, short nemesisColour, Class ourAI, Class nemesisAI){
         
         PixelCoordinates[] tempCoordinatesArray;
         PixelCoordinates tempCoordinates=null;
@@ -64,13 +67,7 @@ public class Engine implements Runnable{
                 default:throw new Error("SIMULATOR ERROR: "+nemesisColour+" is not a valid robot colour. The valid robot colours are 'Robot.BLUE_PLATE' and 'Robot.YELLOW_PLATE'!");
             }
             testPixelCoordinates(tempCoordinates);
-            try{
-                this.pitch.insertRobotinho(tempCoordinates, tempOrientation, ourColour, (AI)ourAI.getConstructor(this.pitch.getClass()).newInstance(this.pitch));
-            }catch (Exception e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace(System.err);
-                throw new Error("FATAL ERROR: Simulator initialization failed to instantiate Robotinho's AI. Look at System.err for more details.");
-            }
+            this.pitch.insertRobotinho(tempCoordinates, tempOrientation, ourColour, ourAI, control);
             
         }else{
             Coordinates tempPos;
@@ -92,7 +89,7 @@ public class Engine implements Runnable{
                 // If target is on the left, we must start on the right.
                 case Pitch.TARGET_LEFT_GOAL:{
                     tempPos=new Coordinates(1.5f, 0.5f);
-                    tempOrientation=new Direction((float)Math.PI);
+                    tempOrientation=new Direction(Math.PI);
                     break;
                 }
                 // And vice versa.
@@ -103,13 +100,7 @@ public class Engine implements Runnable{
                 }
                 default:throw new Error("SIMULATOR ERROR: "+targetGoal+" is not a valid target identification. The valid targets are 'Pitch.TARGET_LEFT_GOAL' and 'Pitch.TARGET_RIGHT_GOAL'!");
             }
-            try{
-                this.pitch.insertRobotinhoInternal(tempPos, tempOrientation, ourColour, (AI)ourAI.getConstructor(this.pitch.getClass()).newInstance(this.pitch));
-            }catch (Exception e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace(System.err);
-                throw new Error("FATAL ERROR: Simulator initialization failed to instantiate Robotinho's AI. Look at System.err for more details.");
-            }
+            this.pitch.insertRobotinhoInternal(tempPos, tempOrientation, ourColour, ourAI, control);
         }
         
         // Initialise nemesis
@@ -141,18 +132,12 @@ public class Engine implements Runnable{
                 // Analogous.
                 case Pitch.TARGET_RIGHT_GOAL:{
                     tempPos=new Coordinates(1.5f, 0.5f);
-                    tempOrientation=new Direction((float)Math.PI);
+                    tempOrientation=new Direction(Math.PI);
                     break;
                 }
                 default:throw new Error("SIMULATOR ERROR: "+targetGoal+" is not a valid target identification. The valid targets are 'Pitch.TARGET_LEFT_GOAL' and 'Pitch.TARGET_RIGHT_GOAL'!");
             }
-            try{
-                this.pitch.insertNemesisInternal(tempPos, tempOrientation, nemesisColour, (AI)nemesisAI.getConstructor(this.pitch.getClass()).newInstance(this.pitch));
-            }catch (Exception e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace(System.err);
-                throw new Error("FATAL ERROR: Simulator initialization failed to instantiate Robotinho's AI. Look at System.err for more details.");
-            }
+            this.pitch.insertNemesisInternal(tempPos, tempOrientation, nemesisColour, nemesisAI);
         }
         
         // Initialise ball
@@ -224,8 +209,8 @@ public class Engine implements Runnable{
             if(Thread.interrupted())return;
             
             // Make sure this only runs at most once every 40 milliseconds - the camera framerate is 25Hz, so there will be no new information to process more frequently.
-            if((thisRun=System.currentTimeMillis())<=lastRun+40)try{
-                Thread.sleep(40-(thisRun-lastRun));
+            if((thisRun=System.currentTimeMillis())<=lastRun+Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS)try{
+                Thread.sleep(Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS-(thisRun-lastRun));
             }catch(InterruptedException e) {return;} // stop if interrupted
             lastRun=System.currentTimeMillis();
             //TODO: Analise object motions, calculate velocities, etc.
@@ -233,7 +218,6 @@ public class Engine implements Runnable{
             // Process Robotinho
             pitch.robotinho.brain.run();
             if(pitch.robotinho.isReal()){
-                //TODO: Obtain action plan and pass to communicator.
                 PixelCoordinates newCoordinates;
                 Direction newDirection;
                 switch(pitch.robotinho.getColour()){
@@ -250,9 +234,10 @@ public class Engine implements Runnable{
                     default:throw new Error("FATAL ERROR: Robotinho has invalid colour plate.");
                 }
                 pitch.updateRobotinho(newCoordinates, newDirection);
-                //TODO: recalculate velocity and trajcectory
+                //TODO: recalculate trajectory
             }else{
-                //TODO: Interpret next instruction of Ronaldinho's action plan and simulate.
+                pitch.robotinho.updateVelocity();
+                //TODO: recalculate trajectory
             }
             
             // Process Nemesis
@@ -273,22 +258,25 @@ public class Engine implements Runnable{
                     default:throw new Error("FATAL ERROR: Nemesis has invalid colour plate.");
                 }
                 pitch.updateNemesis(newCoordinates, newDirection);
-                //TODO: recalculate velocity and trajcectory
+                //TODO: recalculate trajectory
             }else{
                 pitch.nemesis.brain.run();
-                //TODO: Interpret next instruction of Nemesis' action plan and simulate.
+                pitch.nemesis.updateVelocity();
+                //TODO: recalculate trajectory
             }
             
             // Process ball
             if(pitch.ball.isReal()){
                 pitch.updateBall(vision.getBallCoordinates());
+                // TODO: recalculate intercept and trajectory
             }else{
-                // TODO: simulate ball behaviour.
+                // TODO: simulate ball behaviour. and uncomment below.
+                //pitch.ball.updateVelocity();
             }
             
             // TODO: Remove next two lines for production version:
             i++;
-            System.out.println("Simulation iteration "+i+" complete.");
+//            System.out.println("Simulation iteration "+i+" complete.");
         }
     }
     

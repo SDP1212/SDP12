@@ -5,31 +5,33 @@
 package computer.simulator;
 
 /**
- *
+ * Used to represent orientation in radians. Standard conventions apply, i.e.
+ * 0 radians points precisely to the right, growing counter-clockwise.
+ * 
  * @author Dimo Petroff
  */
 public class Direction {
     
-    public float radians;
+    public double radians;
     
-    public Direction(){
-        this(0);
+    public Direction(double radians){
+        this.radians=radians%Math.PI;
+        if(radians<0)
+            this.radians=2*Math.PI+this.radians;
     }
     
-    public Direction(float radians){
-        this.radians=radians;
+    public void setDirection(double radians){
+        this.radians=radians%Math.PI;
+        if(radians<0)
+            this.radians=2*Math.PI+this.radians;
     }
     
-    public void setDirection(float radians){
-       this.radians=radians;
-    }
-    
-    public float getDirectionRadians(){
+    public double getDirectionRadians(){
         return radians;
     }
     
-    public float getDirectionDegrees(){
-        return (float) (radians*180/Math.PI);
+    public double getDirectionDegrees(){
+        return radians*180/Math.PI;
     }
     
 }

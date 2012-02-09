@@ -392,9 +392,9 @@ public class MainWindow extends javax.swing.JFrame {
         } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
             commController.kick();
         } else if (radioLeft.isSelected()) {
-            commController.rotate(new Direction(3));
+            commController.rotate(new Direction((double)3));
         } else if (radioRight.isSelected()) {
-            commController.rotate(new Direction(-3));
+            commController.rotate(new Direction((double)-3));
         }
     }//GEN-LAST:event_goButtonActionPerformed
 

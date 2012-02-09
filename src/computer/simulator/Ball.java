@@ -14,7 +14,7 @@ public class Ball extends SimulatableObject{
         this(1f,0.5f,false);
     }
 
-    protected Ball(float x, float y, boolean real) {
+    protected Ball(double x, double y, boolean real) {
         this.position=new Coordinates(x, y);
         this.real=real;
     }

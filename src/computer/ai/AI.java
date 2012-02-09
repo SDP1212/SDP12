@@ -10,7 +10,8 @@ import computer.simulator.Robot;
 import java.util.ArrayList;
 
 /**
- * The Robot's decision-making should extend this so that it can properly interface with simulation.
+ * The Robot's decision-making should extend this so that it can properly
+ * interface with simulation.
  *
  * @author Dimo Petroff
  */
@@ -21,7 +22,10 @@ public abstract class AI implements Runnable{
     protected ArrayList<Coordinates> actionPlan;
 
     /**
-     * This should be the only constructor. Subclasses should call this, so that the simulator can provide a reference to the pitch for easy access to the current state of the simulation/world/whatever.
+     * Allocates an AI object. Subclasses should call this, so that the
+     * simulator can provide a reference to the pitch for easy access to the
+     * current state of the simulation/world/whatever and a reference to
+     * the robot the AI is controlling.
      * 
      * @param pitch a reference to the pitch
      * @param self a reference to the robot being controlled
