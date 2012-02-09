@@ -15,10 +15,23 @@ public abstract class SimulatableObject {
     
     protected Boolean real;
     protected Coordinates position, oldPosition;
+    protected Velocity v;
 
     protected void setPosition(double x, double y) {
         this.oldPosition=this.position;
         this.position=new Coordinates(x,y);
+    }
+    
+    public Coordinates getPosition(){
+        return this.position;
+    }
+    
+    protected void updateVelocity(){
+        this.v.recalculateVelocity(this.oldPosition, this.position);
+    }
+    
+    public Velocity getV(){
+        return this.v;
     }
     
     public boolean isReal(){

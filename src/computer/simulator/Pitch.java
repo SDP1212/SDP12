@@ -5,6 +5,7 @@
 package computer.simulator;
 
 import computer.ai.DumbAI;
+import computer.control.ControlInterface;
 
 /**
  * Used to represent the entire environment. Provides methods for populating and
@@ -37,10 +38,11 @@ public class Pitch {
      * @param orientation where it's facing
      * @param colour what colour is it
      * @param ai the class of AI to use for Robotinho
+     * @param control the ControlInterface through which to control the brick
      */
-    protected void insertRobotinho(PixelCoordinates coordinates,Direction orientation, short colour, Class ai){
+    protected void insertRobotinho(PixelCoordinates coordinates,Direction orientation, short colour, Class ai, ControlInterface control){
         
-        this.robotinho=new Robot(ai, this, true, colour); // Real coordinates, so obviously real robot.
+        this.robotinho=new Robot(ai, control, this, true, colour); // Real coordinates, so obviously real robot.
         
         this.robotinho.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                              ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
@@ -56,9 +58,10 @@ public class Pitch {
      * @param orientation where it's facing
      * @param colour what colour is it
      * @param ai the class of AI to use for Robotinho
+     * @param control the ControlInterface through which to control the brick
      */
-    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, short colour, Class ai){
-        insertRobotinhoInternal(coordinates, orientation, false, colour, ai); // Not specified if robot is real, and using internal coordinates, so assume it's virtual.
+    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, short colour, Class ai, ControlInterface control){
+        insertRobotinhoInternal(coordinates, orientation, false, colour, ai, control); // Not specified if robot is real, and using internal coordinates, so assume it's virtual.
     }
     
     /**
@@ -69,10 +72,11 @@ public class Pitch {
      * @param real specifies if this robot is backed by real hardware or should be simulated
      * @param colour what colour is it
      * @param ai the class of AI to use for Robotinho
+     * @param control the ControlInterface through which to control the brick
      */
-    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, Class ai){
+    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, Class ai, ControlInterface control){
         
-        this.robotinho=new Robot(ai, this, real, colour);
+        this.robotinho=new Robot(ai, control, this, real, colour);
         
         this.robotinho.setPosition(coordinates.getX(),coordinates.getY());
         
@@ -88,7 +92,7 @@ public class Pitch {
      */
     protected void insertNemesis(PixelCoordinates coordinates,Direction orientation, short colour){
         
-        this.nemesis=new Robot(DumbAI.class, this, true, colour); // Real coordinates, so real robot, and DumbAI is best.
+        this.nemesis=new Robot(DumbAI.class, null, this, true, colour); // Real coordinates, so real robot, and DumbAI is best.
         
         this.nemesis.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                                   ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
@@ -119,7 +123,7 @@ public class Pitch {
      * @param ai the class of AI to use for Nemesis
      */
     protected void insertNemesisInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, Class ai){
-        this.nemesis=new Robot(ai, this, real, colour);
+        this.nemesis=new Robot(ai, null, this, real, colour);
         
         this.nemesis.setPosition(coordinates.getX(),coordinates.getY());
         
@@ -215,6 +219,7 @@ public class Pitch {
         this.robotinho.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                              ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         this.robotinho.setOrientation(orientation);
+        this.robotinho.updateVelocity();
     }
     
     /**
@@ -227,6 +232,7 @@ public class Pitch {
         this.nemesis.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                                   ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         this.nemesis.setOrientation(orientation);
+        this.nemesis.updateVelocity();
     }
 
     /**
@@ -237,6 +243,7 @@ public class Pitch {
     protected void updateBall(PixelCoordinates coordinates) {
         this.ball.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                                ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.ball.updateVelocity();
     }
     
 }

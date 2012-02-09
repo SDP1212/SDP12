@@ -17,6 +17,7 @@ public class Robot extends SimulatableObject implements ControlInterface{
     
     public static final short YELLOW_PLATE=0,BLUE_PLATE=1;
     private Direction orientation;
+    private ControlInterface control;
     private short colour;
     protected AI brain;
     
@@ -24,14 +25,16 @@ public class Robot extends SimulatableObject implements ControlInterface{
      * Allocates a Robot object representing a robot in its entirety.
      * 
      * @param ai the class of AI to use for this robot
+     * @param control the ControlInterface through which to control the brick
      * @param pitch a reference to the pitch to be used with the AI
      * @param real determines if this robot is real or simulated
      * @param colour determines the colour of this robot's plate;
      * Should be either Robot.YELLOW_PLATE or Robot.BLUE_PLATE
      */
-    protected Robot(Class ai, Pitch pitch, Boolean real, short colour){
+    protected Robot(Class ai, ControlInterface control, Pitch pitch, Boolean real, short colour){
         this.real=real;
         this.colour=colour;
+        this.control=control;
         try{
             this.brain=(AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(pitch,this);
         }catch (Exception e) {
@@ -44,33 +47,43 @@ public class Robot extends SimulatableObject implements ControlInterface{
     protected void setOrientation(Direction orientation) {
         this.orientation=orientation;
     }
+    
+    public Direction getOrientation(){
+        return this.orientation;
+    }
 
     public short getColour() {
         return this.colour;
     }
 
     public void forward(int speed) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.forward(speed);
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void backward(int speed) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.backward(speed);
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void stop() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.stop();
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void kick() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.kick();
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void rotateLeft() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.rotateLeft();
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void rotateRight() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(this.control!=null && this.isReal())control.rotateRight();
+        else throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }
