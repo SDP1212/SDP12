@@ -20,8 +20,6 @@ public interface ControlInterface {
     
     public void kick();
     
-    public void rotateLeft();
-    
-    public void rotateRight();
+    public void rotate (double angle);
     
 }

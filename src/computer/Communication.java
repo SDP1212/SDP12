@@ -1,10 +1,9 @@
 package computer;
 import brick.Brick;
-import computer.simulator.Direction;
+import computer.control.ControlInterface;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -13,7 +12,7 @@ import java.util.Arrays;
  * @author Diana Crisan
  * @author Matt Jeffryes
  */
-public class Communication implements Runnable {
+public class Communication implements Runnable, ControlInterface {
     private NXTCommBluecove bluetoothLink;
     private NXTInfo info;
     private OutputStream outStream;

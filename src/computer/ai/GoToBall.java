@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package computer.ai;
 
 import computer.ai.AI;
@@ -9,7 +5,8 @@ import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
 /**
  *
- * @author s0907806
+ * @author Diana Crisan
+ * @author Matt Jeffryes
  */
 
 /**
@@ -47,7 +44,6 @@ public class GoToBall extends AI{
         } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10){
             this.actionPlan.set(0, ball.getCoordinates().clone());
         }
-        
     }
     
     private void issueCommands() {
