@@ -25,6 +25,7 @@ public class Brick {
     private static OutputStream out;
     private static DifferentialPilot pilot;
     private static SensorListener sensorListener;
+    private static ButtonListener buttonListener;
     private static Thread listenerThread;
     /*
      * Opcodes. The opcode occupies the last 2 bytes, its argument the first 2
@@ -78,12 +79,16 @@ public class Brick {
         }
         
         // Set up robotics objects
-        
+        buttonListener = new ButtonListener();
+        Button.ESCAPE.addButtonListener(buttonListener);
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
         listenerThread = new Thread(sensorListener);
         listenerThread.start();
         waitForConnection();
+        if (!connected) {
+            return;
+        }
         int n = DO_NOTHING;
 
         while (n != QUIT) {
@@ -146,12 +151,14 @@ public class Brick {
         LCD.drawString("Waiting for connection", 0, 0);
         Sound.playTone(2000, 1000);
         connection = Bluetooth.waitForConnection();
-        LCD.clear();
-        in = connection.openInputStream();
-        out = connection.openOutputStream();
-        setConnected(true);
-        LCD.drawString("Connected", 0, 0);
-        logToFile(outLog, "Connected");
+        if (connection.getClass() == BTConnection.class) {
+            LCD.clear();
+            in = connection.openInputStream();
+            out = connection.openOutputStream();
+            setConnected(true);
+            LCD.drawString("Connected", 0, 0);
+            logToFile(outLog, "Connected");
+        }
     }
     
     /**

@@ -26,10 +26,8 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        while(!Thread.interrupted()) {
-            correctPlan();
-            issueCommands();
-        }
+        correctPlan();
+        issueCommands();
     }
     
     private void correctPlan() {

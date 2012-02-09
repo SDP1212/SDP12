@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Dimo Petroff
  */
-public abstract class AI implements Runnable{
+public abstract class AI {
 
     protected Pitch pitch=null;
     protected Robot self=null;
