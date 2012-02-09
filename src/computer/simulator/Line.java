@@ -9,80 +9,62 @@ package computer.simulator;
  * @author Evgeniya Sotirova
  */
 public class Line {
-    /**
-     * The following representation of a line is used:
-     * y = lineGradient * x + lineOffset
-     * The line can also be defined by the the two given points linePointA and linePointB. linePointA is always considered as the FIRST point, i.e. (linePointB-linePointA) is the direction of the line.
-     * linePointA and linePointB are also the end points of the line.
-     * lineDirection is true if the direction of the line is in the direction in which x increases
-     * The range of x is [rangeXmin, rangeXmax]
-     */    
-    private double lineGradient, lineOffset;
+    
+    // Equation of a line: y = lineGradient * x + lineOffset
+    private double lineGradient;
+    private double lineOffset;
+    
+    // lineDirection is true if the direction of the line is in the direction in which x increases.
+    // If x is constant, i.e. the line is parallel to the y axis, then lineDirection is true if the direction of the line is in the direction in which y increases.
     private boolean lineDirection;
-    private double rangeXmin, rangeXmax;
-    private Coordinates linePointA, linePointB;
     
-    /**
-     * The default for a line is basically the origin of the coordinate system.
-     */
-    public Line(){
-        lineGradient = 0;
-        lineOffset = 0;
-        lineDirection = true;
-        rangeXmin = 0;
-        rangeXmax = 2;
-        linePointA.setX(0);
-        linePointA.setY(0);
-        linePointB.setX(0);
-        linePointB.setY(0);
-    }
+    // rangeXmin and rangeXmax define the range of x.
+    private double rangeXmin;
+    private double rangeXmax;
     
-    /**
-     * If the you define a line by two points (in this case A and B) then the direction of the line is first point -> second point, i.e. A->B.
-     * Also A and B may not be the end points.
-     * @param A
-     * @param B 
-     */
+    private double rangeYmin;
+    private double rangeYmax;
+    
+    private Coordinates firstPoint;
+    private Coordinates secondPoint;
+     
+    // Defining a line by two points (the order of the points determines the direction of the line):
     public Line(Coordinates A, Coordinates B){
-        /**
-         * ((A.getX()-B.getX())==0 means that the line we have is parallel to the y axis.
-         * Then the gradient tends towards infinity, but it is enough to choose a big enough value for it, i.e. I fix it to be 10000.
-         */
-        if((B.getX()-A.getX())==0){
-            lineGradient = 10000;
-            
-            //The x coordinate of point B has to be changed a little, so that we really have a gradient of 10000.
-            B.setX((B.getY()-A.getY())/10000);
-        }
-        else{
-            lineGradient = (B.getY()-A.getY())/(B.getX()-A.getX());
-        }
+        
+        if((B.getX()-A.getX())==0) lineGradient = Float.POSITIVE_INFINITY;
+        else lineGradient = (B.getY()-A.getY())/(B.getX()-A.getX());
         
         lineOffset = A.getY()-lineGradient*A.getX();
         
         if(B.getX()-A.getX() > 0) lineDirection = true;
-        else lineDirection = false;
+        else {
+            if(B.getX()-A.getX() < 0) lineDirection = false;
+            else{
+                if(B.getY()-A.getY() > 0) lineDirection = true;
+                else lineDirection = false;
+            }
+        }
         
-        rangeXmin = A.getX();
-        rangeXmax = A.getX();
-        if(A.getX() < B.getX()) rangeXmax = B.getX();
-        else rangeXmin = B.getX();
+        rangeXmin = Double.NEGATIVE_INFINITY;
+        rangeXmax = Double.POSITIVE_INFINITY;
+        rangeYmin = Double.NEGATIVE_INFINITY;
+        rangeYmax = Double.POSITIVE_INFINITY;
         
-        linePointA = A;
-        linePointB = B;
-                
+        firstPoint = A;
+        secondPoint = B;
     }
     
-    //If you want the line to be parallel to the y axis, set the gradient to 10000 or -10000.
-    public Line(float gradient, float offset, boolean direction){
+    // Define the line by the gradient,offset, direction and the range for x.
+    /*public Line(double gradient, double offset, boolean direction){
         lineGradient = gradient;
         lineOffset = offset;
         lineDirection = direction;
-        rangeXmin = 0;
-        rangeXmax = 2;
-        linePointA = new Coordinates(0,lineOffset);
-        linePointB = new Coordinates(2,lineGradient*2+lineOffset);
-    }
+
+        rangeXmin = Double.NEGATIVE_INFINITY;
+        rangeXmax = Double.POSITIVE_INFINITY;
+        rangeYmin = Double.NEGATIVE_INFINITY;
+        rangeYmax = Double.POSITIVE_INFINITY;
+    }*/
     
     public double getGradient(){
         return lineGradient;
@@ -93,41 +75,44 @@ public class Line {
     public boolean getDirection(){
         return lineDirection;
     }
-    public double  getXmin(){
+    public double getXmin(){
         return rangeXmin;
     }
-    public double  getXmax(){
+    public double getXmax(){
         return rangeXmax;
     }
+    public double getYmin(){
+        return rangeYmin;
+    }
+    public double getYmax(){
+        return rangeYmax;
+    }
     public Coordinates getFirstPoint(){
-        return linePointA;
+        return firstPoint;
     }
     public Coordinates getSecondPoint(){
-        return linePointB;
+        return secondPoint;
     }
-    
-    
-    
-    
-    public void setGradient(float gradient){
+
+    public void setGradient(double  gradient){
         lineGradient = gradient;        
     }
-    public void setOffset(float offset){
-        
+    public void setOffset(double offset){
+        lineOffset = offset;
     }
-    public void setDirection(boolean Direction){
-        
+    public void setDirection(boolean direction){
+        lineDirection = direction;
     }
-    public void setXmin(float Xmin){
-        
+    public void setXmin(double xMin){
+        rangeXmin = xMin;        
     }
-    public void setXmax(float Xmax){
-        
+    public void setXmax(double xMax){
+        rangeXmax = xMax;
     }
-    public void setFirstPoint(Coordinates firstPoint){
-        
+    public void setYmin(double yMin){
+        rangeYmin = yMin;        
     }
-    public void setSecondPoint(Coordinates secondPoint){
-        
+    public void setYmax(double yMax){
+        rangeYmax = yMax;
     }
 }

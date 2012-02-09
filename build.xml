@@ -35,7 +35,7 @@
 	<!-- deletes generated files -->
         <target name="compileComputer" depends="compile">
             <mkdir dir="${build}" />
-            <javac srcdir="src" includes="**/*.java" excludes="brick/*.java" destdir="${build}" includeantruntime="false" verbose="false">
+            <javac srcdir="src" debug="on" debuglevel="lines,vars,source" includes="**/*.java" excludes="brick/*.java" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
             </javac>
             <copy todir= "${build}/constants">
@@ -44,6 +44,9 @@
         </target>
         <target name="runComputer" depends="compileComputer">
             <java fork="true" classname="computer.ApplicationController" dir="${build}" classpath="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
+        </target>
+        <target name="runSim" depends="compileComputer">
+               <java fork="true" classname="computer.simulator.test.SimulationTest" dir="${build}" classpath="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
         </target>
 	<target name="clean" description="clean up all generated files">
 		<delete dir="${build}" />

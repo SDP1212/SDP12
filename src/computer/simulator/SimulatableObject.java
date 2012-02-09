@@ -19,8 +19,12 @@ public abstract class SimulatableObject {
     protected Acceleration a;
 
     protected void setPosition(double x, double y) {
-        this.oldPosition=this.position;
-        this.position=new Coordinates(x,y);
+        if(this.position==null)
+            this.oldPosition=this.position=new Coordinates(x,y);
+        else{
+            this.oldPosition=this.position;
+            this.position=new Coordinates(x,y);
+        }
     }
     
     public Coordinates getPosition(){
