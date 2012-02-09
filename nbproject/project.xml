@@ -113,5 +113,9 @@
                 </node>
             </module>
         </preferences>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>colour</word>
+            <word>Robotinho</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

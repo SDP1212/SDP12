@@ -4,11 +4,12 @@
  */
 package computer.simulator;
 
-import computer.ai.AI;
 import computer.ai.DumbAI;
 
 /**
- *
+ * Used to represent the entire environment. Provides methods for populating and
+ * updating it.
+ * 
  * @author Dimo Petroff
  */
 public class Pitch {
@@ -35,14 +36,14 @@ public class Pitch {
      * @param coordinates where to put it
      * @param orientation where it's facing
      * @param colour what colour is it
-     * @param ai an AI implementation to use for the robot
+     * @param ai the class of AI to use for Robotinho
      */
-    protected void insertRobotinho(PixelCoordinates coordinates,Direction orientation, short colour, AI ai){
+    protected void insertRobotinho(PixelCoordinates coordinates,Direction orientation, short colour, Class ai){
         
-        this.robotinho=new Robot(ai, true, colour); // Real coordinates, so obviously real robot.
+        this.robotinho=new Robot(ai, this, true, colour); // Real coordinates, so obviously real robot.
         
-        this.robotinho.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                             ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.robotinho.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                             ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         
         this.robotinho.setOrientation(orientation);
     }
@@ -54,9 +55,9 @@ public class Pitch {
      * @param coordinates where to put it
      * @param orientation where it's facing
      * @param colour what colour is it
-     * @param ai an AI implementation to use for the robot
+     * @param ai the class of AI to use for Robotinho
      */
-    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, short colour, AI ai){
+    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, short colour, Class ai){
         insertRobotinhoInternal(coordinates, orientation, false, colour, ai); // Not specified if robot is real, and using internal coordinates, so assume it's virtual.
     }
     
@@ -67,11 +68,11 @@ public class Pitch {
      * @param orientation where it's facing
      * @param real specifies if this robot is backed by real hardware or should be simulated
      * @param colour what colour is it
-     * @param ai an AI implementation to use for the robot
+     * @param ai the class of AI to use for Robotinho
      */
-    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, AI ai){
+    protected void insertRobotinhoInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, Class ai){
         
-        this.robotinho=new Robot(ai, real, colour);
+        this.robotinho=new Robot(ai, this, real, colour);
         
         this.robotinho.setPosition(coordinates.getX(),coordinates.getY());
         
@@ -87,10 +88,10 @@ public class Pitch {
      */
     protected void insertNemesis(PixelCoordinates coordinates,Direction orientation, short colour){
         
-        this.nemesis=new Robot(new DumbAI(this), true, colour); // Real coordinates, so real robot, and DumbAI is best.
+        this.nemesis=new Robot(DumbAI.class, this, true, colour); // Real coordinates, so real robot, and DumbAI is best.
         
-        this.nemesis.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                  ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.nemesis.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                  ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         
         this.nemesis.setOrientation(orientation);
     }
@@ -102,9 +103,9 @@ public class Pitch {
      * @param coordinates where to put it
      * @param orientation where it's facing
      * @param colour what colour is it
-     * @param ai an AI implementation to use for nemesis
+     * @param ai the class of AI to use for Nemesis
      */
-    protected void insertNemesisInternal(Coordinates coordinates,Direction orientation, short colour, AI ai){
+    protected void insertNemesisInternal(Coordinates coordinates,Direction orientation, short colour, Class ai){
         insertNemesisInternal(coordinates, orientation, false, colour, ai);  // Not specified if robot is real, and using internal coordinates, so assume it's virtual.
     }
     
@@ -115,10 +116,10 @@ public class Pitch {
      * @param orientation where it's facing
      * @param real specifies if nemesis is backed by real hardware or should be simulated
      * @param colour what colour is it
-     * @param ai an AI implementation to use for nemesis
+     * @param ai the class of AI to use for Nemesis
      */
-    protected void insertNemesisInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, AI ai){
-        this.nemesis=new Robot(ai, real, colour);
+    protected void insertNemesisInternal(Coordinates coordinates,Direction orientation, boolean real, short colour, Class ai){
+        this.nemesis=new Robot(ai, this, real, colour);
         
         this.nemesis.setPosition(coordinates.getX(),coordinates.getY());
         
@@ -131,8 +132,8 @@ public class Pitch {
      * @param coordinates where to put it
      */
     protected void insertBall(PixelCoordinates coordinates){
-        this.ball=new Ball((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                            ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
+        this.ball=new Ball((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                            ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
                             true);
     }
     
@@ -177,15 +178,15 @@ public class Pitch {
                 break;
             }
         
-        this.leftGoal=new Goal((((float)left[0].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                ((float)left[0].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
-                               (((float)left[1].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                ((float)left[1].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.leftGoal=new Goal((((double)left[0].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                ((double)left[0].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
+                               (((double)left[1].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                ((double)left[1].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         
-        this.rightGoal=new Goal((((float)right[0].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                 ((float)right[0].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
-                                (((float)right[1].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                 ((float)right[1].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.rightGoal=new Goal((((double)right[0].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                 ((double)right[0].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()),
+                                (((double)right[1].getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                 ((double)right[1].getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         
         switch(target){
             case TARGET_LEFT_GOAL:{
@@ -211,8 +212,8 @@ public class Pitch {
      * @param orientation 
      */
     protected void updateRobotinho(PixelCoordinates coordinates, Direction orientation) {
-        this.robotinho.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                             ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.robotinho.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                             ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         this.robotinho.setOrientation(orientation);
     }
     
@@ -223,8 +224,8 @@ public class Pitch {
      * @param orientation 
      */
     protected void updateNemesis(PixelCoordinates coordinates, Direction orientation) {
-        this.nemesis.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                                  ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.nemesis.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                                  ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
         this.nemesis.setOrientation(orientation);
     }
 
@@ -234,8 +235,8 @@ public class Pitch {
      * @param coordinates where to put it
      */
     protected void updateBall(PixelCoordinates coordinates) {
-        this.ball.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
-                               ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
+        this.ball.setPosition((((double)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
+                               ((double)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));
     }
     
 }
