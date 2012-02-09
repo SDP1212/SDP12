@@ -15,7 +15,7 @@ public class LineTools {
      * @param m
      * @return 
      */
-    public Coordinates intersectionOfLines(Line l, Line m){
+    public static Coordinates intersectionOfLines(Line l, Line m){
         Coordinates intersectionPoint;
         intersectionPoint = new Coordinates(3,3);
         
@@ -46,7 +46,7 @@ public class LineTools {
     }
     
     
-    public Coordinates symmetricalPoint(Coordinates point, Line line){
+    public static Coordinates symmetricalPoint(Coordinates point, Line line){
         Coordinates newPoint;
         newPoint = new Coordinates();
         
@@ -65,7 +65,7 @@ public class LineTools {
         return newPoint;
     }
     
-    public double distanceFromPointToLine(Coordinates point, Line line){
+    public static double distanceFromPointToLine(Coordinates point, Line line){
         double distance;
         
         // n=(nx,ny) is a normal vector to the given line
@@ -80,7 +80,7 @@ public class LineTools {
         return distance;
     }
     
-    public double angleBetweenLineAndDirection(Line l, Direction direction){
+    public static double angleBetweenLineAndDirection(Line l, Direction direction){
         double gamma;
  
         gamma = Math.acos((Math.cos(direction.getDirectionRadians())+l.getGradient()*Math.sin(direction.getDirectionRadians()))/Math.sqrt(1+l.getGradient()*l.getGradient()));

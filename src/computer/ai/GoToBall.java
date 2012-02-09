@@ -1,5 +1,6 @@
 package computer.ai;
 
+import brick.Brick;
 import computer.ai.AI;
 import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
@@ -19,25 +20,20 @@ public class GoToBall extends AI{
     public PixelCoordinates yellow;
     public PixelCoordinates ball;
     
-    
     public GoToBall (Pitch pitch, Robot robot) {
         super(pitch, robot);
     }
-    
-
 
     @Override
     public void run() {
-        
-        
-        
-        
-        
-        
+        while(!Thread.interrupted()) {
+            correctPlan();
+            issueCommands();
+        }
     }
     
     private void correctPlan() {
-        Robot robotinho = this.pitch.robotinho;
+        Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(ball.getCoordinates());
@@ -47,7 +43,12 @@ public class GoToBall extends AI{
     }
     
     private void issueCommands() {
-        
+        Robot robotinho = this.self;
+        Ball ball = this.pitch.ball;
+        Line lineToBall = new Line(ball.getCoordinates(), robotinho.getPosition());
+        double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
+        robotinho.rotate(angle);
+        robotinho.forward(Brick.MEDIUM);
     }
         
     

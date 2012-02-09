@@ -5,6 +5,7 @@
 package computer.simulator.test;
 
 import computer.ai.DumbAI;
+import computer.ai.GoToBall;
 import computer.simulator.Engine;
 import computer.simulator.Pitch;
 import computer.simulator.Robot;
@@ -22,7 +23,7 @@ public class SimulationTest {
         // Initialise vision, settings, communication, whatever else.
         
         // Initialise simulator engine, providing the required settings, and start it in its own thread.
-        Engine eng=new Engine(new FakeVision(), null, false, false, false, Pitch.TARGET_LEFT_GOAL, Robot.BLUE_PLATE, DumbAI.class, DumbAI.class);
+        Engine eng=new Engine(new FakeVision(), null, false, false, false, Pitch.TARGET_LEFT_GOAL, Robot.BLUE_PLATE, GoToBall.class, DumbAI.class);
         Thread enginethread=new Thread(eng);
         enginethread.start();
         

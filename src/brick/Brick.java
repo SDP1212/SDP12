@@ -263,7 +263,14 @@ public class Brick {
      */
     public static void rotate(int angle) {
         logToFile(outLog, "Rotate");
-        pilot.rotate((angle - 180) * 2);
+        int finalAngle = angle - 180;
+        double factor;
+        if (finalAngle < 0) {
+            factor = 1.65;
+        } else {
+            factor = 1.35;
+        }
+        pilot.rotate((finalAngle) * factor);
     }
     
     /**
