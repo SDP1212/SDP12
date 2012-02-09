@@ -6,9 +6,12 @@ package computer.simulator;
 
 /**
  * Used to represent coordinates in the internal format. The origin is the
- * top-left corner of the pitch. 
+ * bottom-left corner of the pitch. 
  * X is the horizontal direction, growing to the right in the range 0 to 2.0
- * Y is the vertical direction, growing down in the range 0 to 1.0
+ * Y is the vertical direction, growing up in the range 0 to 1.0
+ * 
+ * Above, "up," "down," "left" and "right" refer to the directions from
+ * the camera's point of view.
  * 
  * N.B. While the Coordinates within these ranges are guaranteed to be within
  * the Pitch, Coordinates may go outside these ranges if fish-eye/barrel effect
