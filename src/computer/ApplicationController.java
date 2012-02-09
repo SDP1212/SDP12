@@ -38,8 +38,8 @@ public class ApplicationController {
      * Getter method for Communication object
      * @return Communication
      */
-    public Communication getCommunicationController() {
-        return communication;
+    public static Communication getCommunicationController() {
+        return appController.communication;
     }
 
     /**

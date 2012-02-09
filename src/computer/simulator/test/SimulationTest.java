@@ -11,7 +11,6 @@ import computer.ai.GoToBall;
 import computer.simulator.Engine;
 import computer.simulator.Pitch;
 import computer.simulator.Robot;
-import org.GNOME.Accessibility.Application;
 
 /**
  * An example of how the simulator is intended to work. Not the only possible
@@ -24,7 +23,8 @@ public class SimulationTest {
     public static void main(String[] args) throws InterruptedException{
         
         // Initialise vision, settings, communication, whatever else.
-        Communication comm = null;
+        Communication comm = new Communication();
+        comm.connect();
         
         // Initialise simulator engine, providing the required settings, and start it in its own thread.
         Engine eng=new Engine(new FakeVision(), comm, false, true, true, Pitch.TARGET_LEFT_GOAL, Robot.BLUE_PLATE, GoToBall.class, DumbAI.class);

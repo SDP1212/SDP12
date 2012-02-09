@@ -35,7 +35,7 @@
 	<!-- deletes generated files -->
         <target name="compileComputer" depends="compile">
             <mkdir dir="${build}" />
-            <javac srcdir="src" includes="**/*.java" excludes="brick/*.java" destdir="${build}" includeantruntime="false" verbose="false">
+            <javac srcdir="src" debug="on" debuglevel="lines,vars,source" includes="**/*.java" excludes="brick/*.java" destdir="${build}" includeantruntime="false" verbose="false">
                 <classpath path="lib/v4l4j.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:build"/>
             </javac>
             <copy todir= "${build}/constants">

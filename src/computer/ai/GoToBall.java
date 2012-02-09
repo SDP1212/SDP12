@@ -4,6 +4,7 @@ import brick.Brick;
 import computer.ai.AI;
 import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
+import java.util.ArrayList;
 /**
  *
  * @author Diana Crisan
@@ -26,6 +27,7 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
+        actionPlan = new ArrayList<Coordinates>();
         correctPlan();
         issueCommands();
     }
