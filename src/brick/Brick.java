@@ -36,8 +36,7 @@ public class Brick {
     public final static int BACKWARDS = 0X03;
     public final static int STOP = 0X04;
     public final static int KICK = 0X05;
-    public final static int ROTATELEFT = 0x06;
-    public final static int ROTATERIGHT = 0x07;
+    public final static int ROTATE = 0x06;
     
     public final static int SLOW = 0X00010000;
     public final static int MEDIUM = 0X00020000;
@@ -106,12 +105,8 @@ public class Brick {
                         backwards(arg);
                         break;
 
-                    case ROTATELEFT:
-                        rotateLeft();
-                        break;
-
-                    case ROTATERIGHT:
-                        rotateRight();
+                    case ROTATE:
+                        rotate(arg);
                         break;
 
                     case STOP:
@@ -261,19 +256,11 @@ public class Brick {
     }
     
     /**
-     * Pivot the robot on a point clockwise.
+     * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
-    public static void rotateRight() {
-        logToFile(outLog, "Right");
-        pilot.rotateRight();
-    }
-    
-    /**
-     * Pivot the robot on a point anti-clockwise.
-     */
-    public static void rotateLeft() {
-        logToFile(outLog, "Left");
-        pilot.rotateLeft();
+    public static void rotate(int angle) {
+        logToFile(outLog, "Rotate");
+        pilot.rotate(angle);
     }
     
     /**

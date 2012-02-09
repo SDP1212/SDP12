@@ -5,6 +5,7 @@
 package computer.ai;
 
 import computer.simulator.Pitch;
+import computer.simulator.Robot;
 
 /**
  * This AI does nothing. Nothing at all. It is intended as a placeholder
@@ -16,8 +17,8 @@ import computer.simulator.Pitch;
  */
 public class DumbAI extends AI{
     
-    public DumbAI(Pitch pitch){
-        super(pitch);
+    public DumbAI(Pitch pitch, Robot self){
+        super(pitch, self);
     }
 
     @Override

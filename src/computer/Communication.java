@@ -1,5 +1,6 @@
 package computer;
 import brick.Brick;
+import computer.simulator.Direction;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -94,17 +95,12 @@ public class Communication implements Runnable {
     }
     
     /**
-     * Send a rotate left message to the brick
+     * Send a rotate message to the brick. Positive anti-clockwise, negative 
+     * clockwise.
      */
-    public void rotateLeft () {
-        sendMessage(Brick.ROTATELEFT);
-    }
-    
-    /**
-     * Send a rotate left message to the brick
-     */
-    public void rotateRight () {
-        sendMessage(Brick.ROTATERIGHT);
+
+    public void rotate (Direction direction) {
+        sendMessage(Brick.ROTATE | ByteBuffer.allocate(2).putInt(composeAngleArgument(direction)).get() << 16);
     }
     
     /**
@@ -121,6 +117,10 @@ public class Communication implements Runnable {
         } catch (IOException e) {
             System.out.println(e.toString());
         }
+    }
+    
+    public int composeAngleArgument(Direction direction) {
+        return Math.round((float)Math.toDegrees(direction.radians));
     }
 
     /**

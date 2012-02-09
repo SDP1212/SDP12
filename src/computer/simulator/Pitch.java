@@ -87,7 +87,7 @@ public class Pitch {
      */
     protected void insertNemesis(PixelCoordinates coordinates,Direction orientation, short colour){
         
-        this.nemesis=new Robot(new DumbAI(this), true, colour); // Real coordinates, so real robot, and DumbAI is best.
+//        this.nemesis=new Robot(new DumbAI(this), true, colour); // Real coordinates, so real robot, and DumbAI is best.
         
         this.nemesis.setPosition((((float)coordinates.getX()-corners[0].getX())/(corners[1].getX()-corners[0].getX()))*2,
                                   ((float)coordinates.getY()-corners[0].getY())/(corners[3].getY()-corners[0].getY()));

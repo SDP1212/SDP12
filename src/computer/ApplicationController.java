@@ -29,9 +29,9 @@ public class ApplicationController {
      * Instantiates a new Communication object.
      */
     public ApplicationController() {
-        MainWindow.setup(this);
-        vision.RunVision.main(null);
         communication = new Communication();
+        vision.RunVision.main(null);
+        MainWindow.setup(this);
     }
 
     /**

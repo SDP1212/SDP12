@@ -23,8 +23,8 @@ public class GoToBall extends AI{
     public PixelCoordinates ball;
     
     
-    public GoToBall (Pitch pitch) {
-        super(pitch);
+    public GoToBall (Pitch pitch, Robot robot) {
+        super(pitch, robot);
     }
     
 

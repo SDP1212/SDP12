@@ -16,10 +16,9 @@ package computer;
  * @author Matt Jeffryes
  */
 import brick.Brick;
+import computer.simulator.Direction;
 import java.awt.Cursor;
 import java.awt.event.*;
-import javax.swing.JFrame;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 public class MainWindow extends javax.swing.JFrame {
 
@@ -378,7 +377,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        int speed;
+        int speed = Brick.SLOW;
         if (radioSlow.isSelected()) {
             speed = Brick.SLOW;
         } else if (radioMedium.isSelected()) {
@@ -393,9 +392,9 @@ public class MainWindow extends javax.swing.JFrame {
         } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
             commController.kick();
         } else if (radioLeft.isSelected()) {
-            commController.rotateLeft();
+            commController.rotate(new Direction(3));
         } else if (radioRight.isSelected()) {
-            commController.rotateRight();
+            commController.rotate(new Direction(-3));
         }
     }//GEN-LAST:event_goButtonActionPerformed
 
