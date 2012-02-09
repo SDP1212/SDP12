@@ -80,10 +80,10 @@ public class LineTools {
         return distance;
     }
     
-    public double angleBetweenLines(Line l, Line m){
+    public double angleBetweenLineAndDirection(Line l, Direction direction){
         double gamma;
-        
-        gamma = Math.acos((1+l.getGradient()*m.getGradient())/(Math.sqrt(1+l.getGradient()*l.getGradient())*Math.sqrt(1+m.getGradient()*m.getGradient())));
+ 
+        gamma = Math.acos((Math.cos(direction.getDirectionRadians())+l.getGradient()*Math.sin(direction.getDirectionRadians()))/Math.sqrt(1+l.getGradient()*l.getGradient()));
         
         return gamma;
     }
