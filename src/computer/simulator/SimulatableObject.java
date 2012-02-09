@@ -28,6 +28,8 @@ public abstract class SimulatableObject {
     }
     
     protected void updateVelocity(){
+        if(this.v==null)this.v=new Velocity(this.oldPosition, this.oldPosition);
+        if(this.a==null)this.a=new Acceleration(this.v);
         this.v.recalculate(this.oldPosition, this.position);
         this.a.recalculate(this.v);
     }
