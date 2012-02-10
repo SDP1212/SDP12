@@ -74,11 +74,12 @@ public class WorldState implements computer.simulator.VisionInterface {
 	}
 
 	public float getBlueOrientation() {
+                //System.out.println("Blue orientation: " + blueOrientation);
 		return blueOrientation;
 	}
 
 	public void setBlueOrientation(float blueOrientation) {
-            System.out.println("Blue orientation: " + blueOrientation);
+            //System.out.println("Blue orientation: " + blueOrientation);
 		this.blueOrientation = blueOrientation;
 	}
 
@@ -165,6 +166,8 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public Direction getBlueRobotOrientation() {
+        //this is in radians
+        //System.out.println("blue or " + getBlueOrientation() );
         return new Direction(getBlueOrientation());
     }
 

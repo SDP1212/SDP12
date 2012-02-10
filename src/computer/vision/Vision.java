@@ -341,7 +341,7 @@ public class Vision extends WindowAdapter {
                 worldState.setBlueOrientation((float) (angle / 180 * Math.PI));
             }
         } catch (NoAngleException e) {
-            worldState.setBlueOrientation(worldState.getBlueOrientation());
+ //            worldState.setBlueOrientation(worldState.getBlueOrientation());
 //            System.out.println("Blue robot: " + e.getMessage());
         }
 
@@ -833,7 +833,7 @@ public class Vision extends WindowAdapter {
             image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
         }
          */
-	System.out.println("F/M: "+angleMF);
+	//System.out.println("F/M: "+angleMF);
         //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
 
         if (radianAngleMF == 0) {

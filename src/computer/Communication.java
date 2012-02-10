@@ -99,8 +99,9 @@ public class Communication implements Runnable, ControlInterface {
     /**
      * Send a rotate message to the brick. Positive anti-clockwise, negative 
      * clockwise.
+     * @param angle must be radians!!!!!
      */
-
+    
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
 //        System.out.println("Opcode: " + opcode);
@@ -129,7 +130,7 @@ public class Communication implements Runnable, ControlInterface {
     
     public int composeAngleArgument(double angle) {
         int out = Math.round((float)Math.toDegrees(angle) + 180);
-        System.out.println("Angle " + Integer.toString(out));
+        //System.out.println("Angle " + Integer.toString(out));
         return out;
         
     }
