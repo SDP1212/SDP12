@@ -199,12 +199,18 @@ public class Vision extends WindowAdapter {
         int yellowY = 0;
         int numYellowPos = 0;
 
+	int greenX = 0;
+	int greenY = 0;
+	int numGreenPos = 0;
+
         ArrayList<Integer> ballXPoints = new ArrayList<Integer>();
         ArrayList<Integer> ballYPoints = new ArrayList<Integer>();
         ArrayList<Integer> blueXPoints = new ArrayList<Integer>();
         ArrayList<Integer> blueYPoints = new ArrayList<Integer>();
         ArrayList<Integer> yellowXPoints = new ArrayList<Integer>();
         ArrayList<Integer> yellowYPoints = new ArrayList<Integer>();
+	ArrayList<Integer> greenXPoints = new ArrayList<Integer>();
+	ArrayList<Integer> greenYPoints = new ArrayList<Integer>();
 
         int topBuffer = pitchConstants.topBuffer;
         int bottomBuffer = pitchConstants.bottomBuffer;
@@ -220,6 +226,7 @@ public class Vision extends WindowAdapter {
                 /* The RGB colours and hsv values for the current pixel. */
                 Color c = new Color(image.getRGB(column, row));
                 float hsbvals[] = new float[3];
+		//System.out.println("This is red: "+(double)(c.getRed()/(double)(c.getRed()+c.getBlue()+c.getGreen()))*255);
                 Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
 
                 /* Debug graphics for the grey circles and green plates.
@@ -228,8 +235,17 @@ public class Vision extends WindowAdapter {
                     image.setRGB(column, row, 0xFFFF0099);
                 }
 
-                if (thresholdsState.isGreen_debug() && isGreen(c, hsbvals)) {
-                    image.setRGB(column, row, 0xFFFF0099);
+                //if (thresholdsState.isGreen_debug() && isGreen(c, hsbvals)) {
+		if(isGreen(c, hsbvals)) {
+		    if (thresholdsState.isGreen_debug()) {
+        		image.setRGB(column, row, 0xFFFF0099);
+		    }
+		    greenX += column;
+		    greenY += row;
+		    numGreenPos++;
+
+		    greenXPoints.add(column);
+		    greenYPoints.add(row);		   
                 }
 
                 /* Is this pixel part of the Blue T? */
@@ -290,6 +306,20 @@ public class Vision extends WindowAdapter {
         Position ball;
         Position blue;
         Position yellow;
+	Position green;
+
+	/*This should find the center of the green object */
+	if(numGreenPos > 0) {
+	    greenX /= numGreenPos;
+	    greenY /= numGreenPos;
+
+	    green = new Position(greenX, greenY);
+	    green.fixValues(worldState.getGreenX(), worldState.getGreenY());
+	    green.filterPoints(greenXPoints, greenYPoints);
+
+	} else {
+	    green = new Position(worldState.getGreenY(), worldState.getGreenY());
+	}
 
         /* If we have only found a few 'Ball' pixels, chances are that the ball has not
          * actually been detected. */
@@ -377,9 +407,12 @@ public class Vision extends WindowAdapter {
         if (!(thresholdsState.isBall_debug() || thresholdsState.isBlue_debug()
                 || thresholdsState.isYellow_debug() || thresholdsState.isGreen_debug()
                 || thresholdsState.isGrey_debug())) {
-            //imageGraphics.setColor(Color.red);
-            //imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
-            //imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
+            imageGraphics.setColor(Color.red);
+            imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
+            imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
+	    imageGraphics.setColor(Color.green);
+	    imageGraphics.drawLine(0, green.getY(), 640, green.getY());
+	    imageGraphics.drawLine(green.getX(), 0, green.getX(), 480);
             //imageGraphics.setColor(Color.blue);
             //imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
             //imageGraphics.setColor(Color.yellow);
@@ -523,6 +556,13 @@ public class Vision extends WindowAdapter {
      * @return                  An orientation from -Pi to Pi degrees.
      * @throws NoAngleException
      */
+
+    public findGreyWithinGreen(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
+	assert (xpoints.size() == ypoints.size();
+        if (xpoints.size() == 0) {
+            throw new NoAngleException("No green pixels");
+        }
+	}
     
     // NOTE!  Changed from float to double
     public double findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
@@ -645,7 +685,7 @@ public class Vision extends WindowAdapter {
 	   angle3 = 360 - angle3;
 	}
 	
-
+	
 
         
         length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
@@ -666,7 +706,6 @@ public class Vision extends WindowAdapter {
 	   angle4 = 360 - angle4;
 	}
         */
-
 
         //Look in a cone in the opposite direction to try to find the grey circle
         ArrayList<Integer> greyXPoints = new ArrayList<Integer>();

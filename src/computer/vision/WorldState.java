@@ -14,6 +14,8 @@ public class WorldState implements computer.simulator.VisionInterface {
 	private int yellowY;
 	private int ballX;
 	private int ballY;
+	private int greenX;
+	private int greenY;
 	private float blueOrientation;
 	private float yellowOrientation;
 	private long counter;
@@ -34,6 +36,24 @@ public class WorldState implements computer.simulator.VisionInterface {
 		this.ballY = 0;
 		this.blueOrientation = 0;
 		this.yellowOrientation = 0;
+		this.greenX = 0;
+		this.greenY = 0;
+	}
+
+	public int getGreenX() {
+		return greenX;
+	}
+
+	public void setGreenX(int greenX) {
+		this.greenX = greenX;
+	}
+
+	public int getGreenY() {
+		return greenY;
+	}
+
+	public void setGreenY(int greenY) {
+		this.greenY = greenY;
 	}
 	
 	public int getBlueX() {
@@ -131,8 +151,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = pitchConstants.rightBuffer;
-        int bottomBuffer = pitchConstants.bottomBuffer;
+        int rightBuffer = 640 - pitchConstants.rightBuffer;
+        int bottomBuffer = 480 - pitchConstants.bottomBuffer;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false;
@@ -147,8 +167,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         results = new PixelCoordinates [4]; 
         results[0] = topLeftCorner; 
         results[1] = topRightCorner;
-        results[2] = bottomLeftCorner;
-        results[3] = bottomRightCorner;
+        results[2] = bottomRightCorner;
+        results[3] = bottomLeftCorner;
         
         return results;
     }
