@@ -64,12 +64,15 @@ public class Brick {
         
         // Create the log file
         File file = new File("log.dat");
-        if (!file.exists()) {
-            try {
+        try {
+            if (!file.exists()) {
+
+                    file.createNewFile();
+            } else {
+                file.delete();
                 file.createNewFile();
-            } catch (IOException ex) {
-                
             }
+            } catch (IOException ex) {
         }
         try {
             outLog = new FileOutputStream(file, true);
