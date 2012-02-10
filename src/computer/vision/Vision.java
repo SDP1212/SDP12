@@ -557,8 +557,9 @@ public class Vision extends WindowAdapter {
      * @throws NoAngleException
      */
 
-    public findGreyWithinGreen(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
-	assert (xpoints.size() == ypoints.size();
+	//Possibly needs to return something
+    public void findGreyWithinGreen(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
+	assert (xpoints.size() == ypoints.size());
         if (xpoints.size() == 0) {
             throw new NoAngleException("No green pixels");
         }

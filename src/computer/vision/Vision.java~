@@ -556,6 +556,13 @@ public class Vision extends WindowAdapter {
      * @return                  An orientation from -Pi to Pi degrees.
      * @throws NoAngleException
      */
+
+    public findGreyWithinGreen(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
+	assert (xpoints.size() == ypoints.size());
+        if (xpoints.size() == 0) {
+            throw new NoAngleException("No green pixels");
+        }
+	}
     
     // NOTE!  Changed from float to double
     public double findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
