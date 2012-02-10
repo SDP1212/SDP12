@@ -334,8 +334,8 @@ public class Vision extends WindowAdapter {
 
         /* Attempt to find the blue robot's orientation. */
         try {
-            float blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
-            float diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
+            double blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+            double diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
             if (diff > 0.1) {
                 float angle = (float) Math.round(((blueOrientation / Math.PI) * 180) / 5) * 5;
                 worldState.setBlueOrientation((float) (angle / 180 * Math.PI));
@@ -348,8 +348,8 @@ public class Vision extends WindowAdapter {
 
         /* Attempt to find the yellow robot's orientation. */
         try {
-            float yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
-            float diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
+            double yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
+            double diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
             if (yellowOrientation != 0 && diff > 0.1) {
                 float angle = (float) Math.round(((yellowOrientation / Math.PI) * 180) / 5) * 5;
                 worldState.setYellowOrientation((float) (angle / 180 * Math.PI));
@@ -523,7 +523,9 @@ public class Vision extends WindowAdapter {
      * @return                  An orientation from -Pi to Pi degrees.
      * @throws NoAngleException
      */
-    public float findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
+    
+    // NOTE!  Changed from float to double
+    public double findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
             int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
         assert (xpoints.size() == ypoints.size()) :
             "Error: Must be equal number of x and y points!";
@@ -590,13 +592,20 @@ public class Vision extends WindowAdapter {
         /* In here, calculate the vector between meanX/frontX and
          * meanY/frontY, and then get the angle of that vector. */
 
-        // Calculate the angle from center of the T to the front of the T
+        // Calculate the angle between the Mean(Middle) of T and the Front.
+        // This should be the default angle for finding orientation.
+        // Because the gray dot is often hard to identify.
+        
         float length = (float) Math.sqrt(Math.pow(frontX - meanX, 2)
                 + Math.pow(frontY - meanY, 2));
         float ax = (frontX - meanX) / length;
         float ay = (frontY - meanY) / length;
-	float radianAngle = (float) Math.acos(ax);
-        double angleMF = Math.toDegrees((double) radianAngle);
+        
+        // Get the angle in radians first.
+	float radianAngleMF = (float) Math.acos(ax);
+        
+        // Now convert to degrees.
+        double angleMF = Math.toDegrees((double) radianAngleMF);
 
         if (frontY < meanY) {
             angleMF = -angleMF;
@@ -609,6 +618,12 @@ public class Vision extends WindowAdapter {
 	   angleMF = 360 - angleMF;
 	}
 	
+        // A check to turn on/off the more complex orientation.
+        boolean useGreyDot = false;
+        
+        if (useGreyDot) {
+            // Something
+        }
         
         /* Calculate new angle using just the center of the T and the grey circle */
         /*
@@ -659,7 +674,7 @@ public class Vision extends WindowAdapter {
 
         for (int a=-20; a < 21; a++) {
             ax = (float) Math.cos(+((a*Math.PI)/180));
-            ay = (float) Math.sin(radianAngle+((a*Math.PI)/180));
+            ay = (float) Math.sin(radianAngleMF+((a*Math.PI)/180));
             for (int i = 15; i < 25; i++) {
                 int greyX = meanX - (int) (ax * i);
                 int greyY = meanY - (int) (ay * i);
@@ -821,11 +836,11 @@ public class Vision extends WindowAdapter {
 	System.out.println("F/M: "+angleMF);
         //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
 
-        if (radianAngle == 0) {
+        if (radianAngleMF == 0) {
             return (float) 0.001;
         }
 
-        return radianAngle;
+        return angleMF;
     
 
     /* Doesn't work */
