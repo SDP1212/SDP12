@@ -131,12 +131,13 @@ public class WorldState implements computer.simulator.VisionInterface {
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = pitchConstants.rightBuffer;
-        int bottomBuffer = pitchConstants.bottomBuffer;
+        int rightBuffer = 640-pitchConstants.rightBuffer;
+        int bottomBuffer = 480-pitchConstants.bottomBuffer;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false;
-        
+        System.out.println("DEBUG: Corners: "+leftBuffer+", "+rightBuffer+", "+topBuffer+", "+bottomBuffer);
+
         PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected);
         PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected); 
         PixelCoordinates bottomLeftCorner = new PixelCoordinates(leftBuffer,bottomBuffer,isThereBarrelCorrection,isOrientationCorrected);
@@ -147,8 +148,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         results = new PixelCoordinates [4]; 
         results[0] = topLeftCorner; 
         results[1] = topRightCorner;
-        results[2] = bottomLeftCorner;
-        results[3] = bottomRightCorner;
+        results[2] = bottomRightCorner;
+        results[3] = bottomLeftCorner;
         
         return results;
     }

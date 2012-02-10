@@ -377,9 +377,9 @@ public class Vision extends WindowAdapter {
         if (!(thresholdsState.isBall_debug() || thresholdsState.isBlue_debug()
                 || thresholdsState.isYellow_debug() || thresholdsState.isGreen_debug()
                 || thresholdsState.isGrey_debug())) {
-            //imageGraphics.setColor(Color.red);
-            //imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
-            //imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
+            imageGraphics.setColor(Color.red);
+            imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
+            imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
             //imageGraphics.setColor(Color.blue);
             //imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
             //imageGraphics.setColor(Color.yellow);
