@@ -30,7 +30,7 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 10000 ) ) {
+        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 3000 ) ) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
             issueCommands();
@@ -54,8 +54,11 @@ public class GoToBall extends AI{
         Line lineToBall = new Line(ball.getCoordinates(), robotinho.getPosition());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
         System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
-        robotinho.rotate(angle);
-        robotinho.forward(Brick.MEDIUM);
+        if (angle > Math.PI / 100) {
+            robotinho.rotate(Math.max(Math.min(angle, Math.PI/100), -Math.PI / 100));
+        } else {
+            robotinho.forward(Brick.MEDIUM);
+        }
     }
         
     

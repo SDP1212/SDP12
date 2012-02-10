@@ -158,7 +158,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public Direction getYellowRobotOrientation() {
-        return new Direction(getYellowOrientation());
+        return new Direction(Math.toRadians(getYellowOrientation()));
     }
 
     public PixelCoordinates getBlueRobotCoordinates() {
@@ -167,8 +167,8 @@ public class WorldState implements computer.simulator.VisionInterface {
 
     public Direction getBlueRobotOrientation() {
         //this is in radians
-        //System.out.println("blue or " + getBlueOrientation() );
-        return new Direction(getBlueOrientation());
+//        System.out.println("blue or " + getBlueOrientation() );
+        return new Direction(Math.toRadians(getBlueOrientation()));
     }
 
     public PixelCoordinates[] getLeftGoalCoordinates() {
