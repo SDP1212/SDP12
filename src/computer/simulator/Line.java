@@ -5,25 +5,23 @@
 package computer.simulator;
 
 /**
- *
+ * The objects in class Line are in fact rays.
+ * For more information please read the .pdf file Line.pdf.
  * @author Evgeniya Sotirova
  */
 public class Line {
     
-    // Equation of a line: y = lineGradient * x + lineOffset
-    private double lineGradient;
-    private double lineOffset;
+    // Equation of a line: y = gradient * x + offset
+    private double gradient;
+    private double offset;
     
     // lineDirection is true if the direction of the line is in the direction in which x increases.
     // If x is constant, i.e. the line is parallel to the y axis, then lineDirection is true if the direction of the line is in the direction in which y increases.
-    private boolean lineDirection;
+    private boolean direction;
     
     // rangeXmin and rangeXmax define the range of x.
     private double rangeXmin;
     private double rangeXmax;
-    
-    private double rangeYmin;
-    private double rangeYmax;
     
     private Coordinates firstPoint;
     private Coordinates secondPoint;
@@ -31,61 +29,42 @@ public class Line {
     // Defining a line by two points (the order of the points determines the direction of the line):
     public Line(Coordinates A, Coordinates B){
         
-        if((B.getX()-A.getX())==0) lineGradient = Float.POSITIVE_INFINITY;
-        else lineGradient = (B.getY()-A.getY())/(B.getX()-A.getX());
+        if((B.getX()-A.getX())==0) gradient = Float.POSITIVE_INFINITY;
+        else gradient = (B.getY()-A.getY())/(B.getX()-A.getX());
         
-        lineOffset = A.getY()-lineGradient*A.getX();
+        offset = A.getY()-gradient*A.getX();
         
-        if(B.getX()-A.getX() > 0) lineDirection = true;
+        // Setting the direction:
+        if(B.getX()-A.getX() > 0) direction = true;
         else {
-            if(B.getX()-A.getX() < 0) lineDirection = false;
+            if(B.getX()-A.getX() < 0) direction = false;
             else{
-                if(B.getY()-A.getY() > 0) lineDirection = true;
-                else lineDirection = false;
+                if(B.getY()-A.getY() > 0) direction = true;
+                else direction = false;
             }
         }
         
-        rangeXmin = Double.NEGATIVE_INFINITY;
+        rangeXmin = B.getX();
         rangeXmax = Double.POSITIVE_INFINITY;
-        rangeYmin = Double.NEGATIVE_INFINITY;
-        rangeYmax = Double.POSITIVE_INFINITY;
         
         firstPoint = A;
         secondPoint = B;
     }
     
-    // Define the line by the gradient,offset, direction and the range for x.
-    /*public Line(double gradient, double offset, boolean direction){
-        lineGradient = gradient;
-        lineOffset = offset;
-        lineDirection = direction;
-
-        rangeXmin = Double.NEGATIVE_INFINITY;
-        rangeXmax = Double.POSITIVE_INFINITY;
-        rangeYmin = Double.NEGATIVE_INFINITY;
-        rangeYmax = Double.POSITIVE_INFINITY;
-    }*/
-    
     public double getGradient(){
-        return lineGradient;
+        return gradient;
     }
     public double getOffset(){
-        return lineOffset;
+        return offset;
     }
     public boolean getDirection(){
-        return lineDirection;
+        return direction;
     }
     public double getXmin(){
         return rangeXmin;
     }
     public double getXmax(){
         return rangeXmax;
-    }
-    public double getYmin(){
-        return rangeYmin;
-    }
-    public double getYmax(){
-        return rangeYmax;
     }
     public Coordinates getFirstPoint(){
         return firstPoint;
@@ -94,25 +73,49 @@ public class Line {
         return secondPoint;
     }
 
-    public void setGradient(double  gradient){
-        lineGradient = gradient;        
+    //If you want to change only the first point of a line.
+    public void setFirstPoint(Coordinates point){
+        firstPoint = point;
+        
+        if((secondPoint.getX()-firstPoint.getX())==0) gradient = Float.POSITIVE_INFINITY;
+        else gradient = (secondPoint.getY()-firstPoint.getY())/(secondPoint.getX()-firstPoint.getX());
+        
+        offset = firstPoint.getY()-gradient*firstPoint.getX();
+        
+        // Setting the direction:
+        if(secondPoint.getX()-firstPoint.getX() > 0) direction = true;
+        else {
+            if(secondPoint.getX()-firstPoint.getX() < 0) direction = false;
+            else{
+                if(secondPoint.getY()-firstPoint.getY() > 0) direction = true;
+                else direction = false;
+            }
+        }
+        
+        rangeXmin = secondPoint.getX();
+        rangeXmax = Double.POSITIVE_INFINITY;
     }
-    public void setOffset(double offset){
-        lineOffset = offset;
-    }
-    public void setDirection(boolean direction){
-        lineDirection = direction;
-    }
-    public void setXmin(double xMin){
-        rangeXmin = xMin;        
-    }
-    public void setXmax(double xMax){
-        rangeXmax = xMax;
-    }
-    public void setYmin(double yMin){
-        rangeYmin = yMin;        
-    }
-    public void setYmax(double yMax){
-        rangeYmax = yMax;
+    
+    //If you want to change the second point of a line.
+    public void setSecondPoint(Coordinates point){
+        secondPoint = point;
+        
+        if((secondPoint.getX()-firstPoint.getX())==0) gradient = Float.POSITIVE_INFINITY;
+        else gradient = (secondPoint.getY()-firstPoint.getY())/(secondPoint.getX()-firstPoint.getX());
+        
+        offset = firstPoint.getY()-gradient*firstPoint.getX();
+        
+        // Setting the direction:
+        if(secondPoint.getX()-firstPoint.getX() > 0) direction = true;
+        else {
+            if(secondPoint.getX()-firstPoint.getX() < 0) direction = false;
+            else{
+                if(secondPoint.getY()-firstPoint.getY() > 0) direction = true;
+                else direction = false;
+            }
+        }
+        
+        rangeXmin = secondPoint.getX();
+        rangeXmax = Double.POSITIVE_INFINITY;
     }
 }
