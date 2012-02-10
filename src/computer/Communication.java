@@ -19,6 +19,7 @@ public class Communication implements Runnable, ControlInterface {
     private InputStream inStream;
     private Thread listener;
     private boolean connected = false;
+    private int commState = DISCONNECTED;
     public void switchModeTo(int mode) {
         
     }
@@ -41,6 +42,7 @@ public class Communication implements Runnable, ControlInterface {
         listener = new Thread(this);
         listener.start();
         connected = true;
+        commState = READY;
         return true;
     }
     /**
@@ -61,6 +63,7 @@ public class Communication implements Runnable, ControlInterface {
             System.out.println(e.toString());
         }
         connected = false;
+        commState = DISCONNECTED;
     }
     
     /**
@@ -100,10 +103,10 @@ public class Communication implements Runnable, ControlInterface {
 
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
-        System.out.println("Opcode: " + opcode);
+//        System.out.println("Opcode: " + opcode);
         int arg = composeAngleArgument(angle) << 8;
-        System.out.println("Arg " + arg);
-        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
+//        System.out.println("Arg " + arg);
+//        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
     
@@ -117,8 +120,10 @@ public class Communication implements Runnable, ControlInterface {
             byte[] buf = intToByteArray(message);
             outStream.write(buf);
             outStream.flush();
+            commState = WAITING;
         } catch (IOException e) {
             System.out.println(e.toString());
+            commState = ERROR;
         }
     }
     
@@ -150,6 +155,7 @@ public class Communication implements Runnable, ControlInterface {
                         System.out.println("Collision!");
                         break;
                     case (Brick.OK):
+                        commState = READY;
                         System.out.println("Acknowledged");
                         break;
                 }
@@ -168,5 +174,9 @@ public class Communication implements Runnable, ControlInterface {
             b[i] = (byte) (((in & 0xFFFFFFFF) >> shift) & 0x00000000FFFFFFFF);
         }
         return b;
+    }
+    
+    public int getCommState() {
+        return commState;
     }
 }

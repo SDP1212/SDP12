@@ -167,16 +167,16 @@ public class Pitch {
     protected void insertGoals(PixelCoordinates[] left, PixelCoordinates[] right, short target){
         
         for(PixelCoordinates coordinates : new PixelCoordinates[] {left[0],left[1],right[0],right[1]})
-            if(!coordinates.isBarrelCorrected()){
-                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "Barrel-distorted coordinates may induce undesirable side-effects such as itching, sweating, irritation, and/or death.\nTo put it more clearly, this makes it impossible to predic objects' motion so no attempt will be made. The robot will only know where things are (approximately), the direction they're facing and the current speed. Considering motion would not be in a straight line, the latter two probably won't be too helpful but it's better than nothing.\n\nWould you still like to continue? Click \"Yes,\" I dare you. No, I double-dare you.", "Don't panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
-                    throw new Error("The operator has chickened out of using barrel-distorted coordinates. But this is a good thing since those are NOT optimally supported by the (simulator) system!");
-                break;
-            }
-            else if(!coordinates.isOrientationCorrected()){
-                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "The provided coordinates may include a slight rotational misalignment of the table. This should not reduce performance in any significant way. You should carry on, ignoring this message.\n\nWould you like to continue?", "Do NOT panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
-                    throw new Error("The operator has chickened out of using a misaligned table... What a shame.");
-                break;
-            }
+//            if(!coordinates.isBarrelCorrected()){
+////                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "Barrel-distorted coordinates may induce undesirable side-effects such as itching, sweating, irritation, and/or death.\nTo put it more clearly, this makes it impossible to predic objects' motion so no attempt will be made. The robot will only know where things are (approximately), the direction they're facing and the current speed. Considering motion would not be in a straight line, the latter two probably won't be too helpful but it's better than nothing.\n\nWould you still like to continue? Click \"Yes,\" I dare you. No, I double-dare you.", "Don't panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
+//                    throw new Error("The operator has chickened out of using barrel-distorted coordinates. But this is a good thing since those are NOT optimally supported by the (simulator) system!");
+//                break;
+//            }
+//            else if(!coordinates.isOrientationCorrected()){
+////                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "The provided coordinates may include a slight rotational misalignment of the table. This should not reduce performance in any significant way. You should carry on, ignoring this message.\n\nWould you like to continue?", "Do NOT panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
+//                    throw new Error("The operator has chickened out of using a misaligned table... What a shame.");
+//                break;
+//            }
         
         this.leftGoal=new Goal(convertX(left[0]),convertY(left[0]),
                                convertX(left[1]),convertY(left[1]));

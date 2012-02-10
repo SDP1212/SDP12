@@ -2,6 +2,7 @@ package computer.ai;
 
 import brick.Brick;
 import computer.ai.AI;
+import computer.control.ControlInterface;
 import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
 import java.util.ArrayList;
@@ -27,9 +28,11 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        actionPlan = new ArrayList<Coordinates>();
-        correctPlan();
-        issueCommands();
+        if (this.self.getCommState() == ControlInterface.READY) {
+            actionPlan = new ArrayList<Coordinates>();
+            correctPlan();
+            issueCommands();
+        }
     }
     
     private void correctPlan() {
@@ -47,8 +50,9 @@ public class GoToBall extends AI{
         Ball ball = this.pitch.ball;
         Line lineToBall = new Line(ball.getCoordinates(), robotinho.getPosition());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
-        robotinho.rotate(angle);
-        robotinho.forward(Brick.MEDIUM);
+//        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
+//        robotinho.rotate(angle);
+//        robotinho.forward(Brick.MEDIUM);
     }
         
     

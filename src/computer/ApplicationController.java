@@ -4,6 +4,8 @@
  */
 package computer;
 
+import computer.ai.*;
+import computer.simulator.*;
 import computer.vision.WorldState;
 
 /**
@@ -85,6 +87,12 @@ public class ApplicationController {
      */
     public void close() {
         disconnect();
+    }
+    
+    public void startEngine() {
+        Engine eng=new Engine(getWorldState(), getCommunicationController(), false, true, true, Pitch.TARGET_LEFT_GOAL, Robot.BLUE_PLATE, GoToBall.class, DumbAI.class);
+        Thread enginethread=new Thread(eng);
+        enginethread.start();
     }
     
     public WorldState getWorldState() {

@@ -78,6 +78,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 	}
 
 	public void setBlueOrientation(float blueOrientation) {
+            System.out.println("Blue orientation: " + blueOrientation);
 		this.blueOrientation = blueOrientation;
 	}
 

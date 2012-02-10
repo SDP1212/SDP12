@@ -11,6 +11,10 @@ package computer.control;
  * @author Dimo Petroff
  */
 public interface ControlInterface {
+    public static int DISCONNECTED = 0;
+    public static int READY = 1;
+    public static int WAITING = 2;
+    public static int ERROR = 3;
     
     public void forward(int speed);
     
@@ -21,5 +25,7 @@ public interface ControlInterface {
     public void kick();
     
     public void rotate (double angle);
+    
+    public int getCommState();
     
 }
