@@ -334,8 +334,8 @@ public class Vision extends WindowAdapter {
 
         /* Attempt to find the blue robot's orientation. */
         try {
-            float blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
-            float diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
+            double blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+            double diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
             if (diff > 0.1) {
                 float angle = (float) Math.round(((blueOrientation / Math.PI) * 180) / 5) * 5;
                 worldState.setBlueOrientation((float) (angle / 180 * Math.PI));
@@ -348,8 +348,8 @@ public class Vision extends WindowAdapter {
 
         /* Attempt to find the yellow robot's orientation. */
         try {
-            float yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
-            float diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
+            double yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
+            double diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
             if (yellowOrientation != 0 && diff > 0.1) {
                 float angle = (float) Math.round(((yellowOrientation / Math.PI) * 180) / 5) * 5;
                 worldState.setYellowOrientation((float) (angle / 180 * Math.PI));
@@ -523,7 +523,9 @@ public class Vision extends WindowAdapter {
      * @return                  An orientation from -Pi to Pi degrees.
      * @throws NoAngleException
      */
-    public float findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
+    
+    // NOTE!  Changed from float to double
+    public double findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
             int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
         assert (xpoints.size() == ypoints.size()) :
             "Error: Must be equal number of x and y points!";
@@ -590,26 +592,80 @@ public class Vision extends WindowAdapter {
         /* In here, calculate the vector between meanX/frontX and
          * meanY/frontY, and then get the angle of that vector. */
 
-        // Calculate the angle from center of the T to the front of the T
+        // Calculate the angle between the Mean(Middle) of T and the Front.
+        // This should be the default angle for finding orientation.
+        // Because the gray dot is often hard to identify.
+        
         float length = (float) Math.sqrt(Math.pow(frontX - meanX, 2)
                 + Math.pow(frontY - meanY, 2));
         float ax = (frontX - meanX) / length;
         float ay = (frontY - meanY) / length;
-	float angle = (float) Math.acos(ax);
-        double angle2 = Math.toDegrees((double) Math.acos(ax));
+        
+        // Get the angle in radians first.
+	float radianAngleMF = (float) Math.acos(ax);
+        
+        // Now convert to degrees.
+        double angleMF = Math.toDegrees((double) radianAngleMF);
 
         if (frontY < meanY) {
-            angle2 = -angle2;
+            angleMF = -angleMF;
         }
 
-	if(angle2<0) {
-		angle2 = Math.abs(angle2);
+	if(angleMF<0) {
+		angleMF = Math.abs(angleMF);
 	}
 	else {
-	   angle2 = 360 - angle2;
+	   angleMF = 360 - angleMF;
+	}
+	
+        // A check to turn on/off the more complex orientation.
+        boolean useGreyDot = false;
+        
+        if (useGreyDot) {
+            // Something
+        }
+        
+        /* Calculate new angle using just the center of the T and the grey circle */
+        /*
+        length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
+                + Math.pow(frontY - backY, 2));
+        ax = (frontX - backX) / length;
+        ay = (frontY - backY) / length;
+	angle = (float) Math.acos(ax);
+        double angle3 = Math.toDegrees((double) Math.acos(ax));
+
+        if (frontY < meanY) {
+            angle3 = -angle3;
+        }
+
+	if(angle3<0) {
+		angle3 = Math.abs(angle3);
+	}
+	else {
+	   angle3 = 360 - angle3;
 	}
 	
 
+
+        
+        length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
+                + Math.pow(meanY - backY, 2));
+        ax = (meanX - backX) / length;
+        ay = (meanY - backY) / length;
+        double angle4 = Math.toDegrees((double) Math.acos(ax));
+        angle = (float) Math.acos(ax);
+
+        if (frontY < meanY) {
+            angle4 = -angle4;
+        }
+
+	if(angle4<0) {
+		angle4 = Math.abs(angle4);
+	}
+	else {
+	   angle4 = 360 - angle4;
+	}
+        */
 
 
         //Look in a cone in the opposite direction to try to find the grey circle
@@ -617,8 +673,8 @@ public class Vision extends WindowAdapter {
         ArrayList<Integer> greyYPoints = new ArrayList<Integer>();
 
         for (int a=-20; a < 21; a++) {
-            ax = (float) Math.cos(angle+((a*Math.PI)/180));
-            ay = (float) Math.sin(angle+((a*Math.PI)/180));
+            ax = (float) Math.cos(+((a*Math.PI)/180));
+            ay = (float) Math.sin(radianAngleMF+((a*Math.PI)/180));
             for (int i = 15; i < 25; i++) {
                 int greyX = meanX - (int) (ax * i);
                 int greyY = meanY - (int) (ay * i);
@@ -639,9 +695,9 @@ public class Vision extends WindowAdapter {
         /* No grey circle found
          * The angle found is probably wrong, skip this value and return 0 */
 
-        if (greyXPoints.size() < 30) {
-            throw new NoAngleException("No grey circle found");
-        }
+//        if (greyXPoints.size() < 30) {
+//            throw new NoAngleException("No grey circle found");
+//        }
 
         /* Calculate center of grey circle points */
         int totalX = 0;
@@ -652,18 +708,20 @@ public class Vision extends WindowAdapter {
         }
 
         /* Center of grey circle */
-        float backX = totalX / greyXPoints.size();
-        float backY = totalY / greyXPoints.size();
+        //float backX = totalX / greyXPoints.size();
+        //float backY = totalY / greyXPoints.size();
 
-        imageGraphics.setColor(Color.red);
-        imageGraphics.drawOval((int)backX-15, (int) backY-15, 30,30);
+        //imageGraphics.setColor(Color.red);
+        //imageGraphics.drawOval((int)backX-15, (int) backY-15, 30,30);
 
         /* Check that the circle is surrounded by the green plate
          * Currently checks above and below the circle */
 
         int foundGreen = 0;
         int greenSides = 0;
+           
         /* Check if green points are above the grey circle */
+           /*
         for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
             for (int y = (int) (backY-9); y < backY; y++) {
                 try {
@@ -684,8 +742,9 @@ public class Vision extends WindowAdapter {
             greenSides++;
         }
 
-
+         * /
         /* Check if green points are below the grey circle */
+        /*
         foundGreen = 0;
         for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
             for (int y = (int) (backY); y < backY+10; y++) {
@@ -707,8 +766,9 @@ public class Vision extends WindowAdapter {
             greenSides++;
         }
 
-
+         * /
         /* Check if green points are left of the grey circle */
+        /*
         foundGreen = 0;
         for (int x=(int) (backX-9); x < backX; x++) {
             for (int y = (int) (backY-2); y < backY+3; y++) {
@@ -729,9 +789,10 @@ public class Vision extends WindowAdapter {
         if (foundGreen >= 3) {
             greenSides++;
         }
-
+         * /
         /* Check if green points are right of the grey circle */
         foundGreen = 0;
+        /*
         for (int x=(int) (backX); x < (int) (backX+10); x++) {
             for (int y = (int) (backY-2); y < backY+3; y++) {
                 try {
@@ -756,7 +817,7 @@ public class Vision extends WindowAdapter {
         if (greenSides < 3) {
             throw new NoAngleException("Not enough green areas around the grey circle");
         }
-
+         * /
 
         /*
          * At this point, the following is true:
@@ -766,60 +827,21 @@ public class Vision extends WindowAdapter {
          * Grey circle is surrounded by green plate pixels on at least 3 sides
          * The grey circle, center of the T and front of the T line up roughly with the same angle
          */
-
-        /* Calculate new angle using just the center of the T and the grey circle */
-        length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
-                + Math.pow(frontY - backY, 2));
-        ax = (frontX - backX) / length;
-        ay = (frontY - backY) / length;
-	angle = (float) Math.acos(ax);
-        double angle3 = Math.toDegrees((double) Math.acos(ax));
-
-        if (frontY < meanY) {
-            angle3 = -angle3;
-        }
-
-	if(angle3<0) {
-		angle3 = Math.abs(angle3);
-	}
-	else {
-	   angle3 = 360 - angle3;
-	}
-	
-
-
-
-        length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
-                + Math.pow(meanY - backY, 2));
-        ax = (meanX - backX) / length;
-        ay = (meanY - backY) / length;
-        double angle4 = Math.toDegrees((double) Math.acos(ax));
-        angle = (float) Math.acos(ax);
-
-        if (frontY < meanY) {
-            angle4 = -angle4;
-        }
-
-	if(angle4<0) {
-		angle4 = Math.abs(angle4);
-	}
-	else {
-	   angle4 = 360 - angle4;
-	}
-
+        /*
         if (showImage) {
             image.getGraphics().drawLine((int)backX, (int)backY, (int)(backX+ax*70), (int)(backY+ay*70));
             image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
         }
+         */
+	System.out.println("F/M: "+angleMF);
+        //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
 
-	System.out.println("F/M: "+angle2+". F/B: "+angle3+". M/B: "+angle4);
-
-        if (angle == 0) {
+        if (radianAngleMF == 0) {
             return (float) 0.001;
         }
 
-        return angle;
-    }
+        return angleMF;
+    
 
     /* Doesn't work */
     /*
@@ -843,6 +865,7 @@ public class Vision extends WindowAdapter {
                 yDistortion[i] = y;
             }
         }
+         */ 
     }
-    */
+    
 }
