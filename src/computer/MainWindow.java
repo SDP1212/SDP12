@@ -405,9 +405,9 @@ public class MainWindow extends javax.swing.JFrame {
         } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
             commController.kick();
         } else if (radioLeft.isSelected()) {
-            commController.rotate((double)3);
+            commController.rotate(Math.PI/2);
         } else if (radioRight.isSelected()) {
-            commController.rotate((double)-3);
+            commController.rotate(-Math.PI/2);
         }
     }//GEN-LAST:event_goButtonActionPerformed
 
