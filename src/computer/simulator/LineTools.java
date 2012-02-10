@@ -57,10 +57,14 @@ public class LineTools {
     }
     
     public double angleBetweenLineAndDirection(Line l, Direction direction){
-        double gamma;
- 
-        gamma = Math.acos((Math.cos(direction.getDirectionRadians())+l.getGradient()*Math.sin(direction.getDirectionRadians()))/Math.sqrt(1+l.getGradient()*l.getGradient()));
-        
+        double gamma = Math.atan(l.getGradient());
+        if(!l.getDirection()){
+            if(gamma > 0) gamma = gamma - 3.141592;
+            else {
+                if(gamma < 0) gamma = gamma + 3.141592;
+            }            
+        }
+        gamma = direction.getDirectionRadians() - gamma;       
         return gamma;
     }
     
