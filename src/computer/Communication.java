@@ -106,10 +106,10 @@ public class Communication implements Runnable, ControlInterface {
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
 //        System.out.println("Opcode: " + opcode);
-        System.out.println("Angle " + angle);
+//        System.out.println("Angle " + angle);
         int arg = composeAngleArgument(angle) << 8;
 //        System.out.println("Arg " + arg);
-        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
+//        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
     
@@ -121,7 +121,7 @@ public class Communication implements Runnable, ControlInterface {
     public void sendMessage(int message) {
         try {
             byte[] buf = intToByteArray(message);
-            System.out.println("Message " + Arrays.toString(buf));
+//            System.out.println("Message " + Arrays.toString(buf));
             outStream.write(buf);
             outStream.flush();
             commState = WAITING;
@@ -133,7 +133,7 @@ public class Communication implements Runnable, ControlInterface {
     
     public int composeAngleArgument(double angle) {
         long out = Math.round(Math.toDegrees(angle) + 180);
-        System.out.println("Angle " + Long.toString(out));
+//        System.out.println("Angle " + Long.toString(out));
         return (int)out;
         
     }

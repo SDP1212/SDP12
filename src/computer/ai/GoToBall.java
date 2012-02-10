@@ -51,6 +51,7 @@ public class GoToBall extends AI{
         date = new Date();
         Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
+        System.out.println("Ball (" + ball.getCoordinates().getX() + ", " + ball.getCoordinates().getY() + ")");
         Line lineToBall = new Line(robotinho.getPosition(), ball.getCoordinates());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
         System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
