@@ -2,8 +2,10 @@ package computer.ai;
 
 import brick.Brick;
 import computer.ai.AI;
+import computer.control.ControlInterface;
 import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
+import java.util.Date;
 import java.util.ArrayList;
 /**
  *
@@ -20,6 +22,7 @@ public class GoToBall extends AI{
     public PixelCoordinates blue;
     public PixelCoordinates yellow;
     public PixelCoordinates ball;
+    private Date date = new Date(0);
     
     public GoToBall (Pitch pitch, Robot robot) {
         super(pitch, robot);
@@ -27,9 +30,11 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        actionPlan = new ArrayList<Coordinates>();
-        correctPlan();
-        issueCommands();
+        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 10000 ) ) {
+            actionPlan = new ArrayList<Coordinates>();
+            correctPlan();
+            issueCommands();
+        }
     }
     
     private void correctPlan() {
@@ -43,10 +48,12 @@ public class GoToBall extends AI{
     }
     
     private void issueCommands() {
+        date = new Date();
         Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
         Line lineToBall = new Line(ball.getCoordinates(), robotinho.getPosition());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
+        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
         robotinho.rotate(angle);
         robotinho.forward(Brick.MEDIUM);
     }

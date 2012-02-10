@@ -86,6 +86,7 @@ public class MainWindow extends javax.swing.JFrame {
         radioRun = new javax.swing.JRadioButton();
         radioPenalty = new javax.swing.JRadioButton();
         buttonWorld = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
@@ -146,17 +147,27 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Run Vision");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(radioRun)
-                    .addComponent(radioPenalty))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
-                .addComponent(buttonWorld)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioRun)
+                            .addComponent(radioPenalty))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                        .addComponent(buttonWorld)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -169,7 +180,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(radioRun)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioPenalty)))
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Play", jPanel1);
@@ -433,6 +446,10 @@ public class MainWindow extends javax.swing.JFrame {
     private void buttonWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonWorldActionPerformed
         System.out.println("X: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getX()) + " Y: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getY()));
     }//GEN-LAST:event_buttonWorldActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        appController.startEngine();
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     /**
      * @param args the command line arguments
@@ -486,6 +503,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton goButton;
     private javax.swing.ButtonGroup groupSpeed;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;

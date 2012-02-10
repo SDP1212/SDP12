@@ -116,6 +116,7 @@ public class Brick {
 
                     case ROTATE:
                         rotate(arg >> 8);
+                        
                         break;
 
                     case STOP:

@@ -74,10 +74,12 @@ public class WorldState implements computer.simulator.VisionInterface {
 	}
 
 	public float getBlueOrientation() {
+                //System.out.println("Blue orientation: " + blueOrientation);
 		return blueOrientation;
 	}
 
 	public void setBlueOrientation(float blueOrientation) {
+            //System.out.println("Blue orientation: " + blueOrientation);
 		this.blueOrientation = blueOrientation;
 	}
 
@@ -111,6 +113,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 
 	public void setPitch(int pitch) {
 		this.pitch = pitch;
+                
 	}
   
   public void updateCounter() {
@@ -121,8 +124,33 @@ public class WorldState implements computer.simulator.VisionInterface {
     return this.counter;
   }
 
+  // Following methods are for the interface.
     public PixelCoordinates[] getPitchCornerCoordinates() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        PitchConstants pitchConstants = new PitchConstants(pitch);
+        
+        int leftBuffer = pitchConstants.leftBuffer;
+        int topBuffer = pitchConstants.topBuffer;
+        int rightBuffer = pitchConstants.rightBuffer;
+        int bottomBuffer = pitchConstants.bottomBuffer;
+        
+        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
+        boolean isOrientationCorrected = false;
+        
+        PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected);
+        PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected); 
+        PixelCoordinates bottomLeftCorner = new PixelCoordinates(leftBuffer,bottomBuffer,isThereBarrelCorrection,isOrientationCorrected);
+        PixelCoordinates bottomRightCorner = new PixelCoordinates(rightBuffer,bottomBuffer,isThereBarrelCorrection,isOrientationCorrected);
+        
+        PixelCoordinates[] results; 
+        
+        results = new PixelCoordinates [4]; 
+        results[0] = topLeftCorner; 
+        results[1] = topRightCorner;
+        results[2] = bottomLeftCorner;
+        results[3] = bottomRightCorner;
+        
+        return results;
     }
 
     public PixelCoordinates getYellowRobotCoordinates() {
@@ -138,15 +166,74 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public Direction getBlueRobotOrientation() {
+        //this is in radians
+        //System.out.println("blue or " + getBlueOrientation() );
         return new Direction(getBlueOrientation());
     }
 
     public PixelCoordinates[] getLeftGoalCoordinates() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // First element is top coordinate, second is bottom.
+        
+        PitchConstants pitchConstants = new PitchConstants(pitch);
+        
+        int leftBuffer = pitchConstants.leftBuffer;
+        int topBuffer = pitchConstants.topBuffer;
+        int rightBuffer = pitchConstants.rightBuffer;
+        int bottomBuffer = pitchConstants.bottomBuffer;
+        
+        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
+        boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
+        
+        // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
+        // Thus we divide the width by 4 and add the ratio to the bottom.
+        // And subtract the ratio from the top.
+        int goalWidth = topBuffer - bottomBuffer;
+        int topGoal = Math.abs(topBuffer - (goalWidth/4));
+        int bottomGoal = Math.abs(bottomBuffer + (goalWidth/4));
+        
+        PixelCoordinates topLeftGoal = new PixelCoordinates(leftBuffer,topGoal,isThereBarrelCorrection,isOrientationCorrected);
+        PixelCoordinates bottomLeftGoal = new PixelCoordinates(leftBuffer,bottomGoal,isThereBarrelCorrection,isOrientationCorrected); 
+        
+        PixelCoordinates[] leftGoalCoordinates; 
+        
+        leftGoalCoordinates = new PixelCoordinates [2]; 
+        leftGoalCoordinates[0] = topLeftGoal; 
+        leftGoalCoordinates[1] = bottomLeftGoal;
+        
+        return leftGoalCoordinates;
+        
     }
 
     public PixelCoordinates[] getRightGoalCoordinates() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // First element is top coordinate, second is bottom.
+        
+        PitchConstants pitchConstants = new PitchConstants(pitch);
+        
+        int leftBuffer = pitchConstants.leftBuffer;
+        int topBuffer = pitchConstants.topBuffer;
+        int rightBuffer = pitchConstants.rightBuffer;
+        int bottomBuffer = pitchConstants.bottomBuffer;
+        
+        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
+        boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
+        
+        // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
+        // Thus we divide the width by 4 and add the ratio to the bottom.
+        // And subtract the ratio from the top.
+        int goalWidth = topBuffer - bottomBuffer;
+        int topGoal = Math.abs(topBuffer - (goalWidth/4));
+        int bottomGoal = Math.abs(bottomBuffer + (goalWidth/4));
+        
+        PixelCoordinates topRightGoal = new PixelCoordinates(rightBuffer,topGoal,isThereBarrelCorrection,isOrientationCorrected);
+        PixelCoordinates bottomRightGoal = new PixelCoordinates(rightBuffer,bottomGoal,isThereBarrelCorrection,isOrientationCorrected); 
+        
+        PixelCoordinates[] rightGoalCoordinates; 
+        
+        rightGoalCoordinates = new PixelCoordinates [2]; 
+        rightGoalCoordinates[0] = topRightGoal; 
+        rightGoalCoordinates[1] = bottomRightGoal;
+        
+        return rightGoalCoordinates;
     }
 
     public PixelCoordinates getBallCoordinates() {

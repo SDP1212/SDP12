@@ -133,10 +133,11 @@ public class PitchConstants {
 		try {
 			scanner = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot load constants file " + fileName + ":");
-			System.err.println(e.getMessage());
-			loadDefaultConstants();
-			return;
+                    throw new Error("no such file");
+//			System.err.println("Cannot load constants file " + fileName + ":");
+//			System.err.println(e.getMessage());
+//			loadDefaultConstants();
+//			return;
 		}
 		
 		assert(scanner != null);
