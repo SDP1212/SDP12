@@ -67,6 +67,7 @@ public class LineTools {
         gamma = direction.getDirectionRadians() - gamma;       
         //gamma = Math.acos((Math.cos(direction.getDirectionRadians())+l.getGradient()*Math.sin(direction.getDirectionRadians()))/Math.sqrt(1+l.getGradient()*l.getGradient()));
         if(gamma > Math.PI) gamma = gamma - 2*Math.PI;
+        if(gamma < -Math.PI) gamma = gamma + 2*Math.PI;
         return gamma;
     }
     
