@@ -278,10 +278,11 @@ public class Brick {
         int finalAngle = angle - 180;
         double factor;
         if (finalAngle < 0) {
-            factor = 1.65;
+            factor = 1;
         } else {
-            factor = 1.35;
+            factor = 1;
         }
+        pilot.setRotateSpeed(180);
         pilot.rotate((finalAngle) * factor);
     }
     
