@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.imageio.ImageIO;   // Used for testing.
+import java.io.File;            // Also used for testing.
 
 import au.edu.jcu.v4l4j.CaptureCallback;
 import au.edu.jcu.v4l4j.DeviceInfo;
@@ -101,13 +103,28 @@ public class Vision extends WindowAdapter {
                 e.printStackTrace();
             }
 
+            boolean singleCheck = true; // TESTING
+            
             public void nextFrame(VideoFrame frame) {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
                 
+                if (singleCheck) {
+                    try {
+                        BufferedImage sampleImage = frameImage;
+                        File outputfile = new File("sample1.jpeg");
+                        ImageIO.write(sampleImage, "jpeg", outputfile);
+                    } catch (Exception e) {
+                        // Seemingly obligatory comment.
+                    }
+                    singleCheck = false;
+                }
+                
                 // SHADOW TEST
-                //int[] hello = calculateMean (frameImage); 
-                //frameImage = shadowRemoval(frameImage,hello);
+                ShadowProcessing  s = new ShadowProcessing(pitchConstants);
+                int[] rgbMean = s.calculateMean(frameImage);
+                frameImage =  s.shadowRemoval(frameImage, rgbMean);
+               
                 
                 frame.recycle();
                 processAndUpdateImage(frameImage, before);
@@ -326,8 +343,8 @@ public class Vision extends WindowAdapter {
 	    green = new Position(worldState.getGreenY(), worldState.getGreenY());
 	}
 
-        /* If we have only found a few 'Ball' pixels, chances are that the ball has not
-         * actually been detected. */
+        /* If we have only found a few 'Ball' pixels, chances are that the ball 
+         * has not actually been detected. */
         if (numBallPos > 5) {
             ballX /= numBallPos;
             ballY /= numBallPos;
@@ -339,8 +356,8 @@ public class Vision extends WindowAdapter {
             ball = new Position(worldState.getBallX(), worldState.getBallY());
         }
 
-        /* If we have only found a few 'Blue' pixels, chances are that the ball has not
-         * actually been detected. */
+        /* If we have only found a few 'Blue' pixels, chances are that the 
+         * blue robot has not actually been detected. */
         if (numBluePos > 0) {
             blueX /= numBluePos;
             blueY /= numBluePos;
@@ -352,8 +369,8 @@ public class Vision extends WindowAdapter {
             blue = new Position(worldState.getBlueX(), worldState.getBlueY());
         }
 
-        /* If we have only found a few 'Yellow' pixels, chances are that the ball has not
-         * actually been detected. */
+        /* If we have only found a few 'Yellow' pixels, chances are that the 
+         * yellow robot has not actually been detected. */
         if (numYellowPos > 0) {
             yellowX /= numYellowPos;
             yellowY /= numYellowPos;
@@ -376,8 +393,8 @@ public class Vision extends WindowAdapter {
                 worldState.setBlueOrientation((float) (angle / 180 * Math.PI));
             }
         } catch (NoAngleException e) {
- //            worldState.setBlueOrientation(worldState.getBlueOrientation());
-//            System.out.println("Blue robot: " + e.getMessage());
+            //worldState.setBlueOrientation(worldState.getBlueOrientation());
+            //System.out.println("Blue robot: " + e.getMessage());
         }
 
 
@@ -390,8 +407,8 @@ public class Vision extends WindowAdapter {
                 worldState.setYellowOrientation((float) (angle / 180 * Math.PI));
             }
         } catch (NoAngleException e) {
-            worldState.setYellowOrientation(worldState.getYellowOrientation());
-//            System.out.println("Yellow robot: " + e.getMessage());
+            //worldState.setYellowOrientation(worldState.getYellowOrientation());
+            //System.out.println("Yellow robot: " + e.getMessage());
         }
 
 
@@ -913,78 +930,6 @@ public class Vision extends WindowAdapter {
          */ 
     }
     
-    public BufferedImage shadowRemoval(BufferedImage image, int[] rgbArray) {
-        
-        int topBuffer = pitchConstants.topBuffer;
-        int bottomBuffer = pitchConstants.bottomBuffer;
-        int leftBuffer = pitchConstants.leftBuffer;
-        int rightBuffer = pitchConstants.rightBuffer;
-       
-        int rgb_redMean = rgbArray[0];
-        int rgb_greenMean = rgbArray[1];
-        int rgb_blueMean = rgbArray[2];
-
-        //Color theMean = new Color(rgb_redMean, rgb_greenMean, rgb_blueMean);
-        //int rgbMean = theMean.getRGB();
-       
-        for (int x = bottomBuffer; x < (480-topBuffer); x++ ) {
-            for (int y = leftBuffer; y < (640-rightBuffer); y++) {
-                Color c = new Color(image.getRGB(y, x));
-                int pixelRed = c.getRed();
-                int pixelGreen = c.getGreen();
-                int pixelBlue = c.getBlue();
-                        
-                int differenceRed = pixelRed - rgb_redMean; 
-                int differenceGreen = pixelGreen - rgb_greenMean; 
-                int differenceBlue = pixelBlue - rgb_blueMean; 
-                //System.out.println ("pixelRed " + pixelRed + "pixelGreen " + pixelGreen + "pixelBlue " + pixelBlue); 
-                //System.out.println("Red: " + rgb_redMean + " Green: " + rgb_greenMean +  " Blue: " + rgb_blueMean);
-                //System.out.println ("pixelRed " + pixelRed + "pixelGreen " + pixelGreen + "pixelBlue " + pixelBlue); 
-	
-                int colourDifference = Math.abs(pixelRed - rgb_redMean) + Math.abs(pixelGreen - rgb_greenMean) + Math.abs(pixelBlue - rgb_greenMean);
-		if (colourDifference > 100) {
-                    pixelRed = pixelRed - differenceRed;
-                    pixelGreen = pixelGreen - differenceGreen;
-                    pixelBlue = pixelBlue - differenceBlue;
-                                
-                    Color temp = new Color(pixelRed,pixelGreen,pixelBlue);
-                    int meanColour = temp.getRGB();
-                                
-                    //Color temp = new Color(pixelRed, pixelGreen, pixelBlue);
-                    //int colourValue = 
-                    //System.out.print(meanColour);
-                    image.setRGB(y,x,meanColour);
-		}                
-            }
-	}
-        return image;
-    }
     
-    public int[] calculateMean(BufferedImage image) {
-        
-        int rgb_redSum = 0;
-        int rgb_greenSum = 0;
-        int rgb_blueSum = 0;
-        
-        for (int x = 220; x < 240; x++) {
-            for (int y = 300; y < 320; y++) {
-                Color c = new Color(image.getRGB(y, x));
-                rgb_redSum = rgb_redSum + c.getRed();
-                rgb_greenSum = rgb_greenSum + c.getRed();
-                rgb_blueSum = rgb_blueSum + c.getRed();
-            }
-        }
-        
-        int rgb_redMean = (int) (rgb_redSum / 400);
-        int rgb_greenMean = (int) (rgb_greenSum / 400);
-        int rgb_blueMean = (int) (rgb_blueSum / 400);
-        
-        //Color theMean = new Color(rgb_redMean, rgb_greenMean, rgb_blueMean);
-        //int rgbMean = theMean.getRGB();
-        
-        int[] rgbArray = {rgb_redMean, rgb_greenMean, rgb_blueMean}; 
-        
-        return rgbArray;
-    }
     
 }
