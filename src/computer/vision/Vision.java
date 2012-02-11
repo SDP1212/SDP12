@@ -109,6 +109,8 @@ public class Vision extends WindowAdapter {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
                 
+                /*
+                // Takes an image of the pitch.
                 if (singleCheck) {
                     try {
                         BufferedImage sampleImage = frameImage;
@@ -120,11 +122,11 @@ public class Vision extends WindowAdapter {
                     singleCheck = false;
                 }
                 
-                // SHADOW TEST
+                // SHADOW REMOVAL TESTS
                 ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 int[] rgbMean = s.calculateMean(frameImage);
                 frameImage =  s.shadowRemoval(frameImage, rgbMean);
-               
+               */
                 
                 frame.recycle();
                 processAndUpdateImage(frameImage, before);
