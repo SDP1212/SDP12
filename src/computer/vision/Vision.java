@@ -121,12 +121,12 @@ public class Vision extends WindowAdapter {
                     }
                     singleCheck = false;
                 }
-                
+                */
                 // SHADOW REMOVAL TESTS
                 ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 int[] rgbMean = s.calculateMean(frameImage);
                 frameImage =  s.shadowRemoval(frameImage, rgbMean);
-               */
+               
                 
                 frame.recycle();
                 processAndUpdateImage(frameImage, before);
