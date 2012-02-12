@@ -274,7 +274,7 @@ public class Brick {
      * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
     public static void rotate(int angle) {
-        logToFile(outLog, "Rotate");
+        logToFile(outLog, "Rotate " + angle);
         int finalAngle = angle - 180;
         double factor;
         if (finalAngle < 0) {
@@ -335,7 +335,7 @@ public class Brick {
         for (int i = 0; i < 4; i++) {
             // Shift by an amount corresponding to our current position the byte at that position
             int shift = (4 - 1 - i) * 8;
-            value += ((b[i] & 0xFFFFFFFF) << shift) & 0x00000000FFFFFFFF;
+            value += ((b[i] & 0xFF) << shift);
         }
         return value;
     }
