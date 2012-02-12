@@ -435,13 +435,15 @@ public class Vision extends WindowAdapter {
             imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
             imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
 	    imageGraphics.setColor(Color.green);
-	    imageGraphics.drawLine(0, green.getY(), 640, green.getY());
-	    imageGraphics.drawLine(green.getX(), 0, green.getX(), 480);
-            //imageGraphics.setColor(Color.blue);
-            //imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
-            //imageGraphics.setColor(Color.yellow);
-            //imageGraphics.drawOval(yellow.getX()-15, yellow.getY()-15, 30,30);
-            //imageGraphics.setColor(Color.white);
+	  //  imageGraphics.drawRect(0, green.getY(), 640, green.getY());
+	  //  imageGraphics.drawRect(green.getX(), 0, green.getX(), 480);
+	  //  imageGraphics.drawRect(0, green.getY(), 640, green.getY());
+	  //  imageGraphics.drawRect(green.getX(), 0, green.getX(), 480);
+            imageGraphics.setColor(Color.blue);
+            imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
+            imageGraphics.setColor(Color.yellow);
+            imageGraphics.drawOval(yellow.getX()-15, yellow.getY()-15, 30,30);
+            imageGraphics.setColor(Color.white);
 
             /*
             float ax = (float) Math.cos(worldState.getBlueOrientation());
