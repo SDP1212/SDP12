@@ -56,7 +56,7 @@ public class GoToBall extends AI{
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
         System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
         if (Math.abs(angle) > Math.PI / 4) {
-            robotinho.rotate(Math.PI / 4);
+            robotinho.rotate(Math.max(Math.min(angle, Math.PI / 8), -Math.PI / 8));
         } else {
             robotinho.forward(Brick.MEDIUM);
         }

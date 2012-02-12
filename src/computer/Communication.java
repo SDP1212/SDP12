@@ -120,11 +120,13 @@ public class Communication implements Runnable, ControlInterface {
      */
     public void sendMessage(int message) {
         try {
-            byte[] buf = intToByteArray(message);
-//            System.out.println("Message " + Arrays.toString(buf));
-            outStream.write(buf);
-            outStream.flush();
-            commState = WAITING;
+            if (commState == READY) {
+                byte[] buf = intToByteArray(message);
+    //            System.out.println("Message " + Arrays.toString(buf));
+                outStream.write(buf);
+                outStream.flush();
+                commState = WAITING;
+            }
         } catch (IOException e) {
             System.out.println(e.toString());
             commState = ERROR;
@@ -156,6 +158,7 @@ public class Communication implements Runnable, ControlInterface {
      
                 switch (n){
                     case (Brick.COLLISION):
+                        commState = WAITING;
                         System.out.println("Collision!");
                         break;
                     case (Brick.OK):

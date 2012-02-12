@@ -224,7 +224,7 @@ public class Brick {
      * @param outLog The log file to write to.
      * @param message The message to write.
      */
-    public static void logToFile(FileOutputStream outLog, String message) {
+    public synchronized static void logToFile(FileOutputStream outLog, String message) {
         DataOutputStream dataOut = new DataOutputStream(outLog);
         try { 
             // write
@@ -321,6 +321,7 @@ public class Brick {
             
         }
         pilot.stop();
+        sendMessage(OK);
     }
     
     /**

@@ -420,6 +420,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        appController.stopEngine();
         commController.stop();
     }//GEN-LAST:event_stopButtonActionPerformed
 
