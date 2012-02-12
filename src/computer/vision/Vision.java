@@ -251,7 +251,7 @@ public class Vision extends WindowAdapter {
                 Color c = new Color(image.getRGB(column, row));
                 float hsbvals[] = new float[3];
 		//System.out.println("This is red: "+(double)(c.getRed()/(double)(c.getRed()+c.getBlue()+c.getGreen()))*255);
-                Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+                Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
 
                 /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
@@ -678,8 +678,7 @@ public class Vision extends WindowAdapter {
 
 	if(angleMF<0) {
 		angleMF = Math.abs(angleMF);
-	}
-	else {
+	} else {
 	   angleMF = 360 - angleMF;
 	}
 	
@@ -692,7 +691,7 @@ public class Vision extends WindowAdapter {
         
         /* Calculate new angle using just the center of the T and the grey circle */
         /*
-        length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
+            length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
                 + Math.pow(frontY - backY, 2));
         ax = (frontX - backX) / length;
         ay = (frontY - backY) / length;
@@ -737,7 +736,7 @@ public class Vision extends WindowAdapter {
         ArrayList<Integer> greyYPoints = new ArrayList<Integer>();
 
         for (int a=-20; a < 21; a++) {
-            ax = (float) Math.cos(+((a*Math.PI)/180));
+            ax = (float) Math.cos(radianAngleMF+((a*Math.PI)/180));
             ay = (float) Math.sin(radianAngleMF+((a*Math.PI)/180));
             for (int i = 15; i < 25; i++) {
                 int greyX = meanX - (int) (ax * i);
@@ -904,34 +903,136 @@ public class Vision extends WindowAdapter {
             return (float) 0.001;
         }
 
+        // TEST FOR longestLine angle location.
+        //longestLine(xpoints, ypoints, meanX, meanY);
         return angleMF;
-    
-
-    /* Doesn't work */
-    /*
-    private void calculateDistortion() {
-        this.xDistortion = new int[640];
-        this.yDistortion = new int[480];
-
-        int centerX = 320;
-        int centerY = 240;
-        float k = (float) 0.01;
-
-        for (int i = 0; i < 480; i++) {
-            for (int j = 0; j < 640; j++) {
-                int x = (int) Math.floor(getRadialX(j, i, centerX, centerY, (float) Math.pow(k, 2)));
-                int y = (int) Math.floor(getRadialY(j, i, centerX, centerY, (float) Math.pow(k, 2)));
-
-                if (y >= 480) { y = 240; }
-                if (x >= 640) { x = 320; }
-
-                xDistortion[j] = x;
-                yDistortion[i] = y;
-            }
-        }
-         */ 
     }
     
+    public void longestLine(ArrayList xPoints, ArrayList yPoints, int meanX, int meanY) {
+	
+	// The "radius" of the square we search within.
+	int range = 60;
+
+	int[] xDetections = new int[4];
+	int[] yDetections = new int[4];
+
+	// +x, +y (Top-Left)
+	search1:
+		for (int x = (meanX-range); x < (meanX+range); x++) {
+			for (int y = (meanY-range); y < (meanY+range); y++) {
+				if (xPoints.contains(x)) {
+					if (yPoints.contains(y)) {
+						xDetections[0] = x;
+						yDetections[0] = y;
+						break search1;
+                                                  
+					}
+				}	
+			}
+		}
+
+	// +x, -y (Bottom-Left)
+	search2:
+		for (int x = (meanX-range); x < (meanX+range); x++) {
+			for (int y = (meanY+range); y > (meanY-range); y--) {
+				if (xPoints.contains(x)) {
+					if (yPoints.contains(y)) {
+						xDetections[1] = x;
+						yDetections[1] = y;
+						break search2;
+					}
+				}	
+			}
+		}
+
+	// -x, -y (Bottom-Right)
+	search3:
+		for (int x = (meanX+range); x > (meanX-range); x--) {
+			for (int y = (meanY+range); y > (meanY-range); y--) {
+				if (xPoints.contains(x)) {
+					if (yPoints.contains(y)) {
+						xDetections[2] = x;
+						yDetections[2] = y;
+						break search3;
+					}
+				}	
+			}
+		}
+
+	// -x, +y (Top-Right)
+	search4:
+		for (int x = (meanX+range); x > (meanX-range); x--) {
+			for (int y = (meanY-range); y < (meanY+range); y++) {
+				if (xPoints.contains(x)) {
+					if (yPoints.contains(y)) {
+						xDetections[3] = x;
+						yDetections[3] = y;
+						break search4;
+					}
+				}	
+			}
+		}
+ 
+        /*
+	for (int i = 0; i < 4; i++) {
+		System.out.println("x" + i + " = " + xDetections[i] + ", y" +  i + " = " + yDetections[i]);
+	}
+         */
+        double angle = getAngle(xDetections, yDetections, meanX, meanY);
+        System.out.println("Angle is " + angle);
+    }
     
+    public double getAngle (int[] x, int []y, int meanX, int meanY ) {
+        
+        // Uses Squared Euclidean Distance
+	double distance = 0; 
+	int pointX = 0;
+        int pointY = 0;
+	for (int i = 0; i < x.length; i++) { 
+            for (int j = 0; j < y.length; j++) { 
+                double tempDistance = Math.pow (meanX -x[i],2) + Math.pow (meanY -y[i],2); 
+		if (tempDistance > distance) { 
+                    distance = tempDistance; 
+                    pointX = x[i]; 
+                    pointY = y[i];  
+		} 
+            } 
+        }
+     
+    //double ax = (longdist[0] - meanX) / distance;
+    //double ay = (longdist[1] - meanY) / distance;
+
+    //float rAngle = (float) Math.acos(ax);
+    double diffX = meanX - pointX;
+    double diffY = meanY - pointY;
+
+    double divisor = (double) diffX / (double) diffY;
+    double radianAngle = Math.atan(divisor);
+    //double divisor = (Math.abs(diffX) / distance);
+    //double radianAngle = Math.asin(divisor);
+    
+    System.out.println("diffX = " + diffX + ", diffY = " + diffY + ", divisor = " + divisor);
+    
+    double degreeAngle = Math.toDegrees(radianAngle);
+    //double degreeAngle = -1.0;
+
+    if (diffX > 0) {
+        if (diffY > 0) {
+            degreeAngle = 180 - degreeAngle;
+            
+        } else {
+            degreeAngle = 180 - 180 - degreeAngle;
+        }
+    } else {
+        if (diffY > 0) {
+            degreeAngle = 180 - 360 + degreeAngle;
+        } else {
+            degreeAngle = 180 - 180 + degreeAngle;    //Correct
+        }
+    }
+    
+    return degreeAngle; 
+        
+    } 
     
 }
