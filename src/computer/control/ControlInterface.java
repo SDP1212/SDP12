@@ -26,6 +26,10 @@ public interface ControlInterface {
     
     public void rotate (double angle);
     
+    public void rotateRight();
+    
+    public void rotateLeft();
+    
     public int getCommState();
     
 }
