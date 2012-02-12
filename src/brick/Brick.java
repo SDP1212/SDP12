@@ -335,7 +335,7 @@ public class Brick {
         pilot.stop();
         pilot.backward();
         try {
-            Thread.sleep(300);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             
         }
