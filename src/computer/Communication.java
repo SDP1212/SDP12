@@ -1,5 +1,6 @@
 package computer;
 import brick.Brick;
+import computer.ai.AI;
 import computer.control.ControlInterface;
 import lejos.pc.comm.*;
 import java.io.*;
@@ -21,6 +22,7 @@ public class Communication implements Runnable, ControlInterface {
     private Thread listener;
     private boolean connected = false;
     private int commState = DISCONNECTED;
+    private AI ai;
     public void switchModeTo(int mode) {
         
     }
@@ -113,6 +115,14 @@ public class Communication implements Runnable, ControlInterface {
         sendMessage(arg | opcode);
     }
     
+    public void rotateRight() {
+        sendMessage(Brick.ROTATERIGHT);
+    }
+
+    public void rotateLeft() {
+        sendMessage(Brick.ROTATELEFT);
+    }
+    
     /**
      * Send message method. Creates a 4 byte buffer in which it adds the message 
      * and writes it to the output stream.
@@ -159,7 +169,8 @@ public class Communication implements Runnable, ControlInterface {
                 switch (n){
                     case (Brick.COLLISION):
                         commState = WAITING;
-                        System.out.println("Collision!");
+                        ai.robotCollided();
+//                        System.out.println("Collision!");
                         break;
                     case (Brick.OK):
                         commState = READY;
@@ -185,5 +196,9 @@ public class Communication implements Runnable, ControlInterface {
     
     public int getCommState() {
         return commState;
+    }
+    
+    public void setAI(AI ai) {
+        this.ai = ai;
     }
 }

@@ -39,6 +39,9 @@ public class Brick {
     public final static int KICK = 0X05;
     public final static int ROTATE = 0x06;
     
+    public final static int ROTATERIGHT = 0x07;
+    public final static int ROTATELEFT = 0x08;
+    
     public final static int SLOW = 0X000100;
     public final static int MEDIUM = 0X000200;
     public final static int FAST = 0X000300;
@@ -119,9 +122,15 @@ public class Brick {
 
                     case ROTATE:
                         rotate(arg >> 8);
-                        
                         break;
 
+                    case ROTATELEFT:
+                        rotateLeft();
+                        break;
+                        
+                    case ROTATERIGHT:
+                        rotateRight();
+                        break;
                     case STOP:
                         stop();
                         break;
@@ -284,6 +293,16 @@ public class Brick {
         }
         pilot.setRotateSpeed(180);
         pilot.rotate((finalAngle) * factor);
+    }
+    
+    public static void rotateRight() {
+        pilot.setRotateSpeed(100);
+        pilot.rotateRight();
+    }
+    
+    public static void rotateLeft() {
+        pilot.setRotateSpeed(100);
+        pilot.rotateLeft();
     }
     
     /**
