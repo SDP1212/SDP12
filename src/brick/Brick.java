@@ -39,6 +39,9 @@ public class Brick {
     public final static int KICK = 0X05;
     public final static int ROTATE = 0x06;
     
+    public final static int ROTATERIGHT = 0x07;
+    public final static int ROTATELEFT = 0x08;
+    
     public final static int SLOW = 0X000100;
     public final static int MEDIUM = 0X000200;
     public final static int FAST = 0X000300;
@@ -119,9 +122,15 @@ public class Brick {
 
                     case ROTATE:
                         rotate(arg >> 8);
-                        
                         break;
 
+                    case ROTATELEFT:
+                        rotateLeft();
+                        break;
+                        
+                    case ROTATERIGHT:
+                        rotateRight();
+                        break;
                     case STOP:
                         stop();
                         break;
@@ -224,7 +233,7 @@ public class Brick {
      * @param outLog The log file to write to.
      * @param message The message to write.
      */
-    public static void logToFile(FileOutputStream outLog, String message) {
+    public synchronized static void logToFile(FileOutputStream outLog, String message) {
         DataOutputStream dataOut = new DataOutputStream(outLog);
         try { 
             // write
@@ -274,7 +283,7 @@ public class Brick {
      * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
     public static void rotate(int angle) {
-        logToFile(outLog, "Rotate");
+        logToFile(outLog, "Rotate " + angle);
         int finalAngle = angle - 180;
         double factor;
         if (finalAngle < 0) {
@@ -284,6 +293,16 @@ public class Brick {
         }
         pilot.setRotateSpeed(180);
         pilot.rotate((finalAngle) * factor);
+    }
+    
+    public static void rotateRight() {
+        pilot.setRotateSpeed(100);
+        pilot.rotateRight();
+    }
+    
+    public static void rotateLeft() {
+        pilot.setRotateSpeed(100);
+        pilot.rotateLeft();
     }
     
     /**
@@ -321,6 +340,7 @@ public class Brick {
             
         }
         pilot.stop();
+        sendMessage(OK);
     }
     
     /**
@@ -335,7 +355,7 @@ public class Brick {
         for (int i = 0; i < 4; i++) {
             // Shift by an amount corresponding to our current position the byte at that position
             int shift = (4 - 1 - i) * 8;
-            value += ((b[i] & 0xFFFFFFFF) << shift) & 0x00000000FFFFFFFF;
+            value += ((b[i] & 0xFF) << shift);
         }
         return value;
     }

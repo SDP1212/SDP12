@@ -156,7 +156,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false;
-        
+        System.out.println("DEBUG: Corners: "+leftBuffer+", "+rightBuffer+", "+topBuffer+", "+bottomBuffer);
+
         PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected);
         PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected); 
         PixelCoordinates bottomLeftCorner = new PixelCoordinates(leftBuffer,bottomBuffer,isThereBarrelCorrection,isOrientationCorrected);

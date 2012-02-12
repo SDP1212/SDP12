@@ -1,9 +1,11 @@
 package computer;
 import brick.Brick;
+import computer.ai.AI;
 import computer.control.ControlInterface;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -20,6 +22,7 @@ public class Communication implements Runnable, ControlInterface {
     private Thread listener;
     private boolean connected = false;
     private int commState = DISCONNECTED;
+    private AI ai;
     public void switchModeTo(int mode) {
         
     }
@@ -105,10 +108,19 @@ public class Communication implements Runnable, ControlInterface {
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
 //        System.out.println("Opcode: " + opcode);
+//        System.out.println("Angle " + angle);
         int arg = composeAngleArgument(angle) << 8;
 //        System.out.println("Arg " + arg);
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
+    }
+    
+    public void rotateRight() {
+        sendMessage(Brick.ROTATERIGHT);
+    }
+
+    public void rotateLeft() {
+        sendMessage(Brick.ROTATELEFT);
     }
     
     /**
@@ -118,10 +130,13 @@ public class Communication implements Runnable, ControlInterface {
      */
     public void sendMessage(int message) {
         try {
-            byte[] buf = intToByteArray(message);
-            outStream.write(buf);
-            outStream.flush();
-            commState = WAITING;
+            if (commState == READY) {
+                byte[] buf = intToByteArray(message);
+    //            System.out.println("Message " + Arrays.toString(buf));
+                outStream.write(buf);
+                outStream.flush();
+                commState = WAITING;
+            }
         } catch (IOException e) {
             System.out.println(e.toString());
             commState = ERROR;
@@ -129,9 +144,9 @@ public class Communication implements Runnable, ControlInterface {
     }
     
     public int composeAngleArgument(double angle) {
-        int out = Math.round((float)Math.toDegrees(angle) + 180);
-        //System.out.println("Angle " + Integer.toString(out));
-        return out;
+        long out = Math.round(Math.toDegrees(angle) + 180);
+//        System.out.println("Angle " + Long.toString(out));
+        return (int)out;
         
     }
 
@@ -153,7 +168,9 @@ public class Communication implements Runnable, ControlInterface {
      
                 switch (n){
                     case (Brick.COLLISION):
-                        System.out.println("Collision!");
+                        commState = WAITING;
+                        ai.robotCollided();
+//                        System.out.println("Collision!");
                         break;
                     case (Brick.OK):
                         commState = READY;
@@ -172,12 +189,16 @@ public class Communication implements Runnable, ControlInterface {
         for (int i = 0; i < 4; i++) {
             // Shift the integer by out current position in the array
             int shift = (3 - i) * 8;
-            b[i] = (byte) (((in & 0xFFFFFFFF) >> shift) & 0x00000000FFFFFFFF);
+            b[i] = (byte) ((in  >>> shift) & 0x000000FF);
         }
         return b;
     }
     
     public int getCommState() {
         return commState;
+    }
+    
+    public void setAI(AI ai) {
+        this.ai = ai;
     }
 }
