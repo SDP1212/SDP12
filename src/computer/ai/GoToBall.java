@@ -30,7 +30,7 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 3000 ) ) {
+        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 100 ) ) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
             issueCommands();
