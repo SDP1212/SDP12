@@ -23,5 +23,10 @@ public class DumbAI extends AI{
 
     @Override
     public void run(){}
+
+    @Override
+    public void robotCollided() {
+        
+    }
     
 }

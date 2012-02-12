@@ -18,6 +18,7 @@ public class ApplicationController {
     private MainWindow window;
     private Communication communication;
     private static ApplicationController appController;
+    private Thread engineThread;
 
     /**
      * Main method. All it does is instantiate a new ApplicationController
@@ -90,9 +91,15 @@ public class ApplicationController {
     }
     
     public void startEngine() {
-        Engine eng=new Engine(getWorldState(), getCommunicationController(), false, true, true, Pitch.TARGET_LEFT_GOAL, Robot.YELLOW_PLATE, GoToBall.class, DumbAI.class);
-        Thread enginethread = new Thread(eng);
-        enginethread.start();
+        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, Pitch.TARGET_LEFT_GOAL, Robot.YELLOW_PLATE, GoToBall.class, DumbAI.class);
+        engineThread = new Thread(engine);
+        engineThread.start();
+    }
+    
+    public void stopEngine() {
+        if (engineThread != null && engineThread.isAlive()) {
+            engineThread.interrupt();
+        }
     }
     
     public WorldState getWorldState() {

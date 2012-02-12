@@ -4,6 +4,7 @@
  */
 package computer.ai;
 
+import computer.ApplicationController;
 import computer.simulator.Coordinates;
 import computer.simulator.Pitch;
 import computer.simulator.Robot;
@@ -33,6 +34,7 @@ public abstract class AI {
     public AI(Pitch pitch, Robot self){
         this.pitch=pitch;
         this.self=self;
+        ApplicationController.getCommunicationController().setAI(this);
     }
     
     /**
@@ -50,4 +52,6 @@ public abstract class AI {
     public ArrayList<Coordinates> getActionPlan(){
         return actionPlan;
     }
+    
+    public abstract void robotCollided();
 }
