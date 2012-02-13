@@ -64,7 +64,7 @@ public class LineTools {
         if(line.getGradient() == Double.POSITIVE_INFINITY){
             distance = Math.abs(point.getX()-line.getXmin());
         } else {
-            distance = (-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
+            distance = Math.abs(-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
         }
         
         return distance;
@@ -95,13 +95,14 @@ public class LineTools {
     public static int sideOfLine(Coordinates point, Line line){
         boolean result = true;
         // Check if the point is on the line...
-        if(point.getX()*line.getGradient() + line.getOffset() == point.getY()){
+        if((point.getX()*line.getGradient() + line.getOffset() == point.getY()||(line.getGradient()==Double.POSITIVE_INFINITY && point.getX()==line.getFirstPoint().getX()))){
             return 0;
         }
         else{
             // Check if the line is parallel to the y axis...
             if(line.getGradient() == Double.POSITIVE_INFINITY || line.getGradient() == Double.NEGATIVE_INFINITY){
-                if(point.getX()<line.getFirstPoint().getX()) result = false;
+                if(point.getX()>line.getFirstPoint().getX()) result = false;
+                if(line.getDirection()==false) result = !result;
             }
             else{
                 // Check if the point is on the left of the line...
@@ -149,7 +150,7 @@ public class LineTools {
             else{
                 quotient2 = (intersectionOfLines(line, lines[i]).getX() -line.getFirstPoint().getX())/x;
             }
-            if(quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
+            if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
                 quotient = quotient2;
                 numOfClosestLine = i;
             }
@@ -205,7 +206,32 @@ public class LineTools {
         lines[10] = new Line(robot2Coordinates[2], robot2Coordinates[3]);
         lines[11] = new Line(robot2Coordinates[3], robot2Coordinates[0]);
         
-        lineOfIntersection = lineIntersectingLines(ball, lines);
+        /*
+         * The following part is the same as the function lineIntersectingLines but we take into account that the sides of the objects on the table are finite.
+         */
+        double quotient = -1;
+        double quotient2;
+        double x = ball.getSecondPoint().getX() - ball.getFirstPoint().getX();
+        double y = ball.getSecondPoint().getY() - ball.getFirstPoint().getY();
+        
+        for(int i=0; i<lines.length; i++){
+            if((lines[i].getSecondPoint().getX()<=intersectionOfLines(ball, lines[i]).getX() && intersectionOfLines(ball, lines[i]).getX()<=lines[i].getFirstPoint().getX())
+                    || (lines[i].getSecondPoint().getX()>=intersectionOfLines(ball, lines[i]).getX() && intersectionOfLines(ball, lines[i]).getX()>=lines[i].getFirstPoint().getX())){
+                
+                if(x == 0){
+                    quotient2 = (intersectionOfLines(ball, lines[i]).getY() -ball.getFirstPoint().getY())/y;
+                }
+                else{
+                    quotient2 = (intersectionOfLines(ball, lines[i]).getX() -ball.getFirstPoint().getX())/x;
+                }
+
+                if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
+                    quotient = quotient2;
+                    lineOfIntersection = i;
+                }
+            }            
+            
+        }
         
         return lineOfIntersection;
     }
