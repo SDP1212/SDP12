@@ -64,7 +64,7 @@ public class LineTools {
         if(line.getGradient() == Double.POSITIVE_INFINITY){
             distance = Math.abs(point.getX()-line.getXmin());
         } else {
-            distance = (-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
+            distance = Math.abs(-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
         }
         
         return distance;
@@ -101,7 +101,8 @@ public class LineTools {
         else{
             // Check if the line is parallel to the y axis...
             if(line.getGradient() == Double.POSITIVE_INFINITY || line.getGradient() == Double.NEGATIVE_INFINITY){
-                if(point.getX()<line.getFirstPoint().getX()) result = false;
+                if(point.getX()>line.getFirstPoint().getX()) result = false;
+                if(line.getDirection()==false) result = !result;
             }
             else{
                 // Check if the point is on the left of the line...
