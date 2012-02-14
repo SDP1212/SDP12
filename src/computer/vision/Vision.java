@@ -11,8 +11,6 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.imageio.ImageIO;   // Used for testing.
-import java.io.File;            // Also used for testing.
 
 import au.edu.jcu.v4l4j.CaptureCallback;
 import au.edu.jcu.v4l4j.DeviceInfo;
@@ -109,27 +107,16 @@ public class Vision extends WindowAdapter {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
                 
-                /*
-                // Takes an image of the pitch.
-                if (singleCheck) {
-                    try {
-                        BufferedImage sampleImage = frameImage;
-                        File outputfile = new File("sample1.jpeg");
-                        ImageIO.write(sampleImage, "jpeg", outputfile);
-                    } catch (Exception e) {
-                        // Seemingly obligatory comment.
-                    }
-                    singleCheck = false;
-                }
-                */
-                // SHADOW REMOVAL TESTS
                 ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 int[] rgbMean = s.calculateMean(frameImage);
                 frameImage =  s.shadowRemoval(frameImage, rgbMean);
                
                 
                 frame.recycle();
-                processAndUpdateImage(frameImage, before);
+                
+                // Switch between angle methods using true or false here.
+                // false is default.
+                processAndUpdateImage(frameImage, before, false);
             }
         });
 
@@ -175,41 +162,14 @@ public class Vision extends WindowAdapter {
      *
      * @param image     The image to process and then show.
      */
-    public void processAndUpdateImage(BufferedImage image, long before) {
-
-        /*
-        //Lens distortion - not working fully
-        BufferedImage image = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-
-        int centerX = 320;
-        int centerY = 240;
-        float k = (float) 0.006;
-
-        for (int i = 0; i < 480; i++) {
-            for (int j = 0; j < 640; j++) {
-                int x = (int) Math.floor(getRadialX(j, i, centerX, centerY, (float) Math.pow(k, 2)));
-                int y = (int) Math.floor(getRadialY(j, i, centerX, centerY, (float) Math.pow(k, 2)));
-
-                if (y >= 480) { y = 1; }
-                if (x >= 640) { x = 1; }
-                if (y < 0) { y = 1; }
-                if (x < 0) { x = 1; }
-
-                image.setRGB(j, i, input.getRGB(x, y));
-            }
-        }
-        */
-
-
-        /*
-        for (int i = 0; i < image.getHeight(); i++) {
-            for (int j = 0; j < image.getWidth(); j++) {
-                image.setRGB(j, i, input.getRGB(xDistortion[j], yDistortion[i]));
-                //image.setRGB(j, i, input.getRGB(j, i));
-            }
-        }
-        */
+    public void processAndUpdateImage(BufferedImage image, long before, boolean noFiltering) {
+        
+        /* NOTE!
+         * The boolean "noFiltering" is used to differentiate between the normal method
+         * for calculating the angle, and the vector method of calculating the angle.
+         * True represents the vector method, false represents the normal method.
+         */
+        
 
         int ballX = 0;
         int ballY = 0;
@@ -339,8 +299,7 @@ public class Vision extends WindowAdapter {
 
 	    green = new Position(greenX, greenY);
 	    green.fixValues(worldState.getGreenX(), worldState.getGreenY());
-	    green.filterPoints(greenXPoints, greenYPoints);
-
+            green.filterPoints(greenXPoints, greenYPoints);
 	} else {
 	    green = new Position(worldState.getGreenY(), worldState.getGreenY());
 	}
@@ -366,7 +325,9 @@ public class Vision extends WindowAdapter {
 
             blue = new Position(blueX, blueY);
             blue.fixValues(worldState.getBlueX(), worldState.getBlueY());
-            blue.filterPoints(blueXPoints, blueYPoints);
+            if (noFiltering == false) {
+                blue.filterPoints(blueXPoints, blueYPoints);
+            }
         } else {
             blue = new Position(worldState.getBlueX(), worldState.getBlueY());
         }
@@ -379,7 +340,9 @@ public class Vision extends WindowAdapter {
 
             yellow = new Position(yellowX, yellowY);
             yellow.fixValues(worldState.getYellowX(), worldState.getYellowY());
-            yellow.filterPoints(yellowXPoints, yellowYPoints);
+            if (noFiltering == false) {
+                yellow.filterPoints(yellowXPoints, yellowYPoints);
+            }
         } else {
             yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
         }
@@ -387,8 +350,15 @@ public class Vision extends WindowAdapter {
 
 
         /* Attempt to find the blue robot's orientation. */
+        
+        double blueOrientation;
         try {
-            double blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+            if (noFiltering == false) {
+                blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+            } else {
+                blueOrientation = getVectorAngle(image, blueXPoints, blueYPoints, blue.getX(), blue.getY());
+            }
+            
             double diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
             if (diff > 0.1) {
                 float angle = (float) Math.round(((blueOrientation / Math.PI) * 180) / 5) * 5;
@@ -399,10 +369,15 @@ public class Vision extends WindowAdapter {
             //System.out.println("Blue robot: " + e.getMessage());
         }
 
-
         /* Attempt to find the yellow robot's orientation. */
+        double yellowOrientation;
         try {
-            double yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
+            if (noFiltering == false) {
+                yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
+            } else {
+                yellowOrientation = getVectorAngle(image, yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY());
+            }
+            
             double diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
             if (yellowOrientation != 0 && diff > 0.1) {
                 float angle = (float) Math.round(((yellowOrientation / Math.PI) * 180) / 5) * 5;
@@ -412,7 +387,7 @@ public class Vision extends WindowAdapter {
             //worldState.setYellowOrientation(worldState.getYellowOrientation());
             //System.out.println("Yellow robot: " + e.getMessage());
         }
-
+         
 
         worldState.setBallX(ball.getX());
         worldState.setBallY(ball.getY());
@@ -613,6 +588,7 @@ public class Vision extends WindowAdapter {
         }
         stdev  = (int) Math.sqrt(stdev / xpoints.size());
 
+
         /* Find the position of the front of the T. */
         int frontX = 0;
         int frontY = 0;
@@ -642,15 +618,7 @@ public class Vision extends WindowAdapter {
         /* Otherwise, get the frontX and Y. */
         frontX /= frontCount;
         frontY /= frontCount;
-	try{
-	double deltaY = meanY-frontY;
-	double deltaX = meanX-frontX;
-	
-	//System.out.println("This is the slope: "+deltaY/deltaX);
-	//System.out.println("The blue X: "+meanX+" and the blue Y: "+meanY+" and the white x: "+frontX+" and the white y: "+frontY+" and the slope is: "+deltaY/deltaX);
-	}
-	catch(Exception e) {
-	}
+
         imageGraphics.setColor(Color.white);
         imageGraphics.drawOval(frontX-15, frontY-15, 30,30);
 	imageGraphics.setColor(Color.blue);
@@ -679,20 +647,155 @@ public class Vision extends WindowAdapter {
             angleMF = -angleMF;
         }
 
-	if(angleMF<0) {
+	if(angleMF < 0) {
 		angleMF = Math.abs(angleMF);
 	} else {
 	   angleMF = 360 - angleMF;
 	}
-	
-        // A check to turn on/off the more complex orientation.
-        boolean useGreyDot = false;
+	      
+        if (radianAngleMF == 0) {
+            return (float) 0.001;
+        }
+
+        // DEBUG
+        //System.out.println("Front-T angle = " + angleMF + ".  Remember Yellow is turned off for testing!");
+        return angleMF;
+    }
+    
+    // getVectorAngle can either find the "longestLine" or the sum of vectors for attempting to get an angle.
+    public double getVectorAngle (BufferedImage image, ArrayList<Integer> xPoints, ArrayList<Integer> yPoints, int meanX, int meanY) {
+     
+        int minX = meanX; 
+        int maxX = meanX; 
+
+        int minY = meanY; 
+        int maxY = meanY; 
+
+        int [] newXpoints = new int [4]; 
+        int [] newYpoints = new int [4]; 
+
+        int currentX;
+        int currentY;
         
-        if (useGreyDot) {
-            // Something
+        Position helper = new Position(meanX, meanY);
+        float range = 50;
+        
+        for (int i = 0; i < xPoints.size(); i++) { 
+            
+            currentX = xPoints.get(i);
+            currentY = yPoints.get(i);
+            
+            if ((helper.sqrdEuclidDist(meanX, meanY, currentX, currentY)) < range) {
+                if (currentX < minX) {
+                    minX = currentX;
+                    newXpoints[0] = currentX; 
+                    newYpoints[0] = currentY; 
+                } else if (currentX > maxX) { 
+                    maxX = currentX;
+                    newXpoints[1] = currentX; 
+                    newYpoints[1] = currentY; 
+                }
+            
+                if (currentY < minY) { 
+                    minY = currentY;
+                    newYpoints[2] = currentY; 
+                    newXpoints[2] = currentX;
+                } else if (currentY > maxY) {
+                    maxY = currentY;
+                    newYpoints[3] = currentY; 
+                    newXpoints[3] = currentX; 
+                }
+            }
+                                
         }
         
-        /* Calculate new angle using just the center of the T and the grey circle */
+        
+        /*
+        // #################
+        // Vector Sum Method
+        double vectorX = 0;
+        double vectorY = 0;
+
+        for (int i = 0; i < 4; i++) {
+            vectorX += meanX - newXpoints[i];
+            vectorY += meanY - newYpoints[i];
+        }
+
+        if (vectorX == 0) {
+            vectorX = 0.01;
+        }
+        
+        if (vectorY == 0) {
+            vectorY = 0.01;
+        }
+        
+        */
+        
+        // End of Sum of Vectors Method
+        // ################################
+        // Squared Eclidean Distance Method
+        
+        double distance = 0; 
+	int pointX = 0;
+        int pointY = 0;
+	for (int i = 0; i < newXpoints.length; i++) {
+            double tempDistance = Math.pow (meanX -newXpoints[i],2) + Math.pow (meanY -newYpoints[i],2);
+            if (tempDistance > distance) { 
+                distance = tempDistance; 
+                pointX = newXpoints[i]; 
+                pointY = newYpoints[i];
+            }
+            // DEBUG
+            //System.out.println("newXpoint = " + newXpoints[i]);
+        }
+        
+        // DEBUG - draws a small circle around where the point is detected.
+        //image.getGraphics().drawOval(pointX-5, pointY-5, 10, 10);
+                
+        double vectorX = meanX - pointX;
+        double vectorY = meanY - pointY;
+        
+        // End of Longest Line method
+        // ##################################
+        
+        
+        double divisor = vectorY / vectorX;
+        double radianAngle = Math.atan(divisor);
+        double degreeAngle = Math.toDegrees(radianAngle);
+        degreeAngle = Math.abs(degreeAngle);
+
+        double angle = 0.1;
+        
+        // DEBUG - Some prints used in testing.
+        //System.out.println("MeanX is: " + meanX + ", MeanY is: " + meanY + ", PointX is: " + pointX + ", PointY is: " + pointY);
+        //System.out.println("Angle = " + degreeAngle + ", VectorX = " + vectorX + ", VectorY = " + vectorY);
+        //System.out.println("Using the vector method.  Remember Yellow is turned off for testing!");
+        
+        if (vectorX > 0) {
+            if (vectorY > 0) {
+                angle = degreeAngle;
+            } else {
+                angle = 360 - degreeAngle;
+            }
+        } else {
+            if (vectorY > 0) {
+                angle = 180 - degreeAngle;
+            } else {
+                angle = 180 + degreeAngle;
+            }
+        }
+        
+        // DEBUG - attempts to draw a line at the angle it's facing.
+        //image.getGraphics().drawLine((meanX - (int)vectorX), (meanY - (int)vectorY), meanX, meanY);
+
+        return angle;
+    }
+}
+
+// FOLLOWING IS ALL CURRENTLY UNUSED CODE
+// This was a part of the findOrientation method.
+
+/* Calculate new angle using just the center of the T and the grey circle */
         /*
             length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
                 + Math.pow(frontY - backY, 2));
@@ -735,6 +838,7 @@ public class Vision extends WindowAdapter {
         */
 
         //Look in a cone in the opposite direction to try to find the grey circle
+/*
         ArrayList<Integer> greyXPoints = new ArrayList<Integer>();
         ArrayList<Integer> greyYPoints = new ArrayList<Integer>();
 
@@ -758,6 +862,7 @@ public class Vision extends WindowAdapter {
                 }
             }
         }
+ */
         /* No grey circle found
          * The angle found is probably wrong, skip this value and return 0 */
 
@@ -766,13 +871,14 @@ public class Vision extends WindowAdapter {
 //        }
 
         /* Calculate center of grey circle points */
+/*
         int totalX = 0;
         int totalY = 0;
         for (int i = 0; i < greyXPoints.size(); i++) {
             totalX += greyXPoints.get(i);
             totalY += greyYPoints.get(i);
         }
-
+*/
         /* Center of grey circle */
         //float backX = totalX / greyXPoints.size();
         //float backY = totalY / greyXPoints.size();
@@ -783,8 +889,8 @@ public class Vision extends WindowAdapter {
         /* Check that the circle is surrounded by the green plate
          * Currently checks above and below the circle */
 
-        int foundGreen = 0;
-        int greenSides = 0;
+        //int foundGreen = 0;
+        //int greenSides = 0;
            
         /* Check if green points are above the grey circle */
            /*
@@ -857,7 +963,7 @@ public class Vision extends WindowAdapter {
         }
          * /
         /* Check if green points are right of the grey circle */
-        foundGreen = 0;
+        //foundGreen = 0;
         /*
         for (int x=(int) (backX); x < (int) (backX+10); x++) {
             for (int y = (int) (backY-2); y < backY+3; y++) {
@@ -901,141 +1007,3 @@ public class Vision extends WindowAdapter {
          */
 	//System.out.println("F/M: "+angleMF);
         //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
-
-        if (radianAngleMF == 0) {
-            return (float) 0.001;
-        }
-
-        // TEST FOR longestLine angle location.
-        //longestLine(xpoints, ypoints, meanX, meanY);
-        return angleMF;
-    }
-    
-    public void longestLine(ArrayList xPoints, ArrayList yPoints, int meanX, int meanY) {
-	
-	// The "radius" of the square we search within.
-	int range = 60;
-
-	int[] xDetections = new int[4];
-	int[] yDetections = new int[4];
-
-	// +x, +y (Top-Left)
-	search1:
-		for (int x = (meanX-range); x < (meanX+range); x++) {
-			for (int y = (meanY-range); y < (meanY+range); y++) {
-				if (xPoints.contains(x)) {
-					if (yPoints.contains(y)) {
-						xDetections[0] = x;
-						yDetections[0] = y;
-						break search1;
-                                                  
-					}
-				}	
-			}
-		}
-
-	// +x, -y (Bottom-Left)
-	search2:
-		for (int x = (meanX-range); x < (meanX+range); x++) {
-			for (int y = (meanY+range); y > (meanY-range); y--) {
-				if (xPoints.contains(x)) {
-					if (yPoints.contains(y)) {
-						xDetections[1] = x;
-						yDetections[1] = y;
-						break search2;
-					}
-				}	
-			}
-		}
-
-	// -x, -y (Bottom-Right)
-	search3:
-		for (int x = (meanX+range); x > (meanX-range); x--) {
-			for (int y = (meanY+range); y > (meanY-range); y--) {
-				if (xPoints.contains(x)) {
-					if (yPoints.contains(y)) {
-						xDetections[2] = x;
-						yDetections[2] = y;
-						break search3;
-					}
-				}	
-			}
-		}
-
-	// -x, +y (Top-Right)
-	search4:
-		for (int x = (meanX+range); x > (meanX-range); x--) {
-			for (int y = (meanY-range); y < (meanY+range); y++) {
-				if (xPoints.contains(x)) {
-					if (yPoints.contains(y)) {
-						xDetections[3] = x;
-						yDetections[3] = y;
-						break search4;
-					}
-				}	
-			}
-		}
- 
-        /*
-	for (int i = 0; i < 4; i++) {
-		System.out.println("x" + i + " = " + xDetections[i] + ", y" +  i + " = " + yDetections[i]);
-	}
-         */
-        double angle = getAngle(xDetections, yDetections, meanX, meanY);
-        System.out.println("Angle is " + angle);
-    }
-    
-    public double getAngle (int[] x, int []y, int meanX, int meanY ) {
-        
-        // Uses Squared Euclidean Distance
-	double distance = 0; 
-	int pointX = 0;
-        int pointY = 0;
-	for (int i = 0; i < x.length; i++) { 
-            for (int j = 0; j < y.length; j++) { 
-                double tempDistance = Math.pow (meanX -x[i],2) + Math.pow (meanY -y[i],2); 
-		if (tempDistance > distance) { 
-                    distance = tempDistance; 
-                    pointX = x[i]; 
-                    pointY = y[i];  
-		} 
-            } 
-        }
-     
-    //double ax = (longdist[0] - meanX) / distance;
-    //double ay = (longdist[1] - meanY) / distance;
-
-    //float rAngle = (float) Math.acos(ax);
-    double diffX = meanX - pointX;
-    double diffY = meanY - pointY;
-
-    double divisor = (double) diffX / (double) diffY;
-    double radianAngle = Math.atan(divisor);
-    //double divisor = (Math.abs(diffX) / distance);
-    //double radianAngle = Math.asin(divisor);
-    
-    System.out.println("diffX = " + diffX + ", diffY = " + diffY + ", divisor = " + divisor);
-    
-    double degreeAngle = Math.toDegrees(radianAngle);
-    //double degreeAngle = -1.0;
-
-    if (diffX > 0) {
-        if (diffY > 0) {
-            degreeAngle = 180 - degreeAngle;
-            
-        } else {
-            degreeAngle = 180 - 180 - degreeAngle;
-        }
-    } else {
-        if (diffY > 0) {
-            degreeAngle = 180 - 360 + degreeAngle;
-        } else {
-            degreeAngle = 180 - 180 + degreeAngle;    //Correct
-        }
-    }
-    
-    return degreeAngle; 
-        
-    } 
-    
-}
