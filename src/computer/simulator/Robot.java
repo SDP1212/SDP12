@@ -14,7 +14,7 @@ import computer.control.ControlInterface;
  * 
  * @author Dimo Petroff
  */
-public class Robot extends SimulatableObject implements ControlInterface{
+public final class Robot extends SimulatableObject implements ControlInterface{
     
     public static final short YELLOW_PLATE=0,BLUE_PLATE=1;
     private Direction orientation;
@@ -36,12 +36,12 @@ public class Robot extends SimulatableObject implements ControlInterface{
         this.real=real;
         this.colour=colour;
         this.control=control;
-        try{
-            this.brain=(AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(pitch,this);
+        if(ai!=null)try{
+            this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(pitch,this));
         }catch (Exception e) {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
-            throw new Error("FATAL ERROR: Initialization of AI failed. Probably caused by: "+(ai==null ? "null" : ai.getName())+" is not a valid AI subclass - look at System.err for more details.");
+            throw new Error("FATAL ERROR: Initialization of AI failed. Probably caused by: "+ai.getName()+" is not a valid AI subclass - look at System.err for more details.");
         }
     }
     
@@ -98,9 +98,9 @@ public class Robot extends SimulatableObject implements ControlInterface{
         }
         else throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public void robotCollided() {
-        brain.robotCollided();
+
+    public void addAI(AI ai) {
+        this.brain=ai;
     }
     
 }

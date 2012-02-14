@@ -2,12 +2,9 @@ package computer;
 import brick.Brick;
 import computer.ai.AI;
 import computer.control.ControlInterface;
-import computer.simulator.Robot;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -24,13 +21,13 @@ public class Communication implements Runnable, ControlInterface {
     private Thread listener;
     private boolean connected = false;
     private int commState = DISCONNECTED;
-    private ArrayList<Robot> robots;
+    private AI ai;
     public void switchModeTo(int mode) {
         
     }
 
     public Communication() {
-        robots = new ArrayList<Robot>();
+        this.ai=null;
     }
     
     /**
@@ -176,9 +173,7 @@ public class Communication implements Runnable, ControlInterface {
                 switch (n){
                     case (Brick.COLLISION):
                         commState = WAITING;
-                        for (Robot robot : robots) {
-                            robot.robotCollided();
-                        }
+                        ai.robotCollided();
 //                        System.out.println("Collision!");
                         break;
                     case (Brick.OK):
@@ -207,12 +202,8 @@ public class Communication implements Runnable, ControlInterface {
         return commState;
     }
 
-    public void addRobot(Robot robot) {
-        robots.add(robot);
-    }
-    
-    public void removeRobot(Robot robot) {
-        robots.remove(robot);
+    public void addAI(AI ai){
+        this.ai=ai;
     }
     
 }

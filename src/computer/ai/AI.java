@@ -52,5 +52,12 @@ public abstract class AI {
         return actionPlan;
     }
     
+    /**
+     * This method is called by the control interface when a collision occurs.
+     * 
+     * It should signal the AI that this condition needs to be handled next run.
+     * Alternatively the implementation may directly take actions to
+     * handle the situation.
+     */
     public abstract void robotCollided();
 }
