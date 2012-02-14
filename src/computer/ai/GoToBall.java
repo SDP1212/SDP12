@@ -45,7 +45,7 @@ public class GoToBall extends AI{
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(ball.getCoordinates());
-        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10){
+        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10 && robotinho.getCommState() == ControlInterface.READY){
             this.actionPlan.set(0, ball.getCoordinates().clone());
         }
     }
@@ -54,10 +54,10 @@ public class GoToBall extends AI{
         date = new Date();
         Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
-        System.out.println("Ball (" + ball.getCoordinates().getX() + ", " + ball.getCoordinates().getY() + ")");
+//        System.out.println("Ball (" + ball.getCoordinates().getX() + ", " + ball.getCoordinates().getY() + ")");
         Line lineToBall = new Line(robotinho.getPosition(), ball.getCoordinates());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
-        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
+//        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
    
         if (Math.abs(angle) > Math.PI / 3) {
             if (angle < 0) {
@@ -78,12 +78,11 @@ public class GoToBall extends AI{
         } else if (forward == false) {
             rotatingLeft = false;
             rotatingRight = false;
-            robotinho.forward(Brick.MEDIUM);
+            robotinho.forward(Brick.SLOW);
             forward = true;
         }
     }
 
-    @Override
     public void robotCollided() {
         System.out.println("Collision");
         rotatingLeft = false;

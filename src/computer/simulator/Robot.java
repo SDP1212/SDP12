@@ -49,7 +49,6 @@ public class Robot extends SimulatableObject implements ControlInterface{
     }
     
     public Direction getOrientation(){
-        System.out.println("Blue orientation: " + this.orientation.getDirectionDegrees());
         return this.orientation;
     }
 
