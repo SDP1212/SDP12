@@ -5,7 +5,6 @@ import computer.control.ControlInterface;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -26,6 +25,11 @@ public class Communication implements Runnable, ControlInterface {
     public void switchModeTo(int mode) {
         
     }
+
+    public Communication() {
+        this.ai=null;
+    }
+    
     /**
      * Connects to the brick
      * 
@@ -197,8 +201,9 @@ public class Communication implements Runnable, ControlInterface {
     public int getCommState() {
         return commState;
     }
-    
-    public void setAI(AI ai) {
-        this.ai = ai;
+
+    public void addAI(AI ai){
+        this.ai=ai;
     }
+    
 }

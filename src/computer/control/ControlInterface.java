@@ -4,6 +4,8 @@
  */
 package computer.control;
 
+import computer.ai.AI;
+
 /**
  * Communication and Robot should implement this to ensure that robot behavior
  * can be simulated and executed consistently.
@@ -32,4 +34,5 @@ public interface ControlInterface {
     
     public int getCommState();
     
+    public void addAI(AI ai);
 }
