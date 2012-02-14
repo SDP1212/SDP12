@@ -179,11 +179,13 @@ public class Communication implements Runnable, ControlInterface {
                         for (Robot robot : robots) {
                             robot.robotCollided();
                         }
-//                        System.out.println("Collision!");
                         break;
                     case (Brick.OK):
                         commState = READY;
                         System.out.println("Acknowledged");
+                        break;
+                    case (Brick.SENSING):
+                        System.out.println("Sensing");
                         break;
                 }
             } catch (IOException e) {

@@ -51,6 +51,7 @@ public class Brick {
     
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
+    public final static int SENSING = 0xa2;
     
     public final static char LEFT = 'l';
     public final static char RIGHT = 'r';
@@ -162,10 +163,10 @@ public class Brick {
         LCD.drawString("Waiting for connection", 0, 0);
         Sound.playTone(2000, 1000);
         connection = Bluetooth.waitForConnection();
-        if (connection.getClass() == BTConnection.class) {
+        if (getConnection().getClass() == BTConnection.class) {
             LCD.clear();
-            in = connection.openInputStream();
-            out = connection.openOutputStream();
+            in = getConnection().openInputStream();
+            out = getConnection().openOutputStream();
             setConnected(true);
             LCD.drawString("Connected", 0, 0);
             logToFile(outLog, "Connected");
@@ -214,7 +215,7 @@ public class Brick {
      * 
      * @param message An opcode.
      */
-    public static void sendMessage(int message) {
+    public synchronized static void sendMessage(int message) {
         if (isConnected()) {
             try {
                 out.write(intToByteArray(message));
@@ -333,6 +334,11 @@ public class Brick {
         pilot.stop();
         sendMessage(OK);
     }
+
+    public synchronized static NXTConnection getConnection() {
+        return connection;
+    }
+    
     
     /**
      * Convert a byte array to an integer.
