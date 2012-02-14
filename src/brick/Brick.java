@@ -105,11 +105,8 @@ public class Brick {
                 in.read(byteBuffer);
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
-                logToFile(outLog, "Message " + Integer.toBinaryString(n));
                 int opcode = n & OPCODE;
-                logToFile(outLog, "Opcode " + opcode);
                 int arg = n & ARG;
-                logToFile(outLog, "Arg " + arg);
                 switch (opcode) {
 
                     case FORWARDS:
@@ -250,7 +247,6 @@ public class Brick {
      * @param speed A travel speed opcode.
      */
     public static void forwards(int speed) {
-        logToFile(outLog, "Forwards");
         pilot.forward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -267,7 +263,6 @@ public class Brick {
      * @param speed A travel speed opcode.
      */
     public static void backwards(int speed) {
-        logToFile(outLog, "Backwards");
         pilot.backward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -283,7 +278,6 @@ public class Brick {
      * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
     public static void rotate(int angle) {
-        logToFile(outLog, "Rotate " + angle);
         int finalAngle = angle - 180;
         double factor;
         if (finalAngle < 0) {
@@ -309,7 +303,6 @@ public class Brick {
      * Stop movement activity.
      */
     public static void stop() {
-        logToFile(outLog, "Stop");
         pilot.stop();
     }
     
@@ -318,7 +311,6 @@ public class Brick {
      */
     public static void kick() {
         sensorListener.setKicking(true);
-        logToFile(outLog, "Kick");
         Motor.C.setSpeed(720);
         Motor.C.rotate(-25);
         Motor.C.rotate(25);
@@ -331,7 +323,6 @@ public class Brick {
      * @param The direction to pivot. 
      */
     public static void backOff(char direction) {
-        logToFile(outLog, "Backoff");
         pilot.stop();
         pilot.backward();
         try {

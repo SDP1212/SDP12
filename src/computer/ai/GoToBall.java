@@ -25,6 +25,7 @@ public class GoToBall extends AI{
     private Date date = new Date(0);
     private boolean rotatingRight = false;
     private boolean rotatingLeft = false;
+    private boolean forward = false;
     
     public GoToBall (Pitch pitch, Robot robot) {
         super(pitch, robot);
@@ -32,7 +33,7 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 100 ) ) {
+        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 40 ) ) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
             issueCommands();
@@ -64,18 +65,21 @@ public class GoToBall extends AI{
                     robotinho.rotateRight();
                     rotatingRight = true;
                     rotatingLeft = false;
+                    forward = false;
                 }
             } else {
                 if (!rotatingLeft) {
                     robotinho.rotateLeft();
                     rotatingLeft = true;
                     rotatingRight = false;
+                    forward = false;
                 }
             }
-        } else {
+        } else if (forward == false) {
             rotatingLeft = false;
             rotatingRight = false;
             robotinho.forward(Brick.MEDIUM);
+            forward = true;
         }
     }
 
@@ -84,6 +88,7 @@ public class GoToBall extends AI{
         System.out.println("Collision");
         rotatingLeft = false;
         rotatingRight = false;
+        forward = false;
     }
         
     
