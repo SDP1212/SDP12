@@ -38,6 +38,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         this.control=control;
         if(ai!=null)try{
             this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(pitch,this));
+            if(control!=null)control.addAI(this.brain);
         }catch (Exception e) {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
