@@ -33,19 +33,20 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        if (this.self.getCommState() == ControlInterface.READY && ((new Date().getTime() - date.getTime()) > 40 ) ) {
+        if (((new Date().getTime() - date.getTime()) > 40 ) ) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
-            issueCommands();
+            if (this.self.getCommState() == ControlInterface.READY) {
+                issueCommands();
+            }
         }
     }
     
     private void correctPlan() {
-        Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(ball.getCoordinates());
-        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10 && robotinho.getCommState() == ControlInterface.READY){
+        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10){
             this.actionPlan.set(0, ball.getCoordinates().clone());
         }
     }
@@ -78,7 +79,7 @@ public class GoToBall extends AI{
         } else if (forward == false) {
             rotatingLeft = false;
             rotatingRight = false;
-            robotinho.forward(Brick.SLOW);
+            robotinho.forward(Brick.MEDIUM);
             forward = true;
         }
     }

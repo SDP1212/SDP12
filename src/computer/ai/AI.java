@@ -34,7 +34,6 @@ public abstract class AI {
     public AI(Pitch pitch, Robot self){
         this.pitch=pitch;
         this.self=self;
-        ApplicationController.getCommunicationController().setAI(this);
     }
     
     /**

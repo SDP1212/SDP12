@@ -4,6 +4,7 @@
  */
 package computer.simulator;
 
+import computer.Communication;
 import computer.ai.DumbAI;
 import computer.control.ControlInterface;
 
@@ -43,7 +44,9 @@ public class Pitch {
     protected void insertRobotinho(PixelCoordinates coordinates,Direction orientation, short colour, Class ai, ControlInterface control){
         
         this.robotinho=new Robot(ai, control, this, true, colour); // Real coordinates, so obviously real robot.
-        
+        if (control.getClass() == Communication.class) {
+            ((Communication)control).addRobot(robotinho);
+        }
         this.robotinho.setPosition(convertX(coordinates),convertY(coordinates));
         
         this.robotinho.setOrientation(orientation);

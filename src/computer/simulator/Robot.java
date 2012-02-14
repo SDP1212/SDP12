@@ -4,6 +4,7 @@
  */
 package computer.simulator;
 
+import computer.Communication;
 import computer.ai.AI;
 import computer.control.ControlInterface;
 
@@ -98,6 +99,8 @@ public class Robot extends SimulatableObject implements ControlInterface{
         else throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    
+    public void robotCollided() {
+        brain.robotCollided();
+    }
     
 }
