@@ -50,7 +50,9 @@ public class SensorListener implements Runnable {
                 Thread.sleep(300);
             }
         } catch (InterruptedException ex) {
-                return;
+            return;
+        } finally {
+            Brick.sendMessage(Brick.SENSINGENDED);
         }
     }
 

@@ -187,6 +187,8 @@ public class Communication implements Runnable, ControlInterface {
                     case (Brick.SENSING):
                         System.out.println("Sensing");
                         break;
+                    case (Brick.SENSINGENDED):
+                        System.out.println("Sensing ended");
                 }
             } catch (IOException e) {
                 System.err.println(e.toString());
