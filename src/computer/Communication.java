@@ -183,7 +183,9 @@ public class Communication implements Runnable, ControlInterface {
                 switch (n){
                     case (Brick.COLLISION):
                         commState = WAITING;
-                        ai.robotCollided();
+                        if (ai != null) {
+                            ai.robotCollided();
+                        }
                         break;
                     case (Brick.OK):
                         commState = READY;
@@ -192,8 +194,9 @@ public class Communication implements Runnable, ControlInterface {
                     case (Brick.SENSING):
                         System.out.println("Sensing");
                         break;
-                    case (Brick.SENSINGENDED):
-                        System.out.println("Sensing ended");
+//                    case (Brick.SENSINGENDED):
+//                        System.out.println("Sensing ended");
+//                        break;
                 }
             } catch (IOException e) {
                 System.err.println(e.toString());

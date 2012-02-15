@@ -30,6 +30,8 @@ public class GoToBall extends AI {
     private Line east;
     private Line south;
     private Line west;
+    private final static double ANGLETHRESHOLD = Math.PI / 4;
+    private final static double DISTANCETHRESHOLD = 0.3;
 
     public GoToBall(Pitch pitch, Robot robot) {
         super(pitch, robot);
@@ -53,7 +55,6 @@ public class GoToBall extends AI {
 
     private void correctPlan() {
         Coordinates ballCoordinates = this.pitch.ball.getCoordinates();
-        
         double x;
         double y;
         x = Math.min(ballCoordinates.getX(), 0.6);
@@ -61,15 +62,14 @@ public class GoToBall extends AI {
         y = Math.min(ballCoordinates.getY(), 1.6);
         y = Math.max(ballCoordinates.getY(), 0.4);
         Coordinates coordinates = new Coordinates(x, y);
-
+//        if ((new Line(ballCoordinates, this.self.getPosition())).getLength() < DISTANCETHRESHOLD) {
+//            coordinates = ballCoordinates;
+//        }
         if (this.actionPlan.isEmpty()) {
             actionPlan.add(coordinates);
-        } else if (Coordinates.distance(this.actionPlan.get(0), coordinates) > 10) {
+        } else if (Coordinates.distance(this.actionPlan.get(0), coordinates) > 0.05) {
             this.actionPlan.set(0, coordinates);
         }
-        
-
-
     }
 
     private void issueCommands() {
@@ -77,11 +77,11 @@ public class GoToBall extends AI {
         Robot robotinho = this.self;
         Ball ball = this.pitch.ball;
 //        System.out.println("Ball (" + ball.getCoordinates().getX() + ", " + ball.getCoordinates().getY() + ")");
-        Line lineToBall = new Line(robotinho.getPosition(), ball.getCoordinates());
+        Line lineToBall = new Line(robotinho.getPosition(), this.actionPlan.get(0));
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
 //        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
         System.out.println("Distance to ball " + lineToBall.getLength());
-        if (Math.abs(angle) < Math.PI / 5 && lineToBall.getLength() < 0.3) {
+        if (Math.abs(angle) < ANGLETHRESHOLD && lineToBall.getLength() < DISTANCETHRESHOLD) {
             robotinho.stop();
             complete = true;
             rotatingLeft = false;
@@ -89,7 +89,7 @@ public class GoToBall extends AI {
             forward = false;
             return;
         }
-        if (Math.abs(angle) > Math.PI / 3) {
+        if (Math.abs(angle) > ANGLETHRESHOLD) {
             if (angle < 0) {
                 if (!rotatingRight) {
                     robotinho.rotateRight();

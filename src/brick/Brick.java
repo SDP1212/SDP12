@@ -52,7 +52,6 @@ public class Brick {
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
     public final static int SENSING = 0xa2;
-    public final static int SENSINGENDED = 0xa3;
     
     public final static char LEFT = 'l';
     public final static char RIGHT = 'r';
@@ -61,8 +60,6 @@ public class Brick {
     public final static double wheelDiameter = 6;
     public static FileOutputStream outLog = null;
     public static boolean connected = false;
-    
-    private static Object comLock = new Object();
     
     /**
      * Loops continuously until told to quit, which causes the brick to reboot.
@@ -106,9 +103,7 @@ public class Brick {
             try {
                 // Read in 4 bytes from the bluetooth stream
                 byte[] byteBuffer = new byte[4];
-                synchronized (comLock) {
-                    in.read(byteBuffer);
-                }
+                in.read(byteBuffer);
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
                 int opcode = n & OPCODE;
@@ -154,7 +149,7 @@ public class Brick {
                     outLog.close();
                 }
             } catch (Throwable e) {
-                logToFile(outLog, "main " + e.toString());
+                logToFile(outLog, e.toString());
                 n = QUIT;
             }
         }
@@ -165,18 +160,16 @@ public class Brick {
      * Wait for a connection, and give feedback on status.
      */
     public static void waitForConnection() {
-        synchronized (comLock) {
-            LCD.drawString("Waiting for connection", 0, 0);
-            Sound.playTone(2000, 1000);
-            connection = Bluetooth.waitForConnection();
-            if (getConnection().getClass() == BTConnection.class) {
-                LCD.clear();
-                in = getConnection().openInputStream();
-                out = getConnection().openOutputStream();
-                setConnected(true);
-                LCD.drawString("Connected", 0, 0);
-                logToFile(outLog, "Connected");
-            }
+        LCD.drawString("Waiting for connection", 0, 0);
+        Sound.playTone(2000, 1000);
+        connection = Bluetooth.waitForConnection();
+        if (getConnection().getClass() == BTConnection.class) {
+            LCD.clear();
+            in = getConnection().openInputStream();
+            out = getConnection().openOutputStream();
+            setConnected(true);
+            LCD.drawString("Connected", 0, 0);
+            logToFile(outLog, "Connected");
         }
     }
     
@@ -184,20 +177,18 @@ public class Brick {
      * Close the connection, and give feedback on status.
      */
     public static void closeConnection() {
-        synchronized (comLock) {
+        LCD.clear();
+        LCD.drawString("Quitting", 0, 0);
+        try {
+            in.close();
+            out.close();
+            connection.close();
             LCD.clear();
-            LCD.drawString("Quitting", 0, 0);
-            try {
-                in.close();
-                out.close();
-                connection.close();
-                LCD.clear();
 
-            } catch (IOException e) {
-                logToFile(outLog, "close connection " +e.toString());
-            }
-            setConnected(false);
+        } catch (IOException e) {
+            logToFile(outLog, e.toString());
         }
+        setConnected(false);
     }
     
     /**
@@ -224,15 +215,13 @@ public class Brick {
      * 
      * @param message An opcode.
      */
-    public static void sendMessage(int message) {
-        synchronized (comLock) {
-            if (isConnected()) {
-                try {
-                    out.write(intToByteArray(message));
-                    out.flush();
-                } catch (IOException e) {
-                    logToFile(outLog, "send message " + e.toString());
-                }
+    public synchronized static void sendMessage(int message) {
+        if (isConnected()) {
+            try {
+                out.write(intToByteArray(message));
+                out.flush();
+            } catch (IOException e) {
+                logToFile(outLog, e.toString());
             }
         }
     }
