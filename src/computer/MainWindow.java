@@ -85,8 +85,8 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         radioRun = new javax.swing.JRadioButton();
         radioPenalty = new javax.swing.JRadioButton();
-        buttonWorld = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        buttonRunVision = new javax.swing.JButton();
+        buttonDribble = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
@@ -140,17 +140,17 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioPenalty);
         radioPenalty.setText("Penalty");
 
-        buttonWorld.setText("Print World State");
-        buttonWorld.addActionListener(new java.awt.event.ActionListener() {
+        buttonRunVision.setText("Run Vision");
+        buttonRunVision.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonWorldActionPerformed(evt);
+                buttonRunVisionActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Run Vision");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonDribble.setText("Dribble");
+        buttonDribble.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                buttonDribbleActionPerformed(evt);
             }
         });
 
@@ -161,27 +161,25 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(radioRun)
-                            .addComponent(radioPenalty))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
-                        .addComponent(buttonWorld)))
+                    .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(radioRun)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
+                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(radioPenalty, javax.swing.GroupLayout.Alignment.LEADING))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonWorld)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(radioRun)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioPenalty)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioRun)
+                    .addComponent(buttonDribble))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioPenalty)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -282,7 +280,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11)
                 .addComponent(kickRadio)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Test", jPanel2);
@@ -446,13 +444,13 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_radioFastActionPerformed
 
-    private void buttonWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonWorldActionPerformed
-        System.out.println("X: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getX()) + " Y: " + Integer.toString(appController.getWorldState().getBlueRobotCoordinates().getY()));
-    }//GEN-LAST:event_buttonWorldActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void buttonRunVisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRunVisionActionPerformed
         appController.startEngine();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_buttonRunVisionActionPerformed
+
+    private void buttonDribbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDribbleActionPerformed
+        commController.dribble();
+    }//GEN-LAST:event_buttonDribbleActionPerformed
     
     /**
      * @param args the command line arguments
@@ -493,8 +491,9 @@ public class MainWindow extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JButton buttonDribble;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JButton buttonWorld;
+    private javax.swing.JButton buttonRunVision;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
@@ -506,7 +505,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton goButton;
     private javax.swing.ButtonGroup groupSpeed;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;

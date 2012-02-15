@@ -26,6 +26,7 @@ public class GoToBall extends AI{
     private boolean rotatingRight = false;
     private boolean rotatingLeft = false;
     private boolean forward = false;
+    private boolean complete = false;
     
     public GoToBall (Pitch pitch, Robot robot) {
         super(pitch, robot);
@@ -33,7 +34,7 @@ public class GoToBall extends AI{
 
     @Override
     public void run() {
-        if (((new Date().getTime() - date.getTime()) > 40 ) ) {
+        if (((new Date().getTime() - date.getTime()) > 40 ) && !complete) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
             if (this.self.getCommState() == ControlInterface.READY) {
@@ -59,7 +60,15 @@ public class GoToBall extends AI{
         Line lineToBall = new Line(robotinho.getPosition(), ball.getCoordinates());
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
 //        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
-   
+        System.out.println("Distance to ball " + lineToBall.getLength());
+        if (Math.abs(angle) < Math.PI / 5 && lineToBall.getLength() < 0.3) {
+            robotinho.stop();
+            complete = true;
+            rotatingLeft = false;
+            rotatingRight = false;
+            forward = false;
+            return;
+        }
         if (Math.abs(angle) > Math.PI / 3) {
             if (angle < 0) {
                 if (!rotatingRight) {

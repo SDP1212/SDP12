@@ -132,6 +132,22 @@ public class LineTools {
         return points;
     }
     
+    /*
+     * The function formLinesAroundPoint creates lines from the points that the above function (formRectagleAroundPoint) returns.
+     * NOTE: LineToolsTest does not test the function formLinesAroundPoint.
+     */
+    public static Line[] formLinesAroundPoint(Coordinates point, Direction direction, double length, double width){
+        Line[] lines = new Line[4];
+        Coordinates[] points = formRectagleAroundPoint(point, direction, length, width);
+        
+        lines[0] = new Line(points[0], points[1]);
+        lines[1] = new Line(points[1], points[2]);
+        lines[2] = new Line(points[2], points[3]);
+        lines[3] = new Line(points[3], points[0]);
+        
+        return lines;
+    }
+    
     /**
      * @return the index of the line from the array of lines which is first intersected by a given line.
      * The line "line" cannot intersect lines which are "behind" it, i.e. here the line is treated as a ray.
@@ -144,17 +160,23 @@ public class LineTools {
         double y = line.getSecondPoint().getY() - line.getFirstPoint().getY();
         
         for(int i=0; i<lines.length; i++){
-            if(x == 0){
-                quotient2 = (intersectionOfLines(line, lines[i]).getY() -line.getFirstPoint().getY())/y;
-            }
-            else{
-                quotient2 = (intersectionOfLines(line, lines[i]).getX() -line.getFirstPoint().getX())/x;
-            }
-            if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
-                quotient = quotient2;
-                numOfClosestLine = i;
-            }
+            Coordinates intersectionPoint = intersectionOfLines(line, lines[i]);
+            
+            if(Coordinates.distance(intersectionPoint, lines[i].getFirstPoint())+Coordinates.distance(intersectionPoint, lines[i].getSecondPoint())==Coordinates.distance(lines[i].getSecondPoint(), lines[i].getFirstPoint())){
+                if(x == 0){
+                    quotient2 = (intersectionPoint.getY() -line.getFirstPoint().getY())/y;
+                }
+                else{
+                    quotient2 = (intersectionPoint.getX() -line.getFirstPoint().getX())/x;
+                }
+
+                if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
+                    quotient = quotient2;
+                    numOfClosestLine = i;
+                }
+            }            
         }
+        
         return numOfClosestLine;
     }
 
@@ -177,7 +199,6 @@ public class LineTools {
     public static int ballOnTheTable(Line ball, Coordinates robot1, Direction dirR1, double lengthR1, double widthR1, Coordinates robot2, Direction dirR2, double lengthR2, double widthR2){
         //Basically, this function uses the function lineIntersectingLines().
         Line[] lines = new Line[12];
-        int lineOfIntersection = -1;
         
         Coordinates[] tableCorners = new Coordinates[4];
         tableCorners[0] = new Coordinates(0,0);
@@ -206,33 +227,7 @@ public class LineTools {
         lines[10] = new Line(robot2Coordinates[2], robot2Coordinates[3]);
         lines[11] = new Line(robot2Coordinates[3], robot2Coordinates[0]);
         
-        /*
-         * The following part is the same as the function lineIntersectingLines but we take into account that the sides of the objects on the table are finite.
-         */
-        double quotient = -1;
-        double quotient2;
-        double x = ball.getSecondPoint().getX() - ball.getFirstPoint().getX();
-        double y = ball.getSecondPoint().getY() - ball.getFirstPoint().getY();
         
-        for(int i=0; i<lines.length; i++){
-            if((lines[i].getSecondPoint().getX()<=intersectionOfLines(ball, lines[i]).getX() && intersectionOfLines(ball, lines[i]).getX()<=lines[i].getFirstPoint().getX())
-                    || (lines[i].getSecondPoint().getX()>=intersectionOfLines(ball, lines[i]).getX() && intersectionOfLines(ball, lines[i]).getX()>=lines[i].getFirstPoint().getX())){
-                
-                if(x == 0){
-                    quotient2 = (intersectionOfLines(ball, lines[i]).getY() -ball.getFirstPoint().getY())/y;
-                }
-                else{
-                    quotient2 = (intersectionOfLines(ball, lines[i]).getX() -ball.getFirstPoint().getX())/x;
-                }
-
-                if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
-                    quotient = quotient2;
-                    lineOfIntersection = i;
-                }
-            }            
-            
-        }
-        
-        return lineOfIntersection;
+        return lineIntersectingLines(ball, lines);
     }
 }
