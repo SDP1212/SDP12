@@ -243,4 +243,16 @@ public class Pitch {
         return ((double)corners[3].getY()-coordinates.getY())/(corners[3].getY()-corners[0].getY());
     }
     
+    protected Coordinates coordinatesForPixelCoordinates(PixelCoordinates pixelCoordinates) {
+        return new Coordinates(convertX(pixelCoordinates), convertY(pixelCoordinates));
+    }
+    
+    protected Coordinates[] getCorners() {
+        Coordinates[] out = new Coordinates[corners.length];
+        for (int i = 0; i < corners.length; i++) {
+            out[i] = coordinatesForPixelCoordinates(corners[i]);
+        }
+        return out;
+    }
+    
 }
