@@ -72,6 +72,9 @@ public class Line {
     public Coordinates getSecondPoint(){
         return secondPoint;
     }
+    public double getLength() {
+        return Math.sqrt(Math.pow(firstPoint.getX() - secondPoint.getX(), 2) + Math.pow(firstPoint.getY() - secondPoint.getY(), 2));
+    }
 
     //If you want to change only the first point of a line.
     public void setFirstPoint(Coordinates point){

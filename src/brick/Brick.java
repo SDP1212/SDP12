@@ -51,6 +51,8 @@ public class Brick {
     
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
+    public final static int SENSING = 0xa2;
+    public final static int SENSINGENDED = 0xa3;
     
     public final static char LEFT = 'l';
     public final static char RIGHT = 'r';
@@ -59,6 +61,8 @@ public class Brick {
     public final static double wheelDiameter = 6;
     public static FileOutputStream outLog = null;
     public static boolean connected = false;
+    
+    private static Object comLock = new Object();
     
     /**
      * Loops continuously until told to quit, which causes the brick to reboot.
@@ -102,14 +106,13 @@ public class Brick {
             try {
                 // Read in 4 bytes from the bluetooth stream
                 byte[] byteBuffer = new byte[4];
-                in.read(byteBuffer);
+                synchronized (comLock) {
+                    in.read(byteBuffer);
+                }
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
-                logToFile(outLog, "Message " + Integer.toBinaryString(n));
                 int opcode = n & OPCODE;
-                logToFile(outLog, "Opcode " + opcode);
                 int arg = n & ARG;
-                logToFile(outLog, "Arg " + arg);
                 switch (opcode) {
 
                     case FORWARDS:
@@ -151,7 +154,7 @@ public class Brick {
                     outLog.close();
                 }
             } catch (Throwable e) {
-                logToFile(outLog, e.toString());
+                logToFile(outLog, "main " + e.toString());
                 n = QUIT;
             }
         }
@@ -162,16 +165,18 @@ public class Brick {
      * Wait for a connection, and give feedback on status.
      */
     public static void waitForConnection() {
-        LCD.drawString("Waiting for connection", 0, 0);
-        Sound.playTone(2000, 1000);
-        connection = Bluetooth.waitForConnection();
-        if (connection.getClass() == BTConnection.class) {
-            LCD.clear();
-            in = connection.openInputStream();
-            out = connection.openOutputStream();
-            setConnected(true);
-            LCD.drawString("Connected", 0, 0);
-            logToFile(outLog, "Connected");
+        synchronized (comLock) {
+            LCD.drawString("Waiting for connection", 0, 0);
+            Sound.playTone(2000, 1000);
+            connection = Bluetooth.waitForConnection();
+            if (getConnection().getClass() == BTConnection.class) {
+                LCD.clear();
+                in = getConnection().openInputStream();
+                out = getConnection().openOutputStream();
+                setConnected(true);
+                LCD.drawString("Connected", 0, 0);
+                logToFile(outLog, "Connected");
+            }
         }
     }
     
@@ -179,18 +184,20 @@ public class Brick {
      * Close the connection, and give feedback on status.
      */
     public static void closeConnection() {
-        LCD.clear();
-        LCD.drawString("Quitting", 0, 0);
-        try {
-            in.close();
-            out.close();
-            connection.close();
+        synchronized (comLock) {
             LCD.clear();
+            LCD.drawString("Quitting", 0, 0);
+            try {
+                in.close();
+                out.close();
+                connection.close();
+                LCD.clear();
 
-        } catch (IOException e) {
-            logToFile(outLog, e.toString());
+            } catch (IOException e) {
+                logToFile(outLog, "close connection " +e.toString());
+            }
+            setConnected(false);
         }
-        setConnected(false);
     }
     
     /**
@@ -218,12 +225,14 @@ public class Brick {
      * @param message An opcode.
      */
     public static void sendMessage(int message) {
-        if (isConnected()) {
-            try {
-                out.write(intToByteArray(message));
-                out.flush();
-            } catch (IOException e) {
-                logToFile(outLog, e.toString());
+        synchronized (comLock) {
+            if (isConnected()) {
+                try {
+                    out.write(intToByteArray(message));
+                    out.flush();
+                } catch (IOException e) {
+                    logToFile(outLog, "send message " + e.toString());
+                }
             }
         }
     }
@@ -250,7 +259,6 @@ public class Brick {
      * @param speed A travel speed opcode.
      */
     public static void forwards(int speed) {
-        logToFile(outLog, "Forwards");
         pilot.forward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -267,7 +275,6 @@ public class Brick {
      * @param speed A travel speed opcode.
      */
     public static void backwards(int speed) {
-        logToFile(outLog, "Backwards");
         pilot.backward();
         if (speed == SLOW) {
             pilot.setRotateSpeed(180);
@@ -283,7 +290,6 @@ public class Brick {
      * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
     public static void rotate(int angle) {
-        logToFile(outLog, "Rotate " + angle);
         int finalAngle = angle - 180;
         double factor;
         if (finalAngle < 0) {
@@ -309,7 +315,6 @@ public class Brick {
      * Stop movement activity.
      */
     public static void stop() {
-        logToFile(outLog, "Stop");
         pilot.stop();
     }
     
@@ -318,7 +323,6 @@ public class Brick {
      */
     public static void kick() {
         sensorListener.setKicking(true);
-        logToFile(outLog, "Kick");
         Motor.C.setSpeed(720);
         Motor.C.rotate(-25);
         Motor.C.rotate(25);
@@ -331,17 +335,21 @@ public class Brick {
      * @param The direction to pivot. 
      */
     public static void backOff(char direction) {
-        logToFile(outLog, "Backoff");
         pilot.stop();
         pilot.backward();
         try {
-            Thread.sleep(300);
+            Thread.sleep(500);
         } catch (InterruptedException ex) {
             
         }
         pilot.stop();
         sendMessage(OK);
     }
+
+    public synchronized static NXTConnection getConnection() {
+        return connection;
+    }
+    
     
     /**
      * Convert a byte array to an integer.

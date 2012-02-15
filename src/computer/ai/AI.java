@@ -34,7 +34,6 @@ public abstract class AI {
     public AI(Pitch pitch, Robot self){
         this.pitch=pitch;
         this.self=self;
-        ApplicationController.getCommunicationController().setAI(this);
     }
     
     /**
@@ -53,5 +52,12 @@ public abstract class AI {
         return actionPlan;
     }
     
+    /**
+     * This method is called by the control interface when a collision occurs.
+     * 
+     * It should signal the AI that this condition needs to be handled next run.
+     * Alternatively the implementation may directly take actions to
+     * handle the situation.
+     */
     public abstract void robotCollided();
 }

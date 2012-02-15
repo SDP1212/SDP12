@@ -5,7 +5,6 @@ import computer.control.ControlInterface;
 import lejos.pc.comm.*;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 /**
  * Instances of this class provide communication with the NXT brick.
  * 
@@ -26,6 +25,11 @@ public class Communication implements Runnable, ControlInterface {
     public void switchModeTo(int mode) {
         
     }
+
+    public Communication() {
+        this.ai=null;
+    }
+    
     /**
      * Connects to the brick
      * 
@@ -123,6 +127,16 @@ public class Communication implements Runnable, ControlInterface {
         sendMessage(Brick.ROTATELEFT);
     }
     
+    public void dribble() {
+        forward(Brick.MEDIUM);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            
+        }
+        stop();
+    }
+    
     /**
      * Send message method. Creates a 4 byte buffer in which it adds the message 
      * and writes it to the output stream.
@@ -170,12 +184,16 @@ public class Communication implements Runnable, ControlInterface {
                     case (Brick.COLLISION):
                         commState = WAITING;
                         ai.robotCollided();
-//                        System.out.println("Collision!");
                         break;
                     case (Brick.OK):
                         commState = READY;
                         System.out.println("Acknowledged");
                         break;
+                    case (Brick.SENSING):
+                        System.out.println("Sensing");
+                        break;
+                    case (Brick.SENSINGENDED):
+                        System.out.println("Sensing ended");
                 }
             } catch (IOException e) {
                 System.err.println(e.toString());
@@ -197,8 +215,9 @@ public class Communication implements Runnable, ControlInterface {
     public int getCommState() {
         return commState;
     }
-    
-    public void setAI(AI ai) {
-        this.ai = ai;
+
+    public void addAI(AI ai){
+        this.ai=ai;
     }
+    
 }

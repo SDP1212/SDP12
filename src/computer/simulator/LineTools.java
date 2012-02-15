@@ -64,7 +64,7 @@ public class LineTools {
         if(line.getGradient() == Double.POSITIVE_INFINITY){
             distance = Math.abs(point.getX()-line.getXmin());
         } else {
-            distance = (-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
+            distance = Math.abs(-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
         }
         
         return distance;
@@ -95,13 +95,14 @@ public class LineTools {
     public static int sideOfLine(Coordinates point, Line line){
         boolean result = true;
         // Check if the point is on the line...
-        if(point.getX()*line.getGradient() + line.getOffset() == point.getY()){
+        if((point.getX()*line.getGradient() + line.getOffset() == point.getY()||(line.getGradient()==Double.POSITIVE_INFINITY && point.getX()==line.getFirstPoint().getX()))){
             return 0;
         }
         else{
             // Check if the line is parallel to the y axis...
             if(line.getGradient() == Double.POSITIVE_INFINITY || line.getGradient() == Double.NEGATIVE_INFINITY){
-                if(point.getX()<line.getFirstPoint().getX()) result = false;
+                if(point.getX()>line.getFirstPoint().getX()) result = false;
+                if(line.getDirection()==false) result = !result;
             }
             else{
                 // Check if the point is on the left of the line...
@@ -131,6 +132,22 @@ public class LineTools {
         return points;
     }
     
+    /*
+     * The function formLinesAroundPoint creates lines from the points that the above function (formRectagleAroundPoint) returns.
+     * NOTE: LineToolsTest does not test the function formLinesAroundPoint.
+     */
+    public static Line[] formLinesAroundPoint(Coordinates point, Direction direction, double length, double width){
+        Line[] lines = new Line[4];
+        Coordinates[] points = formRectagleAroundPoint(point, direction, length, width);
+        
+        lines[0] = new Line(points[0], points[1]);
+        lines[1] = new Line(points[1], points[2]);
+        lines[2] = new Line(points[2], points[3]);
+        lines[3] = new Line(points[3], points[0]);
+        
+        return lines;
+    }
+    
     /**
      * @return the index of the line from the array of lines which is first intersected by a given line.
      * The line "line" cannot intersect lines which are "behind" it, i.e. here the line is treated as a ray.
@@ -143,17 +160,23 @@ public class LineTools {
         double y = line.getSecondPoint().getY() - line.getFirstPoint().getY();
         
         for(int i=0; i<lines.length; i++){
-            if(x == 0){
-                quotient2 = (intersectionOfLines(line, lines[i]).getY() -line.getFirstPoint().getY())/y;
-            }
-            else{
-                quotient2 = (intersectionOfLines(line, lines[i]).getX() -line.getFirstPoint().getX())/x;
-            }
-            if(quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
-                quotient = quotient2;
-                numOfClosestLine = i;
-            }
+            Coordinates intersectionPoint = intersectionOfLines(line, lines[i]);
+            
+            if(Coordinates.distance(intersectionPoint, lines[i].getFirstPoint())+Coordinates.distance(intersectionPoint, lines[i].getSecondPoint())==Coordinates.distance(lines[i].getSecondPoint(), lines[i].getFirstPoint())){
+                if(x == 0){
+                    quotient2 = (intersectionPoint.getY() -line.getFirstPoint().getY())/y;
+                }
+                else{
+                    quotient2 = (intersectionPoint.getX() -line.getFirstPoint().getX())/x;
+                }
+
+                if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
+                    quotient = quotient2;
+                    numOfClosestLine = i;
+                }
+            }            
         }
+        
         return numOfClosestLine;
     }
 
@@ -176,7 +199,6 @@ public class LineTools {
     public static int ballOnTheTable(Line ball, Coordinates robot1, Direction dirR1, double lengthR1, double widthR1, Coordinates robot2, Direction dirR2, double lengthR2, double widthR2){
         //Basically, this function uses the function lineIntersectingLines().
         Line[] lines = new Line[12];
-        int lineOfIntersection = -1;
         
         Coordinates[] tableCorners = new Coordinates[4];
         tableCorners[0] = new Coordinates(0,0);
@@ -205,8 +227,7 @@ public class LineTools {
         lines[10] = new Line(robot2Coordinates[2], robot2Coordinates[3]);
         lines[11] = new Line(robot2Coordinates[3], robot2Coordinates[0]);
         
-        lineOfIntersection = lineIntersectingLines(ball, lines);
         
-        return lineOfIntersection;
+        return lineIntersectingLines(ball, lines);
     }
 }

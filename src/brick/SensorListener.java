@@ -36,6 +36,7 @@ public class SensorListener implements Runnable {
     public void run() {
         try {
             while(!Thread.interrupted()) {
+                Brick.sendMessage(Brick.SENSING);
                 if (pressed && !kicking) {
                     Brick.sendMessage(Brick.COLLISION);
                     Brick.backOff(Brick.LEFT);
@@ -49,7 +50,9 @@ public class SensorListener implements Runnable {
                 Thread.sleep(300);
             }
         } catch (InterruptedException ex) {
-                return;
+            return;
+        } finally {
+            Brick.sendMessage(Brick.SENSINGENDED);
         }
     }
 
