@@ -7,18 +7,17 @@ import computer.simulator.*;
 import computer.simulator.PixelCoordinates;
 import java.util.Date;
 import java.util.ArrayList;
+
 /**
  *
  * @author Diana Crisan
  * @author Matt Jeffryes
  */
-
 /**
  * This class will get the ball coordinates and direct the robot towards it.
  */
+public class GoToBall extends AI {
 
-public class GoToBall extends AI{
-   
     public PixelCoordinates blue;
     public PixelCoordinates yellow;
     public PixelCoordinates ball;
@@ -27,14 +26,23 @@ public class GoToBall extends AI{
     private boolean rotatingLeft = false;
     private boolean forward = false;
     private boolean complete = false;
-    
-    public GoToBall (Pitch pitch, Robot robot) {
+    private Line north;
+    private Line east;
+    private Line south;
+    private Line west;
+
+    public GoToBall(Pitch pitch, Robot robot) {
         super(pitch, robot);
+        Coordinates[] corners = pitch.getCorners();
+        north = new Line(corners[0], corners[1]);
+        east = new Line(corners[1], corners[2]);
+        south = new Line(corners[2], corners[3]);
+        west = new Line(corners[3], corners[0]);
     }
 
     @Override
     public void run() {
-        if (((new Date().getTime() - date.getTime()) > 40 ) && !complete) {
+        if (((new Date().getTime() - date.getTime()) > 40) && !complete) {
             actionPlan = new ArrayList<Coordinates>();
             correctPlan();
             if (this.self.getCommState() == ControlInterface.READY) {
@@ -42,16 +50,28 @@ public class GoToBall extends AI{
             }
         }
     }
-    
+
     private void correctPlan() {
-        Ball ball = this.pitch.ball;
+        Coordinates ballCoordinates = this.pitch.ball.getCoordinates();
+        
+        double x;
+        double y;
+        x = Math.min(ballCoordinates.getX(), 0.6);
+        x = Math.max(ballCoordinates.getX(), 0.4);
+        y = Math.min(ballCoordinates.getY(), 1.6);
+        y = Math.max(ballCoordinates.getY(), 0.4);
+        Coordinates coordinates = new Coordinates(x, y);
+
         if (this.actionPlan.isEmpty()) {
-            actionPlan.add(ball.getCoordinates());
-        } else if (Coordinates.distance(this.actionPlan.get(0), ball.getCoordinates()) > 10){
-            this.actionPlan.set(0, ball.getCoordinates().clone());
+            actionPlan.add(coordinates);
+        } else if (Coordinates.distance(this.actionPlan.get(0), coordinates) > 10) {
+            this.actionPlan.set(0, coordinates);
         }
+        
+
+
     }
-    
+
     private void issueCommands() {
         date = new Date();
         Robot robotinho = this.self;
@@ -99,7 +119,4 @@ public class GoToBall extends AI{
         rotatingRight = false;
         forward = false;
     }
-        
-    
-    
 }

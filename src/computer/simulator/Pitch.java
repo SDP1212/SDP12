@@ -247,7 +247,7 @@ public class Pitch {
         return new Coordinates(convertX(pixelCoordinates), convertY(pixelCoordinates));
     }
     
-    protected Coordinates[] getCorners() {
+    public Coordinates[] getCorners() {
         Coordinates[] out = new Coordinates[corners.length];
         for (int i = 0; i < corners.length; i++) {
             out[i] = coordinatesForPixelCoordinates(corners[i]);
