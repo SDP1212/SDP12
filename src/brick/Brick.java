@@ -70,7 +70,6 @@ public class Brick {
         File file = new File("log.dat");
         try {
             if (!file.exists()) {
-
                     file.createNewFile();
             } else {
                 file.delete();
@@ -152,6 +151,9 @@ public class Brick {
                 logToFile(outLog, e.toString());
                 n = QUIT;
             }
+			if (!listenerThread.isAlive()) {
+				Sound.playTone(1500, 1000);
+			}
         }
         listenerThread.interrupt();
     }
