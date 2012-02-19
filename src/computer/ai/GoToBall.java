@@ -81,14 +81,14 @@ public class GoToBall extends AI {
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
 //        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
         System.out.println("Distance to ball " + lineToBall.getLength());
-        if (Math.abs(angle) < ANGLETHRESHOLD && lineToBall.getLength() < DISTANCETHRESHOLD) {
-            robotinho.stop();
-            complete = true;
-            rotatingLeft = false;
-            rotatingRight = false;
-            forward = false;
-            return;
-        }
+//        if (Math.abs(angle) < ANGLETHRESHOLD && lineToBall.getLength() < DISTANCETHRESHOLD) {
+//            robotinho.stop();
+//            complete = true;
+//            rotatingLeft = false;
+//            rotatingRight = false;
+//            forward = false;
+//            return;
+//        }
         if (Math.abs(angle) > ANGLETHRESHOLD) {
             if (angle < 0) {
                 if (!rotatingRight) {
