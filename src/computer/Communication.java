@@ -119,13 +119,12 @@ public class Communication implements Runnable, ControlInterface {
         sendMessage(arg | opcode);
     }
 
-	public void arc(int radius) {
-		int opcode = Brick.ARC;
-		int arg = radius << 8;
-		sendMessage(arg | opcode);
-	}
-	
-    
+    public void arc(int radius) {
+        int opcode = Brick.ARC;
+        int arg = radius << 8;
+        sendMessage(arg | opcode);
+    }
+	 
     public void rotateRight() {
         sendMessage(Brick.ROTATERIGHT);
     }

@@ -32,7 +32,7 @@ public interface ControlInterface {
     
     public void rotateLeft();
 	
-	public void arc(int radius);
+    public void arc(int radius);
     
     public int getCommState();
     
