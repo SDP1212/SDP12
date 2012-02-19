@@ -82,6 +82,11 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         if(this.control!=null && this.isReal())control.rotate(angle);
         else throw new UnsupportedOperationException("Not supported yet.");
     }
+	
+	public void arc(int radius) {
+        if(this.control!=null && this.isReal())control.arc(radius);
+        else throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     public void rotateRight() {
         if(this.control!=null && this.isReal())control.rotateRight();

@@ -118,6 +118,13 @@ public class Communication implements Runnable, ControlInterface {
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
+
+	public void arc(int radius) {
+		int opcode = Brick.ARC;
+		int arg = radius << 8;
+		sendMessage(arg | opcode);
+	}
+	
     
     public void rotateRight() {
         sendMessage(Brick.ROTATERIGHT);
@@ -157,6 +164,11 @@ public class Communication implements Runnable, ControlInterface {
         }
     }
     
+	/**
+	 * Convert a radian angle to an integer, suitable to be used as an argument
+	 * @param angle an angle in radians
+	 * @return an integer angle in degrees
+	 */
     public int composeAngleArgument(double angle) {
         long out = Math.round(Math.toDegrees(angle) + 180);
 //        System.out.println("Angle " + Long.toString(out));
