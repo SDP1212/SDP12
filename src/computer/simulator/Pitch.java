@@ -254,5 +254,13 @@ public class Pitch {
         }
         return out;
     }
+	
+	public Goal getTargetGoal() {
+		if (rightGoal.isTarget()) {
+			return rightGoal;
+		} else {
+			return leftGoal;
+		}
+	}
     
 }
