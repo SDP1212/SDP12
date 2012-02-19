@@ -190,15 +190,17 @@ public class Communication implements Runnable, ControlInterface {
                         commState = READY;
                         System.out.println("Acknowledged");
                         break;
-                    case (Brick.SENSING):
-                        System.out.println("Sensing");
-                        break;
+//                    case (Brick.SENSING):
+//                        System.out.println("Sensing");
+//                        break;
 //                    case (Brick.SENSINGENDED):
 //                        System.out.println("Sensing ended");
 //                        break;
                 }
             } catch (IOException e) {
-                System.err.println(e.toString());
+                connected = false;
+				disconnect();
+				break;
             }
         }
         System.out.println("Interupted");
