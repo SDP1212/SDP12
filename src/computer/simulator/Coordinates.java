@@ -72,5 +72,11 @@ public class Coordinates{
         }
         return c;
     }
+
+	@Override
+	public String toString() {
+		return "(" + x + "," + y + ")";
+	}
     
+	
 }

@@ -7,7 +7,7 @@ package computer.simulator;
 /**
  * Represents the box perpendicular to the axes with two defining corners passed
  * in its constructor.
- * @author Matt Jeffryes
+ * @author 
  */
 public class Box {
 	private Coordinates[] corners = new Coordinates[2];
@@ -29,4 +29,11 @@ public class Box {
 		boolean yInside = (c0.getY() <= p.getY() || c1.getY() <= p.getY()) && (c0.getY() >= p.getY() || c1.getY() >= p.getY());
 		return xInside && yInside;
 	}
+
+	@Override
+	public String toString() {
+		return corners[0].toString() + " " + corners[1].toString();
+	}
+	
+	
 }
