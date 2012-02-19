@@ -169,7 +169,6 @@ public class Communication implements Runnable, ControlInterface {
      */
     public void run() {
         while(!Thread.interrupted()) {
-            byte[] byteBuffer = new byte[4];
             ByteBuffer buffer = ByteBuffer.allocate(4);
             int n = Brick.DO_NOTHING;
             try {
