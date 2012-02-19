@@ -207,10 +207,10 @@ public class Pitch {
      * @param coordinates
      * @param orientation 
      */
-    protected void updateRobotinho(PixelCoordinates coordinates, Direction orientation) {
+    protected void updateRobotinho(PixelCoordinates coordinates, Direction orientation, long timeDeltaInMilliseconds) {
         this.robotinho.setPosition(convertX(coordinates),convertY(coordinates));
         this.robotinho.setOrientation(orientation);
-        this.robotinho.updateVelocity();
+        this.robotinho.updateVelocity(timeDeltaInMilliseconds);
     }
     
     /**
@@ -219,10 +219,10 @@ public class Pitch {
      * @param coordinates
      * @param orientation 
      */
-    protected void updateNemesis(PixelCoordinates coordinates, Direction orientation) {
+    protected void updateNemesis(PixelCoordinates coordinates, Direction orientation, long timeDeltaInMilliseconds) {
         this.nemesis.setPosition(convertX(coordinates),convertY(coordinates));
         this.nemesis.setOrientation(orientation);
-        this.nemesis.updateVelocity();
+        this.nemesis.updateVelocity(timeDeltaInMilliseconds);
     }
 
     /**
@@ -230,9 +230,9 @@ public class Pitch {
      * 
      * @param coordinates where to put it
      */
-    protected void updateBall(PixelCoordinates coordinates) {
+    protected void updateBall(PixelCoordinates coordinates, long timeDeltaInMilliseconds) {
         this.ball.setPosition(convertX(coordinates),convertY(coordinates));
-        this.ball.updateVelocity();
+        this.ball.updateVelocity(timeDeltaInMilliseconds);
     }
     
     private double convertX(PixelCoordinates coordinates){
@@ -243,16 +243,32 @@ public class Pitch {
         return ((double)corners[3].getY()-coordinates.getY())/(corners[3].getY()-corners[0].getY());
     }
     
-    protected Coordinates coordinatesForPixelCoordinates(PixelCoordinates pixelCoordinates) {
-        return new Coordinates(convertX(pixelCoordinates), convertY(pixelCoordinates));
+    public Coordinates[] getCorners() {
+        return new Coordinates[] {new Coordinates(0.0, 1.0),
+                                  new Coordinates(2.0, 1.0),
+                                  new Coordinates(2.0, 0.0),
+                                  new Coordinates(0.0, 0.0)};
     }
     
-    public Coordinates[] getCorners() {
-        Coordinates[] out = new Coordinates[corners.length];
-        for (int i = 0; i < corners.length; i++) {
-            out[i] = coordinatesForPixelCoordinates(corners[i]);
-        }
-        return out;
+    public Line getNorthWall(){
+        return new Line(getCorners()[0],getCorners()[1]);
+    }
+    
+    public Line getEastWall(){
+        return new Line(getCorners()[1],getCorners()[2]);
+    }
+    
+    public Line getSouthWall(){
+        return new Line(getCorners()[2],getCorners()[3]);
+    }
+    
+    public Line getWestWall(){
+        return new Line(getCorners()[3],getCorners()[0]);
+    }
+    
+    public Line[] getWalls(){
+        return new Line[] {getNorthWall(),getEastWall(),
+                           getSouthWall(),getWestWall()};
     }
     
 }

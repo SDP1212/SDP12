@@ -31,10 +31,10 @@ public abstract class SimulatableObject {
         return this.position;
     }
     
-    protected void updateVelocity(){
-        if(this.v==null)this.v=new Velocity(this.oldPosition, this.oldPosition);
+    protected void updateVelocity(long timeDeltaInMilliseconds){
+        if(this.v==null)this.v=new Velocity(this.oldPosition, this.oldPosition, timeDeltaInMilliseconds);
         if(this.a==null)this.a=new Acceleration(this.v);
-        this.v.recalculate(this.oldPosition, this.position);
+        this.v.recalculate(this.oldPosition, this.position, timeDeltaInMilliseconds);
         this.a.recalculate(this.v);
     }
     
@@ -49,5 +49,7 @@ public abstract class SimulatableObject {
     public boolean isReal(){
         return this.real;
     }
+    
+    protected abstract void animate(long timeDeltaInMilliseconds);
     
 }
