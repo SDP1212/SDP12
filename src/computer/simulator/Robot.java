@@ -27,6 +27,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     private int commState = READY;
     private int linMotionState=0;
     private double rotMotionState=0;
+    private int arcMotionState=0;
     
     /**
      * Allocates a Robot object representing a robot in its entirety.
@@ -80,6 +81,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         else {
             linMotionState=0;
             rotMotionState=0.0;
+            arcMotionState=0;
             commState=READY;
         }
     }
@@ -108,8 +110,15 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     public void rotateLeft() {
         if(this.control!=null && this.isReal())control.rotateLeft();
         else {
-            rotMotionState= Double.POSITIVE_INFINITY;
+            rotMotionState=Double.POSITIVE_INFINITY;
             commState=WAITING;
+        }
+    }
+    
+    public void arc(int radius) {
+        if(this.control!=null && this.isReal())control.arc(radius);
+        else {
+            arcMotionState=radius;
         }
     }
 
@@ -158,6 +167,9 @@ public final class Robot extends SimulatableObject implements ControlInterface{
                 this.setPosition(position.getX()-(Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
                                  position.getY()-(Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
             }
+        }
+        else if(arcMotionState!=0){
+            throw new UnsupportedOperationException("Simulated movement along an arc not implemented yet :(");
         }
     }
     

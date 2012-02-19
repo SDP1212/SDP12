@@ -2,14 +2,9 @@ package computer.ai;
 
 import brick.Brick;
 import computer.control.ControlInterface;
-import computer.simulator.Ball;
-import computer.simulator.Coordinates;
-import computer.simulator.Line;
-import computer.simulator.LineTools;
-import computer.simulator.Pitch;
-import computer.simulator.Robot;
-import java.util.Date;
+import computer.simulator.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -80,14 +75,14 @@ public class GoToBall extends AI {
         double angle = LineTools.angleBetweenLineAndDirection(lineToBall, robotinho.getOrientation());
 //        System.out.println("Current angle: " + robotinho.getOrientation().getDirectionDegrees() + " Rotating to " + angle);
         System.out.println("Distance to ball " + lineToBall.getLength());
-        if (Math.abs(angle) < ANGLETHRESHOLD && lineToBall.getLength() < DISTANCETHRESHOLD) {
-            robotinho.stop();
-            complete = true;
-            rotatingLeft = false;
-            rotatingRight = false;
-            forward = false;
-            return;
-        }
+//        if (Math.abs(angle) < ANGLETHRESHOLD && lineToBall.getLength() < DISTANCETHRESHOLD) {
+//            robotinho.stop();
+//            complete = true;
+//            rotatingLeft = false;
+//            rotatingRight = false;
+//            forward = false;
+//            return;
+//        }
         if (Math.abs(angle) > ANGLETHRESHOLD) {
             if (angle < 0) {
                 if (!rotatingRight) {

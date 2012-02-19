@@ -41,6 +41,8 @@ public class Brick {
     
     public final static int ROTATERIGHT = 0x07;
     public final static int ROTATELEFT = 0x08;
+	
+	public final static int ARC = 0x09;
     
     public final static int SLOW = 0X000100;
     public final static int MEDIUM = 0X000200;
@@ -70,7 +72,6 @@ public class Brick {
         File file = new File("log.dat");
         try {
             if (!file.exists()) {
-
                     file.createNewFile();
             } else {
                 file.delete();
@@ -129,6 +130,11 @@ public class Brick {
                     case ROTATERIGHT:
                         rotateRight();
                         break;
+						
+					case ARC:
+						arc(arg >> 8);
+						break;
+						
                     case STOP:
                         stop();
                         break;
@@ -152,6 +158,9 @@ public class Brick {
                 logToFile(outLog, e.toString());
                 n = QUIT;
             }
+			if (!listenerThread.isAlive()) {
+				Sound.playTone(1500, 1000);
+			}
         }
         listenerThread.interrupt();
     }
@@ -299,6 +308,10 @@ public class Brick {
         pilot.setRotateSpeed(100);
         pilot.rotateLeft();
     }
+	
+	public static void arc(int angle) {
+		pilot.arcForward(angle);
+	}
     
     /**
      * Stop movement activity.

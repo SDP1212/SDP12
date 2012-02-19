@@ -31,6 +31,8 @@ public interface ControlInterface {
     public void rotateRight();
     
     public void rotateLeft();
+	
+	public void arc(int radius);
     
     public int getCommState();
     

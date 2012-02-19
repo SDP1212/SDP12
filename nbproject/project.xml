@@ -98,7 +98,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">../classes/lib/classes.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/nxt/classes.jar:lib/v4l4j.jar</classpath>
+                <classpath mode="compile">/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/nxt/classes.jar:../classes/lib/classes.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/pccomm.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar:/group/teaching/sdp/sdp12/secure/lejos_nxj/lib/pc/3rdparty/bluecove.jar:lib/v4l4j.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

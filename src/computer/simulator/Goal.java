@@ -35,4 +35,9 @@ public class Goal {
     public Coordinates getLowerPostCoordinates(){
         return this.lowerPost;
     }
+
+	@Override
+	public String toString() {
+		return upperPost.toString() + " " + lowerPost.toString();
+	}
 }

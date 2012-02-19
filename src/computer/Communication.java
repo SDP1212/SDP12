@@ -118,6 +118,13 @@ public class Communication implements Runnable, ControlInterface {
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
+
+	public void arc(int radius) {
+		int opcode = Brick.ARC;
+		int arg = radius << 8;
+		sendMessage(arg | opcode);
+	}
+	
     
     public void rotateRight() {
         sendMessage(Brick.ROTATERIGHT);
@@ -157,6 +164,11 @@ public class Communication implements Runnable, ControlInterface {
         }
     }
     
+	/**
+	 * Convert a radian angle to an integer, suitable to be used as an argument
+	 * @param angle an angle in radians
+	 * @return an integer angle in degrees
+	 */
     public int composeAngleArgument(double angle) {
         long out = Math.round(Math.toDegrees(angle) + 180);
 //        System.out.println("Angle " + Long.toString(out));
@@ -169,7 +181,6 @@ public class Communication implements Runnable, ControlInterface {
      */
     public void run() {
         while(!Thread.interrupted()) {
-            byte[] byteBuffer = new byte[4];
             ByteBuffer buffer = ByteBuffer.allocate(4);
             int n = Brick.DO_NOTHING;
             try {
@@ -191,15 +202,17 @@ public class Communication implements Runnable, ControlInterface {
                         commState = READY;
                         System.out.println("Acknowledged");
                         break;
-                    case (Brick.SENSING):
-                        System.out.println("Sensing");
-                        break;
+//                    case (Brick.SENSING):
+//                        System.out.println("Sensing");
+//                        break;
 //                    case (Brick.SENSINGENDED):
 //                        System.out.println("Sensing ended");
 //                        break;
                 }
             } catch (IOException e) {
-                System.err.println(e.toString());
+                connected = false;
+				disconnect();
+				break;
             }
         }
         System.out.println("Interupted");
