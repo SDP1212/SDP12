@@ -166,18 +166,6 @@ public class Pitch {
      */
     protected void insertGoals(PixelCoordinates[] left, PixelCoordinates[] right, short target){
         
-        for(PixelCoordinates coordinates : new PixelCoordinates[] {left[0],left[1],right[0],right[1]})
-//            if(!coordinates.isBarrelCorrected()){
-////                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "Barrel-distorted coordinates may induce undesirable side-effects such as itching, sweating, irritation, and/or death.\nTo put it more clearly, this makes it impossible to predic objects' motion so no attempt will be made. The robot will only know where things are (approximately), the direction they're facing and the current speed. Considering motion would not be in a straight line, the latter two probably won't be too helpful but it's better than nothing.\n\nWould you still like to continue? Click \"Yes,\" I dare you. No, I double-dare you.", "Don't panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
-//                    throw new Error("The operator has chickened out of using barrel-distorted coordinates. But this is a good thing since those are NOT optimally supported by the (simulator) system!");
-//                break;
-//            }
-//            else if(!coordinates.isOrientationCorrected()){
-////                if(javax.swing.JOptionPane.NO_OPTION==javax.swing.JOptionPane.showConfirmDialog(null, "The provided coordinates may include a slight rotational misalignment of the table. This should not reduce performance in any significant way. You should carry on, ignoring this message.\n\nWould you like to continue?", "Do NOT panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE))
-//                    throw new Error("The operator has chickened out of using a misaligned table... What a shame.");
-//                break;
-//            }
-        
         this.leftGoal=new Goal(convertX(left[0]),convertY(left[0]),
                                convertX(left[1]),convertY(left[1]));
         
@@ -207,10 +195,10 @@ public class Pitch {
      * @param coordinates
      * @param orientation 
      */
-    protected void updateRobotinho(PixelCoordinates coordinates, Direction orientation) {
+    protected void updateRobotinho(PixelCoordinates coordinates, Direction orientation, long timeDeltaInMilliseconds) {
         this.robotinho.setPosition(convertX(coordinates),convertY(coordinates));
         this.robotinho.setOrientation(orientation);
-        this.robotinho.updateVelocity();
+        this.robotinho.updateVelocity(timeDeltaInMilliseconds);
     }
     
     /**
@@ -219,10 +207,10 @@ public class Pitch {
      * @param coordinates
      * @param orientation 
      */
-    protected void updateNemesis(PixelCoordinates coordinates, Direction orientation) {
+    protected void updateNemesis(PixelCoordinates coordinates, Direction orientation, long timeDeltaInMilliseconds) {
         this.nemesis.setPosition(convertX(coordinates),convertY(coordinates));
         this.nemesis.setOrientation(orientation);
-        this.nemesis.updateVelocity();
+        this.nemesis.updateVelocity(timeDeltaInMilliseconds);
     }
 
     /**
@@ -230,9 +218,9 @@ public class Pitch {
      * 
      * @param coordinates where to put it
      */
-    protected void updateBall(PixelCoordinates coordinates) {
+    protected void updateBall(PixelCoordinates coordinates, long timeDeltaInMilliseconds) {
         this.ball.setPosition(convertX(coordinates),convertY(coordinates));
-        this.ball.updateVelocity();
+        this.ball.updateVelocity(timeDeltaInMilliseconds);
     }
     
     private double convertX(PixelCoordinates coordinates){
@@ -243,24 +231,40 @@ public class Pitch {
         return ((double)corners[3].getY()-coordinates.getY())/(corners[3].getY()-corners[0].getY());
     }
     
-    protected Coordinates coordinatesForPixelCoordinates(PixelCoordinates pixelCoordinates) {
-        return new Coordinates(convertX(pixelCoordinates), convertY(pixelCoordinates));
+    public Coordinates[] getCorners() {
+        return new Coordinates[] {new Coordinates(0.0, 1.0),
+                                  new Coordinates(2.0, 1.0),
+                                  new Coordinates(2.0, 0.0),
+                                  new Coordinates(0.0, 0.0)};
     }
     
-    public Coordinates[] getCorners() {
-        Coordinates[] out = new Coordinates[corners.length];
-        for (int i = 0; i < corners.length; i++) {
-            out[i] = coordinatesForPixelCoordinates(corners[i]);
-        }
-        return out;
+    public Line getNorthWall(){
+        return new Line(getCorners()[0],getCorners()[1]);
     }
-	
-	public Goal getTargetGoal() {
-		if (rightGoal.isTarget()) {
-			return rightGoal;
-		} else {
-			return leftGoal;
-		}
-	}
+    
+    public Line getEastWall(){
+        return new Line(getCorners()[1],getCorners()[2]);
+    }
+    
+    public Line getSouthWall(){
+        return new Line(getCorners()[2],getCorners()[3]);
+    }
+    
+    public Line getWestWall(){
+        return new Line(getCorners()[3],getCorners()[0]);
+    }
+    
+    public Line[] getWalls(){
+        return new Line[] {getNorthWall(),getEastWall(),
+                           getSouthWall(),getWestWall()};
+    }
+
+    public Goal getTargetGoal() {
+        if(leftGoal.isTarget())
+            return leftGoal;
+        else if(rightGoal.isTarget())
+            return rightGoal;
+        else return null;
+    }
     
 }

@@ -4,7 +4,6 @@
  */
 package computer.simulator;
 
-import computer.Communication;
 import computer.control.ControlInterface;
 
 /**
@@ -16,7 +15,7 @@ public class Engine implements Runnable{
     
     public static final short SIMULATOR_TICK_LENGTH_IN_MILLISECONDS=40;
     private boolean barrelEffectPresent=false,tableMisalignmentPresent=false;
-    private Pitch pitch=null;
+    private static Pitch pitch=null;
     private VisionInterface vision;
     
     /**
@@ -164,33 +163,34 @@ public class Engine implements Runnable{
     }
     
     private void testPixelCoordinates(PixelCoordinates coordinates){
-//        if(!barrelEffectPresent && !coordinates.isBarrelCorrected())
-////            switch(javax.swing.JOptionPane.showConfirmDialog(null, "Barrel-distorted coordinates may induce undesirable side-effects such as itching, sweating, irritation, and/or death.\nTo put it more clearly, this makes it impossible to predic objects' motion so no attempt will be made. The robot will only know where things are (approximately), the direction they're facing and the current speed. Considering motion would not be in a straight line, the latter two probably won't be too helpful but it's better than nothing.\n\nWould you still like to continue? Click \"Yes,\" I dare you. No, I double-dare you.", "Don't panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE)){
+        if(!barrelEffectPresent && !coordinates.isBarrelCorrected()){
+            System.err.println("WARNING: Coordinates from vision have barrel distortion. Calculations may not be accurate.");
+//            switch(javax.swing.JOptionPane.showConfirmDialog(null, "Barrel-distorted coordinates may induce undesirable side-effects such as itching, sweating, irritation, and/or death.\nTo put it more clearly, this makes it impossible to predic objects' motion so no attempt will be made. The robot will only know where things are (approximately), the direction they're facing and the current speed. Considering motion would not be in a straight line, the latter two probably won't be too helpful but it's better than nothing.\n\nWould you still like to continue? Click \"Yes,\" I dare you. No, I double-dare you.", "Don't panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE)){
 //
 //                case javax.swing.JOptionPane.NO_OPTION:{
 //                    throw new Error("The operator has chickened out of using barrel-distorted coordinates. But this is a good thing since those are NOT optimally supported by the (simulator) system!");
 //                }
 //                    
 //                case javax.swing.JOptionPane.YES_OPTION:{
-//                    barrelEffectPresent=true;
+                    barrelEffectPresent=true;
 //                    break;
 //                }
 //                    
 //            }
-//        
-//        if(!tableMisalignmentPresent && !coordinates.isOrientationCorrected()){
-////            switch(javax.swing.JOptionPane.showConfirmDialog(null, "The provided coordinates may include a slight rotational misalignment of the table. This should not reduce performance in any significant way. You should carry on, ignoring this message.\n\nWould you like to continue?", "Do NOT panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE)){
+        }
+        if(!tableMisalignmentPresent && !coordinates.isOrientationCorrected()){
+//            switch(javax.swing.JOptionPane.showConfirmDialog(null, "The provided coordinates may include a slight rotational misalignment of the table. This should not reduce performance in any significant way. You should carry on, ignoring this message.\n\nWould you like to continue?", "Do NOT panic!", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE)){
 //                
 //                case javax.swing.JOptionPane.NO_OPTION:{
 //                    throw new Error("The operator has chickened out of using a misaligned table... What a shame.");
 //                }
 //                    
 //                case javax.swing.JOptionPane.YES_OPTION:{
-//                    tableMisalignmentPresent=true;
+                    tableMisalignmentPresent=true;
 //                    break;
 //                }
 //            }
-//        }
+        }
     }
     
     
@@ -213,7 +213,6 @@ public class Engine implements Runnable{
                 Thread.sleep(Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS-(thisRun-lastRun));
             }catch(InterruptedException e) {return;} // stop if interrupted
             lastRun=System.currentTimeMillis();
-            //TODO: Analise object motions, calculate velocities, etc.
             
             // Process Robotinho
             pitch.robotinho.brain.run();
@@ -233,10 +232,11 @@ public class Engine implements Runnable{
                     }
                     default:throw new Error("FATAL ERROR: Robotinho has invalid colour plate.");
                 }
-                pitch.updateRobotinho(newCoordinates, newDirection);
+                pitch.updateRobotinho(newCoordinates, newDirection, thisRun-lastRun);
                 //TODO: recalculate trajectory
             }else{
-                pitch.robotinho.updateVelocity();
+                pitch.robotinho.updateVelocity(thisRun-lastRun);
+                pitch.robotinho.animate(thisRun-lastRun);
                 //TODO: recalculate trajectory
             }
             
@@ -257,19 +257,50 @@ public class Engine implements Runnable{
                     }
                     default:throw new Error("FATAL ERROR: Nemesis has invalid colour plate.");
                 }
-                pitch.updateNemesis(newCoordinates, newDirection);
+                pitch.updateNemesis(newCoordinates, newDirection, thisRun-lastRun);
                 //TODO: recalculate trajectory
             }else{
                 pitch.nemesis.brain.run();
-                pitch.nemesis.updateVelocity();
+                pitch.nemesis.updateVelocity(thisRun-lastRun);
+                pitch.nemesis.animate(thisRun-lastRun);
                 //TODO: recalculate trajectory
             }
             
             // Process ball
             if(pitch.ball.isReal()){
-                pitch.updateBall(vision.getBallCoordinates());
+                pitch.updateBall(vision.getBallCoordinates(),thisRun-lastRun);
                 // TODO: recalculate intercept and trajectory
             }else{
+                // ball-robot collisions
+                Double collisionAngle=null;
+                if(pitch.ball.getPosition().distance(pitch.robotinho.getPosition())<0.17)//about 21 cm
+                    collisionAngle=LineTools.angleBetweenLineAndDirection(new Line(pitch.robotinho.getPosition(),pitch.ball.getPosition()), new Direction(0));
+                if(pitch.ball.getPosition().distance(pitch.nemesis.getPosition())<0.17)//about 21 cm
+                    collisionAngle=LineTools.angleBetweenLineAndDirection(new Line(pitch.nemesis.getPosition(),pitch.ball.getPosition()), new Direction(0));
+                if(collisionAngle!=null)
+                    pitch.ball.getV().set(0.04*Math.cos(collisionAngle), 0.04*Math.sin(collisionAngle));
+                
+                // ball-wall collisions
+                double ballX=pitch.ball.getPosition().getX(),ballY=pitch.ball.getPosition().getY();
+                Velocity ballV=pitch.ball.getV();
+                if(ballX<0){
+                    pitch.ball.setPosition(-ballX, ballY);
+                    ballV.set(-ballV.getXcomponent(), ballV.getYcomonent());
+                }
+                if(ballX>2){
+                    pitch.ball.setPosition(2-(ballX-2), ballY);
+                    ballV.set(-ballV.getXcomponent(), ballV.getYcomonent());
+                }
+                if(ballY<0){
+                    pitch.ball.setPosition(ballX, -ballY);
+                    ballV.set(ballV.getXcomponent(), -ballV.getYcomonent());
+                }
+                if(ballY>1){
+                    pitch.ball.setPosition(ballX, 1-(ballY-1));
+                    ballV.set(ballV.getXcomponent(), -ballV.getYcomonent());
+                }
+                pitch.ball.animate(thisRun-lastRun);
+                
                 // TODO: simulate ball behaviour. and uncomment below.
                 //pitch.ball.updateVelocity();
             }

@@ -1,12 +1,10 @@
 package computer.ai;
 
 import brick.Brick;
-import computer.ai.AI;
 import computer.control.ControlInterface;
 import computer.simulator.*;
-import computer.simulator.PixelCoordinates;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -18,9 +16,6 @@ import java.util.ArrayList;
  */
 public class GoToBall extends AI {
 
-    public PixelCoordinates blue;
-    public PixelCoordinates yellow;
-    public PixelCoordinates ball;
     private Date date = new Date(0);
     private boolean rotatingRight = false;
     private boolean rotatingLeft = false;
@@ -35,11 +30,10 @@ public class GoToBall extends AI {
 
     public GoToBall(Pitch pitch, Robot robot) {
         super(pitch, robot);
-        Coordinates[] corners = pitch.getCorners();
-        north = new Line(corners[0], corners[1]);
-        east = new Line(corners[1], corners[2]);
-        south = new Line(corners[2], corners[3]);
-        west = new Line(corners[3], corners[0]);
+        north = pitch.getNorthWall();
+        east = pitch.getEastWall();
+        south = pitch.getSouthWall();
+        west = pitch.getWestWall();
     }
 
     @Override
@@ -54,7 +48,7 @@ public class GoToBall extends AI {
     }
 
     private void correctPlan() {
-        Coordinates ballCoordinates = this.pitch.ball.getCoordinates();
+        Coordinates ballCoordinates = this.pitch.ball.getPosition();
         double x;
         double y;
         x = Math.min(ballCoordinates.getX(), 0.6);

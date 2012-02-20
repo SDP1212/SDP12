@@ -179,8 +179,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = pitchConstants.rightBuffer;
-        int bottomBuffer = pitchConstants.bottomBuffer;
+        int rightBuffer = 640-pitchConstants.rightBuffer;
+        int bottomBuffer = 480-pitchConstants.bottomBuffer;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
@@ -188,9 +188,9 @@ public class WorldState implements computer.simulator.VisionInterface {
         // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
         // Thus we divide the width by 4 and add the ratio to the bottom.
         // And subtract the ratio from the top.
-        int goalWidth = topBuffer - bottomBuffer;
-        int topGoal = Math.abs(topBuffer - (goalWidth/4));
-        int bottomGoal = Math.abs(bottomBuffer + (goalWidth/4));
+        int goalWidth = bottomBuffer - topBuffer;
+        int topGoal = topBuffer + (goalWidth/4);
+        int bottomGoal = bottomBuffer - (goalWidth/4);
         
         PixelCoordinates topLeftGoal = new PixelCoordinates(leftBuffer,topGoal,isThereBarrelCorrection,isOrientationCorrected);
         PixelCoordinates bottomLeftGoal = new PixelCoordinates(leftBuffer,bottomGoal,isThereBarrelCorrection,isOrientationCorrected); 
@@ -212,8 +212,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = pitchConstants.rightBuffer;
-        int bottomBuffer = pitchConstants.bottomBuffer;
+        int rightBuffer = 640-pitchConstants.rightBuffer;
+        int bottomBuffer = 480-pitchConstants.bottomBuffer;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
@@ -221,9 +221,9 @@ public class WorldState implements computer.simulator.VisionInterface {
         // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
         // Thus we divide the width by 4 and add the ratio to the bottom.
         // And subtract the ratio from the top.
-        int goalWidth = topBuffer - bottomBuffer;
-        int topGoal = Math.abs(topBuffer - (goalWidth/4));
-        int bottomGoal = Math.abs(bottomBuffer + (goalWidth/4));
+        int goalWidth = bottomBuffer - topBuffer;
+        int topGoal = topBuffer + (goalWidth/4);
+        int bottomGoal = bottomBuffer - (goalWidth/4);
         
         PixelCoordinates topRightGoal = new PixelCoordinates(rightBuffer,topGoal,isThereBarrelCorrection,isOrientationCorrected);
         PixelCoordinates bottomRightGoal = new PixelCoordinates(rightBuffer,bottomGoal,isThereBarrelCorrection,isOrientationCorrected); 
