@@ -5,12 +5,17 @@
 package computer.ai;
 
 import computer.simulator.*;
+import java.util.Date;
 
 /**
- *
- * @author s0935251
+ * An AI strategy.
+ * 
+ * Dribble the ball towards target goal. When in goal area, shoot.
+ * 
+ * @author Matt Jeffryes
  */
 public class Shooter extends AI {
+	private Date shotTime = new Date(0);
 
 	public Shooter(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -27,17 +32,15 @@ public class Shooter extends AI {
 //				new Coordinates(
 //				goal.getUpperPostCoordinates().getX() + 0.5, goal.getUpperPostCoordinates().getY()));
 		Box shootingBox = new Box(new Coordinates(0, 0), new Coordinates(0.5, 1));
-		System.out.println("Goals" + goal);
-		System.out.println("Box" + shootingBox);
-		System.out.println("Robot" + self.getPosition());
-		if (shootingBox.isPointInside(self.getPosition())) {
+		if (shootingBox.isPointInside(self.getPosition()) && (new Date().getTime() - shotTime.getTime() > 2000)) {
 			self.kick();
+			shotTime = new Date();
 		}
 	}
 
 	@Override
 	public void robotCollided() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
 	}
 	
 }
