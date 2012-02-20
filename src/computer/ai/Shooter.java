@@ -27,11 +27,9 @@ public class Shooter extends AI {
 	@Override
 	public void run() {
 		Goal goal = pitch.getTargetGoal();
-//		We're getting faulty goal coords.
-//		Box shootingBox = new Box(goal.getLowerPostCoordinates(), 
-//				new Coordinates(
-//				goal.getUpperPostCoordinates().getX() + 0.5, goal.getUpperPostCoordinates().getY()));
-		Box shootingBox = new Box(new Coordinates(0, 0), new Coordinates(0.5, 1));
+		Box shootingBox = new Box(goal.getLowerPostCoordinates(), 
+				new Coordinates(
+				goal.getUpperPostCoordinates().getX() + 0.5, goal.getUpperPostCoordinates().getY()));
 		if (shootingBox.isPointInside(self.getPosition()) && (new Date().getTime() - shotTime.getTime() > 2000)) {
 			self.kick();
 			shotTime = new Date();
