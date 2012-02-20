@@ -108,9 +108,8 @@ public class Vision extends WindowAdapter {
                 BufferedImage frameImage = frame.getBufferedImage();
                 
                 ShadowProcessing  s = new ShadowProcessing(pitchConstants);
-                int[] rgbMean = s.calculateMean(frameImage);
-                frameImage =  s.shadowRemoval(frameImage, rgbMean);
-               
+                frameImage =  s.sideNormalise(frameImage);
+                //frameImage = s.fullNormalise(frameImage);
                 
                 frame.recycle();
                 
@@ -162,10 +161,10 @@ public class Vision extends WindowAdapter {
      *
      * @param image     The image to process and then show.
      */
-    public void processAndUpdateImage(BufferedImage image, long before, boolean noFiltering) {
+    public void processAndUpdateImage(BufferedImage image, long before, boolean runAlternate) {
         
         /* NOTE!
-         * The boolean "noFiltering" is used to differentiate between the normal method
+         * The boolean "runAlternate" is used to differentiate between the normal method
          * for calculating the angle, and the vector method of calculating the angle.
          * True represents the vector method, false represents the normal method.
          */
@@ -293,6 +292,7 @@ public class Vision extends WindowAdapter {
 	Position green;
 
 	/*This should find the center of the green object */
+        /*
 	if(numGreenPos > 0) {
 	    greenX /= numGreenPos;
 	    greenY /= numGreenPos;
@@ -303,7 +303,9 @@ public class Vision extends WindowAdapter {
 	} else {
 	    green = new Position(worldState.getGreenY(), worldState.getGreenY());
 	}
-
+         * /
+         
+         */
         /* If we have only found a few 'Ball' pixels, chances are that the ball 
          * has not actually been detected. */
         if (numBallPos > 5) {
@@ -325,9 +327,7 @@ public class Vision extends WindowAdapter {
 
             blue = new Position(blueX, blueY);
             blue.fixValues(worldState.getBlueX(), worldState.getBlueY());
-            if (noFiltering == false) {
-                blue.filterPoints(blueXPoints, blueYPoints);
-            }
+            blue.filterPoints(blueXPoints, blueYPoints);
         } else {
             blue = new Position(worldState.getBlueX(), worldState.getBlueY());
         }
@@ -340,9 +340,7 @@ public class Vision extends WindowAdapter {
 
             yellow = new Position(yellowX, yellowY);
             yellow.fixValues(worldState.getYellowX(), worldState.getYellowY());
-            if (noFiltering == false) {
-                yellow.filterPoints(yellowXPoints, yellowYPoints);
-            }
+            yellow.filterPoints(yellowXPoints, yellowYPoints);
         } else {
             yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
         }
@@ -353,7 +351,7 @@ public class Vision extends WindowAdapter {
         
         double blueOrientation;
         try {
-            if (noFiltering == false) {
+            if (runAlternate == false) {
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
             } else {
                 blueOrientation = getVectorAngle(image, blueXPoints, blueYPoints, blue.getX(), blue.getY());
@@ -372,7 +370,7 @@ public class Vision extends WindowAdapter {
         /* Attempt to find the yellow robot's orientation. */
         double yellowOrientation;
         try {
-            if (noFiltering == false) {
+            if (true == true) {
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
             } else {
                 yellowOrientation = getVectorAngle(image, yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY());
@@ -709,32 +707,31 @@ public class Vision extends WindowAdapter {
                                 
         }
         
-        
-        /*
         // #################
         // Vector Sum Method
         double vectorX = 0;
         double vectorY = 0;
 
-        for (int i = 0; i < 4; i++) {
-            vectorX += meanX - newXpoints[i];
-            vectorY += meanY - newYpoints[i];
-        }
-
+        //for (int i = 0; i < 4; i++) {
+        //    vectorX += newXpoints[i] - meanX;
+        //    vectorY += meanY - newYpoints[i];
+        //}
+        
+        vectorX = (minX - meanX) + (maxX - meanX);
+        vectorY = (meanY - minY) + (meanY - maxY);
+        
         if (vectorX == 0) {
-            vectorX = 0.01;
+            vectorX = 1;
         }
         
         if (vectorY == 0) {
-            vectorY = 0.01;
+            vectorY = 1;
         }
-        
-        */
         
         // End of Sum of Vectors Method
         // ################################
         // Squared Eclidean Distance Method
-        
+        /*
         double distance = 0; 
 	int pointX = 0;
         int pointY = 0;
@@ -754,7 +751,7 @@ public class Vision extends WindowAdapter {
                 
         double vectorX = meanX - pointX;
         double vectorY = meanY - pointY;
-        
+        */
         // End of Longest Line method
         // ##################################
         
@@ -771,7 +768,7 @@ public class Vision extends WindowAdapter {
         //System.out.println("Angle = " + degreeAngle + ", VectorX = " + vectorX + ", VectorY = " + vectorY);
         //System.out.println("Using the vector method.  Remember Yellow is turned off for testing!");
         
-        if (vectorX > 0) {
+        if (vectorX < 0) {
             if (vectorY > 0) {
                 angle = degreeAngle;
             } else {
@@ -786,8 +783,9 @@ public class Vision extends WindowAdapter {
         }
         
         // DEBUG - attempts to draw a line at the angle it's facing.
-        //image.getGraphics().drawLine((meanX - (int)vectorX), (meanY - (int)vectorY), meanX, meanY);
-
+        image.getGraphics().drawLine((meanX - (int)vectorX), (meanY - (int)vectorY), meanX, meanY);
+        
+        System.out.println("VectorX = " + vectorX + ", VectorY = " + vectorY + ", Angle = " + angle);
         return angle;
     }
 }
