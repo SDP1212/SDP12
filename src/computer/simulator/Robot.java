@@ -161,15 +161,18 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
         else if(linMotionState!=0){
             if(linMotionState>0){
-                this.setPosition(position.getX()+(Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
-                                 position.getY()+(Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
+                this.movePosition((Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                                  (Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
             }else{
-                this.setPosition(position.getX()-(Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
-                                 position.getY()-(Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
+                this.movePosition(-(Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                                  -(Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
             }
         }
         else if(arcMotionState!=0){
-            throw new UnsupportedOperationException("Simulated movement along an arc not implemented yet :(");
+            double turn=(LINEAR_MOTION_SPEED/Coordinates.distanceFromCentimetres(arcMotionState))*(timeDeltaInMilliseconds/1000); // Equivallent to: ((Math.PI*2)/((Math.PI*2*arcMotionState)/LINEAR_MOTION_SPEED))*(timeDeltaInMilliseconds/1000);
+            this.getOrientation().alter(turn);
+            this.movePosition((Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                              (Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
         }
     }
     

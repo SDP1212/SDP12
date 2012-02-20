@@ -31,6 +31,11 @@ public abstract class SimulatableObject {
         return this.position;
     }
     
+    protected void movePosition(double xAmount, double yAmount){
+        this.position.set(this.position.getX()+xAmount,
+                          this.position.getY()+yAmount);
+    }
+    
     protected void updateVelocity(long timeDeltaInMilliseconds){
         if(this.v==null)this.v=new Velocity(this.oldPosition, this.oldPosition, timeDeltaInMilliseconds);
         if(this.a==null)this.a=new Acceleration(this.v);
