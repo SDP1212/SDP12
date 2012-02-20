@@ -91,7 +91,7 @@ public class ApplicationController {
     }
     
     public void startEngine() {
-        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, Pitch.TARGET_LEFT_GOAL, Robot.YELLOW_PLATE, GoToBall.class, DumbAI.class);
+        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, Pitch.TARGET_LEFT_GOAL, Robot.YELLOW_PLATE, Shooter.class, DumbAI.class);
         engineThread = new Thread(engine);
         engineThread.start();
     }

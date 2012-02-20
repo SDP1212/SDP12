@@ -123,16 +123,16 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="connectButton" pref="114" max="32767" attributes="1"/>
+              <Component id="connectButton" pref="195" max="32767" attributes="1"/>
               <EmptySpace min="-2" pref="287" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jTabbedPane1" pref="401" max="32767" attributes="0"/>
+              <Component id="jTabbedPane1" pref="482" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="goButton" pref="103" max="32767" attributes="0"/>
+              <Component id="goButton" pref="184" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="stopButton" min="-2" pref="109" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="171" max="-2" attributes="0"/>
@@ -203,7 +203,7 @@
                           <Component id="buttonRunVision" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="radioRun" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="221" max="32767" attributes="0"/>
+                              <EmptySpace pref="302" max="32767" attributes="0"/>
                               <Component id="buttonDribble" min="-2" pref="95" max="-2" attributes="0"/>
                           </Group>
                           <Component id="radioPenalty" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -222,7 +222,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="radioPenalty" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="35" max="32767" attributes="0"/>
+                      <EmptySpace pref="82" max="32767" attributes="0"/>
                       <Component id="buttonRunVision" min="-2" pref="60" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -279,32 +279,43 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="radioForward" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="136" max="32767" attributes="0"/>
-                          </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="radioBackward" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="kickRadio" pref="88" max="32767" attributes="1"/>
-                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                      <Component id="radioForward" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="217" max="32767" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
-                                      <EmptySpace pref="4" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="radioBackward" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
+                                              <EmptySpace pref="85" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="radioLeft" alignment="0" pref="195" max="32767" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="radioLeft" alignment="0" pref="114" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="radioMedium" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="radioSlow" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="radioFast" alignment="0" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="radioArcRight" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="radioArcLeft" alignment="0" pref="123" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="radioMedium" alignment="0" max="32767" attributes="1"/>
-                          <Component id="radioSlow" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="radioFast" alignment="0" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -328,9 +339,13 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="radioRight" min="-2" pref="22" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="radioArcLeft" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="radioArcRight" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="kickRadio" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -414,6 +429,22 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioFastActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="radioArcLeft">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Arc Left"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="radioArcRight">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Arc Right"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

@@ -30,12 +30,16 @@ public final class Direction {
          */
     }
     
+    public void alter(double radians){
+        this.radians+=radians;
+    }
+    
     public double getDirectionRadians(){
         return radians;
     }
     
     public double getDirectionDegrees(){
-        return radians*180/Math.PI;
+        return Math.toDegrees(radians);
     }
     
 }

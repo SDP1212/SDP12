@@ -4,7 +4,6 @@
  */
 package computer.simulator;
 
-import computer.Communication;
 import computer.ai.AI;
 import computer.control.ControlInterface;
 
@@ -17,10 +16,18 @@ import computer.control.ControlInterface;
 public final class Robot extends SimulatableObject implements ControlInterface{
     
     public static final short YELLOW_PLATE=0,BLUE_PLATE=1;
+    public static final double LINEAR_MOTION_SPEED=4/1.5; // 4 feet per 1.5 sec
+    public static final double ROTARY_MOTION_SPEED=2*Math.PI/2; // 1 rotation per 2 seconds
+    
     private Direction orientation;
     private ControlInterface control;
     private short colour;
     protected AI brain;
+    private Pitch pitch;
+    private int commState = READY;
+    private int linMotionState=0;
+    private double rotMotionState=0;
+    private int arcMotionState=0;
     
     /**
      * Allocates a Robot object representing a robot in its entirety.
@@ -36,8 +43,9 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         this.real=real;
         this.colour=colour;
         this.control=control;
+        this.pitch=pitch;
         if(ai!=null)try{
-            this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(pitch,this));
+            this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(this.pitch,this));
             if(control!=null)control.addAI(this.brain);
         }catch (Exception e) {
             System.err.println(e.getMessage());
@@ -60,48 +68,112 @@ public final class Robot extends SimulatableObject implements ControlInterface{
 
     public void forward(int speed) {
         if(this.control!=null && this.isReal())control.forward(speed);
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else linMotionState=speed;
     }
 
     public void backward(int speed) {
         if(this.control!=null && this.isReal())control.backward(speed);
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else linMotionState=-speed;
     }
 
     public void stop() {
         if(this.control!=null && this.isReal())control.stop();
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else {
+            linMotionState=0;
+            rotMotionState=0.0;
+            arcMotionState=0;
+            commState=READY;
+        }
     }
 
     public void kick() {
         if(this.control!=null && this.isReal())control.kick();
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else pitch.ball.kick(position, orientation);
     }
 
     public void rotate(double angle) {
         if(this.control!=null && this.isReal())control.rotate(angle);
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else {
+            rotMotionState=angle;
+            commState=WAITING;
+        }
     }
     
     public void rotateRight() {
         if(this.control!=null && this.isReal())control.rotateRight();
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else {
+            rotMotionState=Double.NEGATIVE_INFINITY;
+            commState=WAITING;
+        }
     }
 
     public void rotateLeft() {
         if(this.control!=null && this.isReal())control.rotateLeft();
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else {
+            rotMotionState=Double.POSITIVE_INFINITY;
+            commState=WAITING;
+        }
+    }
+    
+    public void arc(int radius) {
+        if(this.control!=null && this.isReal())control.arc(radius);
+        else {
+            arcMotionState=radius;
+        }
     }
 
     public int getCommState() {
         if(this.control!=null && this.isReal()) {
             return control.getCommState();
         }
-        else throw new UnsupportedOperationException("Not supported yet.");
+        else return commState;
     }
 
     public void addAI(AI ai) {
         this.brain=ai;
+    }
+    
+    protected void animate(long timeDeltaInMilliseconds){
+        
+        double ROT_FACTOR=ROTARY_MOTION_SPEED*timeDeltaInMilliseconds/1000;
+        double MOV_FACTOR=LINEAR_MOTION_SPEED*0.25*timeDeltaInMilliseconds/1000;
+        
+        if(rotMotionState!=0){
+            if(rotMotionState>0){
+                if(rotMotionState>ROT_FACTOR){
+                    orientation.alter(ROT_FACTOR);
+                    rotMotionState-=ROT_FACTOR;
+                }else{
+                    orientation.alter(rotMotionState);
+                    rotMotionState=0.0;
+                    commState=READY;
+                }
+            }else{
+                if(rotMotionState<-ROT_FACTOR){
+                    orientation.alter(-ROT_FACTOR);
+                    rotMotionState+=ROT_FACTOR;
+                }else{
+                    orientation.alter(rotMotionState);
+                    rotMotionState=0.0;
+                    commState=READY;
+                }
+            }
+        }
+        else if(linMotionState!=0){
+            if(linMotionState>0){
+                this.movePosition((Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                                  (Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
+            }else{
+                this.movePosition(-(Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                                  -(Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
+            }
+        }
+        else if(arcMotionState!=0){
+            double turn=(LINEAR_MOTION_SPEED/Coordinates.distanceFromCentimetres(arcMotionState))*(timeDeltaInMilliseconds/1000); // Equivallent to: ((Math.PI*2)/((Math.PI*2*arcMotionState)/LINEAR_MOTION_SPEED))*(timeDeltaInMilliseconds/1000);
+            this.getOrientation().alter(turn);
+            this.movePosition((Math.cos(orientation.getDirectionRadians())*MOV_FACTOR),
+                              (Math.sin(orientation.getDirectionRadians())*MOV_FACTOR));
+        }
     }
     
 }

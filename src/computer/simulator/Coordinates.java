@@ -23,6 +23,26 @@ public class Coordinates{
     
     private double x,y;
     
+    /**
+     * Converts a measurement from centimetres to the internal unit
+     * 
+     * @param cm the measurement in centimetres
+     * @return result from conversion
+     */
+    public static double distanceFromCentimetres(double cm){
+        return cm/(4*30.48);
+    }
+    
+    /**
+     * Converts a measurement from feet to the internal unit
+     * 
+     * @param feet the measurement in feet
+     * @return result from conversion
+     */
+    public static double distanceFromFeet(double feet){
+        return feet/4;
+    }
+    
     public Coordinates(double x, double y){
         this.x=x;
         this.y=y;
@@ -61,6 +81,7 @@ public class Coordinates{
         return Math.sqrt(Math.pow(pointA.getX() - pointB.getX(), 2) + Math.pow(pointA.getY() - pointB.getY(), 2));
     }
     
+    @Override
     public Coordinates clone (){
         Coordinates c = null;
         try {
@@ -72,5 +93,11 @@ public class Coordinates{
         }
         return c;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
     
+	
 }
