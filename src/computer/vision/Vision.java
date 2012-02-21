@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.io.*; //TEST
 import javax.imageio.ImageIO;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +30,7 @@ import computer.simulator.VisionInterface;
  * data. Identifies ball and robot locations, and robot orientations.
  */
 public class Vision extends WindowAdapter {
+
     private VideoDevice videoDev;
     private JLabel label;
     private JFrame windowFrame;
@@ -39,6 +41,8 @@ public class Vision extends WindowAdapter {
     private WorldState worldState;
     private ThresholdsState thresholdsState;
     private PitchConstants pitchConstants;
+    private int errorChecker;
+    //TODO Add an errorChecker value that increments every time we disregard a value for being bad. If this errorChecker goes to 5 (aka 5 errors in a row), then we set the value to that new angle and reset the ErrorChecker
     //private int[] xDistortion;
     //private int[] yDistortion;
 
@@ -71,7 +75,7 @@ public class Vision extends WindowAdapter {
         initGUI();
     }
 
-     /**
+    /**
      * Initialises a FrameGrabber object with the given parameters.
      *
      * @param videoDevice           The video device file to capture from.
@@ -90,7 +94,7 @@ public class Vision extends WindowAdapter {
         DeviceInfo deviceInfo = videoDev.getDeviceInfo();
 
         if (deviceInfo.getFormatList().getNativeFormats().isEmpty()) {
-          throw new ImageFormatException("Unable to detect any native formats for the device!");
+            throw new ImageFormatException("Unable to detect any native formats for the device!");
         }
         ImageFormat imageFormat = deviceInfo.getFormatList().getNativeFormat(0);
 
@@ -98,17 +102,17 @@ public class Vision extends WindowAdapter {
                 compressionQuality, imageFormat);
 
         frameGrabber.setCaptureCallback(new CaptureCallback() {
+
             public void exceptionReceived(V4L4JException e) {
                 System.err.println("Unable to capture frame:");
                 e.printStackTrace();
             }
-
             int imCount = 0;
-            
+
             public void nextFrame(VideoFrame frame) {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
-                
+
                 imCount += 1;
                 if (imCount == 10) {
                     try {
@@ -118,13 +122,13 @@ public class Vision extends WindowAdapter {
                         // Obligatory comment
                     }
                 }
-                
+
                 //ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 //frameImage =  s.sideNormalise(frameImage);
                 //frameImage = s.fullNormalise(frameImage);
-                
+
                 frame.recycle();
-                
+
                 BufferedImage img = null;
                 try {
                     img = ImageIO.read(new File("TestImage.jpeg"));
@@ -181,13 +185,13 @@ public class Vision extends WindowAdapter {
      * @param image     The image to process and then show.
      */
     public void processAndUpdateImage(BufferedImage image, BufferedImage background, long before, boolean runAlternate) {
-        
+
         /* NOTE!
          * The boolean "runAlternate" is used to differentiate between the normal method
          * for calculating the angle, and the vector method of calculating the angle.
          * True represents the vector method, false represents the normal method.
          */
-        
+
 
         int ballX = 0;
         int ballY = 0;
@@ -201,9 +205,13 @@ public class Vision extends WindowAdapter {
         int yellowY = 0;
         int numYellowPos = 0;
 
-	int greenX = 0;
-	int greenY = 0;
-	int numGreenPos = 0;
+        int greenX = 0;
+        int greenY = 0;
+        int numGreenPos = 0;
+
+        int greenX2 = 0;
+        int greenY2 = 0;
+        int numGreenPos2 = 0;
 
         ArrayList<Integer> ballXPoints = new ArrayList<Integer>();
         ArrayList<Integer> ballYPoints = new ArrayList<Integer>();
@@ -211,8 +219,8 @@ public class Vision extends WindowAdapter {
         ArrayList<Integer> blueYPoints = new ArrayList<Integer>();
         ArrayList<Integer> yellowXPoints = new ArrayList<Integer>();
         ArrayList<Integer> yellowYPoints = new ArrayList<Integer>();
-	ArrayList<Integer> greenXPoints = new ArrayList<Integer>();
-	ArrayList<Integer> greenYPoints = new ArrayList<Integer>();
+        ArrayList<Integer> greenXPoints = new ArrayList<Integer>();
+        ArrayList<Integer> greenYPoints = new ArrayList<Integer>();
 
         int topBuffer = pitchConstants.topBuffer;
         int bottomBuffer = pitchConstants.bottomBuffer;
@@ -223,44 +231,43 @@ public class Vision extends WindowAdapter {
          * the yellow T, the blue T, either green plate or a grey circle. */
         for (int row = topBuffer; row < image.getHeight() - bottomBuffer; row++) {
             for (int column = leftBuffer; column < image.getWidth() - rightBuffer; column++) {
-                
+
                 /* The RGB colours and hsv values for the current pixel. */
                 /* And the RBG values for the background image*/
                 Color c = new Color(image.getRGB(column, row));
                 Color c2 = new Color(background.getRGB(column, row));
-                
+
                 /* Subtract the RGB values of the current image from the background image  */
-                int red = Math.abs(c.getRed()-c2.getRed());
-                int blue = Math.abs(c.getBlue()-c2.getBlue());
-                int green = Math.abs(c.getGreen()-c2.getGreen());
+                int red = Math.abs(c.getRed() - c2.getRed());
+                int blue = Math.abs(c.getBlue() - c2.getBlue());
+                int green = Math.abs(c.getGreen() - c2.getGreen());
 
                 float hsbvals[] = new float[3];
-                
+
                 int diffRange = 25;
-                
-                if(red > diffRange || blue > diffRange || green > diffRange) {
-	            Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
-                    /* Debug graphics for the grey circles and green plates.
+
+                //if (red > diffRange || blue > diffRange || green > diffRange) {
+                Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+                /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
                 if (thresholdsState.isGrey_debug() && isGrey(c, hsbvals)) {
                     image.setRGB(column, row, 0xFFFF0099);
                 }
 
                 //if (thresholdsState.isGreen_debug() && isGreen(c, hsbvals)) {
-		if(isGreen(c, hsbvals)) {
-		    if (thresholdsState.isGreen_debug()) {
-        		image.setRGB(column, row, 0xFFFF0099);
-		    }
-		    greenX += column;
-		    greenY += row;
-		    numGreenPos++;
-
-		    greenXPoints.add(column);
-		    greenYPoints.add(row);		   
+                if (isGreen(c, hsbvals)) {
+                    if (thresholdsState.isGreen_debug()) {
+                        image.setRGB(column, row, 0xFFFF0099);
+                    }
+                    greenX += column;
+                    greenY += row;
+                    numGreenPos++;
+                    greenXPoints.add(column);
+                    greenYPoints.add(row);
                 }
 
                 /* Is this pixel part of the Blue T? */
-                if (isBlue(c, hsbvals) ){
+                if (isBlue(c, hsbvals)) {
 
                     blueX += column;
                     blueY += row;
@@ -310,15 +317,14 @@ public class Vision extends WindowAdapter {
                         image.setRGB(column, row, 0xFFFF0000);
                     }
                 }
-                }
-                else{
-                    //Color.RGBtoHSB(0, 0, 0, hsbvals);
-                    image.setRGB(column, row, 0x00000000);
-                }
-                
+                //} else {
+                //Color.RGBtoHSB(0, 0, 0, hsbvals);
+                //image.setRGB(column, row, 0x00000000);
+                // }
 
 
-                
+
+
             }
         }
 
@@ -326,23 +332,123 @@ public class Vision extends WindowAdapter {
         Position ball;
         Position blue;
         Position yellow;
-	Position green;
+        Position firstRobot;
+        Position secondRobot;
 
-	/*This should find the center of the green object */
-        /*
-	if(numGreenPos > 0) {
-	    greenX /= numGreenPos;
-	    greenY /= numGreenPos;
+        //These are new arraylists to keep track of the values of the Green plates
+        ArrayList<Integer> firstRobotXPoints = new ArrayList<Integer>();
+        ArrayList<Integer> firstRobotYPoints = new ArrayList<Integer>();
 
-	    green = new Position(greenX, greenY);
-	    green.fixValues(worldState.getGreenX(), worldState.getGreenY());
-            green.filterPoints(greenXPoints, greenYPoints);
-	} else {
-	    green = new Position(worldState.getGreenY(), worldState.getGreenY());
-	}
-         * /
-         
-         */
+        ArrayList<Integer> secondRobotXPoints = new ArrayList<Integer>();
+        ArrayList<Integer> secondRobotYPoints = new ArrayList<Integer>();
+
+        //We have to iterate through the same green points and see which robot plate they belong to
+        int greenfirstx = 0;
+        int greenfirsty = 0;
+        int numgreenFirst = 0;
+        int greensecondx = 0;
+        int greensecondy = 0;
+        int numgreenSecond = 0;
+
+
+        /*This should find the center of the green object */
+
+        if (numGreenPos > 0) {
+
+            //Find the max and min points along the Greens, assuming two different plates
+            Integer max = Collections.max(greenXPoints);
+            Integer min = Collections.min(greenXPoints);
+            //  Find a midpoint to perform a division along the X Axis
+            int average = (((int) max + (int) min) / 2);
+            //System.out.println("Max: " + max + " Min: " + min+ " Avg: "+average);
+
+            /*
+             * If the values have very similar X points (layered atop one another), this will not work. 
+             * So instead, if the values are too similar, then we will use the Y
+             */
+            if (average + 35 > max && average - 35 < min) {
+                Integer maxY = Collections.max(greenYPoints);
+                Integer minY = Collections.min(greenYPoints);
+
+                average = (((int) maxY + (int) minY) / 2);
+                //System.out.println("MaxY: " + maxY + " MinY: " + minY+ " AvgY: "+average);
+
+                //Using the Y instead
+
+                for (int i = 0; i < greenXPoints.size(); i++) {
+                    //Go through every point. If less than the average, it belongs to one robot. Else, the other
+                    if (greenYPoints.get(i) < average) {
+                        greenfirstx += greenXPoints.get(i);
+                        greenfirsty += greenYPoints.get(i);
+                        numgreenFirst++;
+                        firstRobotXPoints.add(greenXPoints.get(i));
+                        firstRobotYPoints.add(greenYPoints.get(i));
+                    } else {
+                        greensecondx += greenXPoints.get(i);
+                        greensecondy += greenYPoints.get(i);
+                        numgreenSecond++;
+                        secondRobotXPoints.add(greenXPoints.get(i));
+                        secondRobotYPoints.add(greenYPoints.get(i));
+                    }
+
+                }
+
+            } else {
+                for (int i = 0; i < greenXPoints.size(); i++) {
+                    //Go through every point. If less than the average, it belongs to one robot. Else, the other
+                    if (greenXPoints.get(i) < average) {
+                        greenfirstx += greenXPoints.get(i);
+                        greenfirsty += greenYPoints.get(i);
+                        numgreenFirst++;
+                        firstRobotXPoints.add(greenXPoints.get(i));
+                        firstRobotYPoints.add(greenYPoints.get(i));
+                    } else {
+                        greensecondx += greenXPoints.get(i);
+                        greensecondy += greenYPoints.get(i);
+                        numgreenSecond++;
+                        secondRobotXPoints.add(greenXPoints.get(i));
+                        secondRobotYPoints.add(greenYPoints.get(i));
+                    }
+
+                }
+            }
+        }
+
+
+        if (numgreenFirst > 0) {
+
+            //Find the middle position for both robots now
+            //This is first robot
+
+            greenfirstx /= numgreenFirst;
+            greenfirsty /= numgreenFirst;
+
+            firstRobot = new Position(greenfirstx, greenfirsty);
+            firstRobot.fixValues(worldState.getGreenX(), worldState.getGreenY());
+            firstRobot.filterPoints(firstRobotXPoints, firstRobotYPoints);
+
+
+
+        } else {
+            firstRobot = new Position(worldState.getGreenX(), worldState.getGreenY());
+
+        }
+
+
+        if (numgreenSecond > 0) {
+            //This is second robot
+            greensecondx /= numgreenSecond;
+            greensecondy /= numgreenSecond;
+
+            secondRobot = new Position(greensecondx, greensecondy);
+            secondRobot.fixValues(worldState.getGreenX2(), worldState.getGreenY2());
+            secondRobot.filterPoints(secondRobotXPoints, secondRobotYPoints);
+        } else {
+            secondRobot = new Position(worldState.getGreenX2(), worldState.getGreenY2());
+        }
+
+
+
         /* If we have only found a few 'Ball' pixels, chances are that the ball 
          * has not actually been detected. */
         if (numBallPos > 5) {
@@ -385,7 +491,7 @@ public class Vision extends WindowAdapter {
 
 
         /* Attempt to find the blue robot's orientation. */
-        
+
         double blueOrientation;
         try {
             if (runAlternate == false) {
@@ -393,7 +499,7 @@ public class Vision extends WindowAdapter {
             } else {
                 blueOrientation = getVectorAngle(image, blueXPoints, blueYPoints, blue.getX(), blue.getY());
             }
-            
+
             double diff = Math.abs(blueOrientation - worldState.getBlueOrientation());
             if (diff > 0.1) {
                 float angle = (float) Math.round(((blueOrientation / Math.PI) * 180) / 5) * 5;
@@ -412,7 +518,7 @@ public class Vision extends WindowAdapter {
             } else {
                 yellowOrientation = getVectorAngle(image, yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY());
             }
-            
+
             double diff = Math.abs(yellowOrientation - worldState.getYellowOrientation());
             if (yellowOrientation != 0 && diff > 0.1) {
                 float angle = (float) Math.round(((yellowOrientation / Math.PI) * 180) / 5) * 5;
@@ -422,7 +528,7 @@ public class Vision extends WindowAdapter {
             //worldState.setYellowOrientation(worldState.getYellowOrientation());
             //System.out.println("Yellow robot: " + e.getMessage());
         }
-         
+
 
         worldState.setBallX(ball.getX());
         worldState.setBallY(ball.getY());
@@ -431,6 +537,12 @@ public class Vision extends WindowAdapter {
         worldState.setBlueY(blue.getY());
         worldState.setYellowX(yellow.getX());
         worldState.setYellowY(yellow.getY());
+
+        worldState.setGreenX(firstRobot.getX());
+        worldState.setGreenY(firstRobot.getY());
+        worldState.setGreenX2(secondRobot.getX());
+        worldState.setGreenY2(secondRobot.getY());
+
         worldState.updateCounter();
 
         /* Draw the image onto the vision frame. */
@@ -444,15 +556,55 @@ public class Vision extends WindowAdapter {
             imageGraphics.setColor(Color.red);
             imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
             imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
-	    imageGraphics.setColor(Color.green);
-	  //  imageGraphics.drawRect(0, green.getY(), 640, green.getY());
-	  //  imageGraphics.drawRect(green.getX(), 0, green.getX(), 480);
-	  //  imageGraphics.drawRect(0, green.getY(), 640, green.getY());
-	  //  imageGraphics.drawRect(green.getX(), 0, green.getX(), 480);
+            imageGraphics.setColor(Color.green);
+            /*imageGraphics.drawLine(0, firstRobot.getY(), 640, firstRobot.getY());
+            imageGraphics.drawLine(firstRobot.getX(), 0, firstRobot.getX(), 480);
+            imageGraphics.drawLine(0, firstRobot.getY(), 640, firstRobot.getY());
+            imageGraphics.drawLine(firstRobot.getX(), 0, firstRobot.getX(), 480);
+            imageGraphics.drawLine(0, secondRobot.getY(), 640, secondRobot.getY());
+            imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480);
+            imageGraphics.drawLine(0, secondRobot.getY(), 640, secondRobot.getY());
+            imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480); */
+            Integer firstRobotMaxX = 0;
+            Integer firstRobotMinX = 0;
+            Integer firstRobotMaxY = 0;
+            Integer firstRobotMinY = 0;
+            try {
+                firstRobotMaxX = Collections.max(firstRobotXPoints);
+                firstRobotMinX = Collections.min(firstRobotXPoints);
+                firstRobotMaxY = Collections.max(firstRobotYPoints);
+                firstRobotMinY = Collections.min(firstRobotYPoints);
+
+            } catch (Exception e) {
+                //No frame detected - square won't display
+            }
+
+            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
+                imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
+            }
+            
+            Integer secondRobotMaxX = 0;
+            Integer secondRobotMinX = 0;
+            Integer secondRobotMaxY = 0;
+            Integer secondRobotMinY = 0;
+            try {
+                secondRobotMaxX = Collections.max(secondRobotXPoints);
+                secondRobotMinX = Collections.min(secondRobotXPoints);
+                secondRobotMaxY = Collections.max(secondRobotYPoints);
+                secondRobotMinY = Collections.min(secondRobotYPoints);
+
+            } catch (Exception e) {
+                //No frame detected - square won't display
+            }
+
+            if (secondRobotMaxX != 0 && secondRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
+                imageGraphics.drawRect(secondRobotMinX, secondRobotMinY, secondRobotMaxX - secondRobotMinX, secondRobotMaxY - secondRobotMinY);
+            }
+
             imageGraphics.setColor(Color.blue);
-            imageGraphics.drawOval(blue.getX()-15, blue.getY()-15, 30,30);
+            imageGraphics.drawOval(blue.getX() - 15, blue.getY() - 15, 30, 30);
             imageGraphics.setColor(Color.yellow);
-            imageGraphics.drawOval(yellow.getX()-15, yellow.getY()-15, 30,30);
+            imageGraphics.drawOval(yellow.getX() - 15, yellow.getY() - 15, 30, 30);
             imageGraphics.setColor(Color.white);
 
 
@@ -460,18 +612,18 @@ public class Vision extends WindowAdapter {
             float ax = (float) Math.cos(worldState.getBlueOrientation());
             float ay = (float) Math.sin(worldState.getBlueOrientation());
             imageGraphics.drawLine(blue.getX(), blue.getY(), (int) (ax*70), (int) (ay*70));
-
+            
             ax = (float) Math.sin(worldState.getYellowOrientation());
             ay = (float) Math.cos(worldState.getYellowOrientation());
             imageGraphics.drawLine(yellow.getX(), yellow.getY(), (int) (ax*70), (int) (ay*70));
-            */
+             */
         }
 
         /* Used to calculate the FPS. */
         long after = System.currentTimeMillis();
 
         /* Display the FPS that the vision system is running at. */
-        float fps = (1.0f)/((after - before) / 1000.0f);
+        float fps = (1.0f) / ((after - before) / 1000.0f);
         imageGraphics.setColor(Color.white);
         imageGraphics.drawString("FPS: " + fps, 15, 15);
         frameGraphics.drawImage(image, 0, 0, width, height, null);
@@ -489,12 +641,12 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isBlue(Color color, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getBlue_h_high() && hsbvals[0] >= thresholdsState.getBlue_h_low() &&
-        hsbvals[1] <= thresholdsState.getBlue_s_high() && hsbvals[1] >= thresholdsState.getBlue_s_low() &&
-        hsbvals[2] <= thresholdsState.getBlue_v_high() && hsbvals[2] >= thresholdsState.getBlue_v_low() &&
-        color.getRed() <= thresholdsState.getBlue_r_high() && color.getRed() >= thresholdsState.getBlue_r_low() &&
-        color.getGreen() <= thresholdsState.getBlue_g_high() && color.getGreen() >= thresholdsState.getBlue_g_low() &&
-        color.getBlue() <= thresholdsState.getBlue_b_high() && color.getBlue() >= thresholdsState.getBlue_b_low();
+        return hsbvals[0] <= thresholdsState.getBlue_h_high() && hsbvals[0] >= thresholdsState.getBlue_h_low()
+                && hsbvals[1] <= thresholdsState.getBlue_s_high() && hsbvals[1] >= thresholdsState.getBlue_s_low()
+                && hsbvals[2] <= thresholdsState.getBlue_v_high() && hsbvals[2] >= thresholdsState.getBlue_v_low()
+                && color.getRed() <= thresholdsState.getBlue_r_high() && color.getRed() >= thresholdsState.getBlue_r_low()
+                && color.getGreen() <= thresholdsState.getBlue_g_high() && color.getGreen() >= thresholdsState.getBlue_g_low()
+                && color.getBlue() <= thresholdsState.getBlue_b_high() && color.getBlue() >= thresholdsState.getBlue_b_low();
     }
 
     /**
@@ -509,12 +661,12 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isYellow(Color colour, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getYellow_h_high() && hsbvals[0] >= thresholdsState.getYellow_h_low() &&
-        hsbvals[1] <= thresholdsState.getYellow_s_high() &&  hsbvals[1] >= thresholdsState.getYellow_s_low() &&
-        hsbvals[2] <= thresholdsState.getYellow_v_high() &&  hsbvals[2] >= thresholdsState.getYellow_v_low() &&
-        colour.getRed() <= thresholdsState.getYellow_r_high() &&  colour.getRed() >= thresholdsState.getYellow_r_low() &&
-        colour.getGreen() <= thresholdsState.getYellow_g_high() && colour.getGreen() >= thresholdsState.getYellow_g_low() &&
-        colour.getBlue() <= thresholdsState.getYellow_b_high() && colour.getBlue() >= thresholdsState.getYellow_b_low();
+        return hsbvals[0] <= thresholdsState.getYellow_h_high() && hsbvals[0] >= thresholdsState.getYellow_h_low()
+                && hsbvals[1] <= thresholdsState.getYellow_s_high() && hsbvals[1] >= thresholdsState.getYellow_s_low()
+                && hsbvals[2] <= thresholdsState.getYellow_v_high() && hsbvals[2] >= thresholdsState.getYellow_v_low()
+                && colour.getRed() <= thresholdsState.getYellow_r_high() && colour.getRed() >= thresholdsState.getYellow_r_low()
+                && colour.getGreen() <= thresholdsState.getYellow_g_high() && colour.getGreen() >= thresholdsState.getYellow_g_low()
+                && colour.getBlue() <= thresholdsState.getYellow_b_high() && colour.getBlue() >= thresholdsState.getYellow_b_low();
     }
 
     /**
@@ -529,12 +681,12 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isBall(Color colour, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getBall_h_high() && hsbvals[0] >= thresholdsState.getBall_h_low() &&
-        hsbvals[1] <= thresholdsState.getBall_s_high() &&  hsbvals[1] >= thresholdsState.getBall_s_low() &&
-        hsbvals[2] <= thresholdsState.getBall_v_high() &&  hsbvals[2] >= thresholdsState.getBall_v_low() &&
-        colour.getRed() <= thresholdsState.getBall_r_high() &&  colour.getRed() >= thresholdsState.getBall_r_low() &&
-        colour.getGreen() <= thresholdsState.getBall_g_high() && colour.getGreen() >= thresholdsState.getBall_g_low() &&
-        colour.getBlue() <= thresholdsState.getBall_b_high() && colour.getBlue() >= thresholdsState.getBall_b_low();
+        return hsbvals[0] <= thresholdsState.getBall_h_high() && hsbvals[0] >= thresholdsState.getBall_h_low()
+                && hsbvals[1] <= thresholdsState.getBall_s_high() && hsbvals[1] >= thresholdsState.getBall_s_low()
+                && hsbvals[2] <= thresholdsState.getBall_v_high() && hsbvals[2] >= thresholdsState.getBall_v_low()
+                && colour.getRed() <= thresholdsState.getBall_r_high() && colour.getRed() >= thresholdsState.getBall_r_low()
+                && colour.getGreen() <= thresholdsState.getBall_g_high() && colour.getGreen() >= thresholdsState.getBall_g_low()
+                && colour.getBlue() <= thresholdsState.getBall_b_high() && colour.getBlue() >= thresholdsState.getBall_b_low();
     }
 
     /**
@@ -549,12 +701,12 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isGrey(Color colour, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getGrey_h_high() && hsbvals[0] >= thresholdsState.getGrey_h_low() &&
-        hsbvals[1] <= thresholdsState.getGrey_s_high() &&  hsbvals[1] >= thresholdsState.getGrey_s_low() &&
-        hsbvals[2] <= thresholdsState.getGrey_v_high() &&  hsbvals[2] >= thresholdsState.getGrey_v_low() &&
-        colour.getRed() <= thresholdsState.getGrey_r_high() &&  colour.getRed() >= thresholdsState.getGrey_r_low() &&
-        colour.getGreen() <= thresholdsState.getGrey_g_high() && colour.getGreen() >= thresholdsState.getGrey_g_low() &&
-        colour.getBlue() <= thresholdsState.getGrey_b_high() && colour.getBlue() >= thresholdsState.getGrey_b_low();
+        return hsbvals[0] <= thresholdsState.getGrey_h_high() && hsbvals[0] >= thresholdsState.getGrey_h_low()
+                && hsbvals[1] <= thresholdsState.getGrey_s_high() && hsbvals[1] >= thresholdsState.getGrey_s_low()
+                && hsbvals[2] <= thresholdsState.getGrey_v_high() && hsbvals[2] >= thresholdsState.getGrey_v_low()
+                && colour.getRed() <= thresholdsState.getGrey_r_high() && colour.getRed() >= thresholdsState.getGrey_r_low()
+                && colour.getGreen() <= thresholdsState.getGrey_g_high() && colour.getGreen() >= thresholdsState.getGrey_g_low()
+                && colour.getBlue() <= thresholdsState.getGrey_b_high() && colour.getBlue() >= thresholdsState.getGrey_b_low();
     }
 
     /**
@@ -569,12 +721,12 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isGreen(Color colour, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getGreen_h_high() && hsbvals[0] >= thresholdsState.getGreen_h_low() &&
-        hsbvals[1] <= thresholdsState.getGreen_s_high() &&  hsbvals[1] >= thresholdsState.getGreen_s_low() &&
-        hsbvals[2] <= thresholdsState.getGreen_v_high() &&  hsbvals[2] >= thresholdsState.getGreen_v_low() &&
-        colour.getRed() <= thresholdsState.getGreen_r_high() &&  colour.getRed() >= thresholdsState.getGreen_r_low() &&
-        colour.getGreen() <= thresholdsState.getGreen_g_high() && colour.getGreen() >= thresholdsState.getGreen_g_low() &&
-        colour.getBlue() <= thresholdsState.getGreen_b_high() && colour.getBlue() >= thresholdsState.getGreen_b_low();
+        return hsbvals[0] <= thresholdsState.getGreen_h_high() && hsbvals[0] >= thresholdsState.getGreen_h_low()
+                && hsbvals[1] <= thresholdsState.getGreen_s_high() && hsbvals[1] >= thresholdsState.getGreen_s_low()
+                && hsbvals[2] <= thresholdsState.getGreen_v_high() && hsbvals[2] >= thresholdsState.getGreen_v_low()
+                && colour.getRed() <= thresholdsState.getGreen_r_high() && colour.getRed() >= thresholdsState.getGreen_r_low()
+                && colour.getGreen() <= thresholdsState.getGreen_g_high() && colour.getGreen() >= thresholdsState.getGreen_g_low()
+                && colour.getBlue() <= thresholdsState.getGreen_b_high() && colour.getBlue() >= thresholdsState.getGreen_b_low();
     }
 
     /**
@@ -593,22 +745,21 @@ public class Vision extends WindowAdapter {
      * @return                  An orientation from -Pi to Pi degrees.
      * @throws NoAngleException
      */
-
-	//Possibly needs to return something
+    //Possibly needs to return something
     public void findGreyWithinGreen(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
-	assert (xpoints.size() == ypoints.size());
+        assert (xpoints.size() == ypoints.size());
         if (xpoints.size() == 0) {
             throw new NoAngleException("No green pixels");
         }
-	}
-    
+    }
+
     // NOTE!  Changed from float to double
     public double findOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
             int meanX, int meanY, BufferedImage image, boolean showImage) throws NoAngleException {
         assert (xpoints.size() == ypoints.size()) :
-            "Error: Must be equal number of x and y points!";
+                "Error: Must be equal number of x and y points!";
 
-	 Graphics imageGraphics = image.getGraphics();
+        Graphics imageGraphics = image.getGraphics();
         if (xpoints.size() == 0) {
             throw new NoAngleException("No T pixels");
         }
@@ -621,7 +772,7 @@ public class Vision extends WindowAdapter {
 
             stdev += Math.pow(Math.sqrt(Position.sqrdEuclidDist(x, y, meanX, meanY)), 2);
         }
-        stdev  = (int) Math.sqrt(stdev / xpoints.size());
+        stdev = (int) Math.sqrt(stdev / xpoints.size());
 
 
         /* Find the position of the front of the T. */
@@ -630,8 +781,8 @@ public class Vision extends WindowAdapter {
         int frontCount = 0;
         for (int i = 0; i < xpoints.size(); i++) {
             if (stdev > 15) {
-                if (Math.abs(xpoints.get(i) - meanX) < stdev && Math.abs(ypoints.get(i) - meanY) < stdev &&
-                        Position.sqrdEuclidDist(xpoints.get(i), ypoints.get(i), meanX, meanY) > Math.pow(15, 2)) {
+                if (Math.abs(xpoints.get(i) - meanX) < stdev && Math.abs(ypoints.get(i) - meanY) < stdev
+                        && Position.sqrdEuclidDist(xpoints.get(i), ypoints.get(i), meanX, meanY) > Math.pow(15, 2)) {
                     frontCount++;
                     frontX += xpoints.get(i);
                     frontY += ypoints.get(i);
@@ -655,10 +806,10 @@ public class Vision extends WindowAdapter {
         frontY /= frontCount;
 
         imageGraphics.setColor(Color.white);
-        imageGraphics.drawOval(frontX-15, frontY-15, 30,30);
-	imageGraphics.setColor(Color.blue);
-	imageGraphics.drawOval(meanX-15, meanY-15, 30, 30);
-	image.getGraphics().drawLine(frontX, frontY, meanX, meanY);
+        imageGraphics.drawOval(frontX - 15, frontY - 15, 30, 30);
+        imageGraphics.setColor(Color.blue);
+        imageGraphics.drawOval(meanX - 15, meanY - 15, 30, 30);
+        image.getGraphics().drawLine(frontX, frontY, meanX, meanY);
 
         /* In here, calculate the vector between meanX/frontX and
          * meanY/frontY, and then get the angle of that vector. */
@@ -666,15 +817,15 @@ public class Vision extends WindowAdapter {
         // Calculate the angle between the Mean(Middle) of T and the Front.
         // This should be the default angle for finding orientation.
         // Because the gray dot is often hard to identify.
-        
+
         float length = (float) Math.sqrt(Math.pow(frontX - meanX, 2)
                 + Math.pow(frontY - meanY, 2));
         float ax = (frontX - meanX) / length;
         float ay = (frontY - meanY) / length;
-        
+
         // Get the angle in radians first.
-	float radianAngleMF = (float) Math.acos(ax);
-        
+        float radianAngleMF = (float) Math.acos(ax);
+
         // Now convert to degrees.
         double angleMF = Math.toDegrees((double) radianAngleMF);
 
@@ -682,12 +833,12 @@ public class Vision extends WindowAdapter {
             angleMF = -angleMF;
         }
 
-	if(angleMF < 0) {
-		angleMF = Math.abs(angleMF);
-	} else {
-	   angleMF = 360 - angleMF;
-	}
-	      
+        if (angleMF < 0) {
+            angleMF = Math.abs(angleMF);
+        } else {
+            angleMF = 360 - angleMF;
+        }
+
         if (radianAngleMF == 0) {
             return (float) 0.001;
         }
@@ -696,60 +847,60 @@ public class Vision extends WindowAdapter {
         //System.out.println("Front-T angle = " + angleMF + ".  Remember Yellow is turned off for testing!");
         return angleMF;
     }
-    
+
     // getVectorAngle can either find the "longestLine" or the sum of vectors for attempting to get an angle.
-    public double getVectorAngle (BufferedImage image, ArrayList<Integer> xPoints, ArrayList<Integer> yPoints, int meanX, int meanY) {
-     
-        int minX = meanX; 
-        int maxX = meanX; 
+    public double getVectorAngle(BufferedImage image, ArrayList<Integer> xPoints, ArrayList<Integer> yPoints, int meanX, int meanY) {
 
-        int minY = meanY; 
-        int maxY = meanY; 
+        int minX = meanX;
+        int maxX = meanX;
 
-        int [] newXpoints = new int [4]; 
-        int [] newYpoints = new int [4]; 
+        int minY = meanY;
+        int maxY = meanY;
+
+        int[] newXpoints = new int[4];
+        int[] newYpoints = new int[4];
 
         int currentX;
         int currentY;
-        
+
         Position helper = new Position(meanX, meanY);
         float range = 50;
-        
-        for (int i = 0; i < xPoints.size(); i++) { 
-            
+
+        for (int i = 0; i < xPoints.size(); i++) {
+
             currentX = xPoints.get(i);
             currentY = yPoints.get(i);
-            
+
             if ((helper.sqrdEuclidDist(meanX, meanY, currentX, currentY)) < range) {
                 if (currentX < minX) {
                     minX = currentX;
-                    newXpoints[0] = currentX; 
-                    newYpoints[0] = currentY; 
-                } else if (currentX > maxX) { 
+                    newXpoints[0] = currentX;
+                    newYpoints[0] = currentY;
+                } else if (currentX > maxX) {
                     maxX = currentX;
-                    newXpoints[1] = currentX; 
-                    newYpoints[1] = currentY; 
+                    newXpoints[1] = currentX;
+                    newYpoints[1] = currentY;
                 }
-            
-                if (currentY < minY) { 
+
+                if (currentY < minY) {
                     minY = currentY;
-                    newYpoints[2] = currentY; 
+                    newYpoints[2] = currentY;
                     newXpoints[2] = currentX;
                 } else if (currentY > maxY) {
                     maxY = currentY;
-                    newYpoints[3] = currentY; 
-                    newXpoints[3] = currentX; 
+                    newYpoints[3] = currentY;
+                    newXpoints[3] = currentX;
                 }
             }
-                                
+
         }
-        
+
         // #################
         // Vector Sum Method
         /*
         double vectorX = 0;
         double vectorY = 0;
-
+        
         //for (int i = 0; i < 4; i++) {
         //    vectorX += newXpoints[i] - meanX;
         //    vectorY += meanY - newYpoints[i];
@@ -759,53 +910,53 @@ public class Vision extends WindowAdapter {
         vectorY = (meanY - minY) + (meanY - maxY);
         
         if (vectorX == 0) {
-            vectorX = 1;
+        vectorX = 1;
         }
         
         if (vectorY == 0) {
-            vectorY = 1;
+        vectorY = 1;
         }
-        */
+         */
         // End of Sum of Vectors Method
         // ################################
         // Squared Eclidean Distance Method
-        
-        double distance = 0; 
-	int pointX = 0;
+
+        double distance = 0;
+        int pointX = 0;
         int pointY = 0;
-	for (int i = 0; i < newXpoints.length; i++) {
-            double tempDistance = Math.pow (meanX -newXpoints[i],2) + Math.pow (meanY -newYpoints[i],2);
-            if (tempDistance > distance) { 
-                distance = tempDistance; 
-                pointX = newXpoints[i]; 
+        for (int i = 0; i < newXpoints.length; i++) {
+            double tempDistance = Math.pow(meanX - newXpoints[i], 2) + Math.pow(meanY - newYpoints[i], 2);
+            if (tempDistance > distance) {
+                distance = tempDistance;
+                pointX = newXpoints[i];
                 pointY = newYpoints[i];
             }
             // DEBUG
             //System.out.println("newXpoint = " + newXpoints[i]);
         }
-        
+
         // DEBUG - draws a small circle around where the point is detected.
         //image.getGraphics().drawOval(pointX-5, pointY-5, 10, 10);
-                
+
         double vectorX = pointX - meanX;
         double vectorY = meanY - pointY;
-        
+
         // End of Longest Line method
         // ##################################
-        
-        
+
+
         double divisor = vectorY / vectorX;
         double radianAngle = Math.atan(divisor);
         double degreeAngle = Math.toDegrees(radianAngle);
         degreeAngle = Math.abs(degreeAngle);
 
         double angle = 0.1;
-        
+
         // DEBUG - Some prints used in testing.
         //System.out.println("MeanX is: " + meanX + ", MeanY is: " + meanY + ", PointX is: " + pointX + ", PointY is: " + pointY);
         //System.out.println("Angle = " + degreeAngle + ", VectorX = " + vectorX + ", VectorY = " + vectorY);
         //System.out.println("Using the vector method.  Remember Yellow is turned off for testing!");
-        
+
         if (vectorX < 0) {
             if (vectorY > 0) {
                 angle = degreeAngle;
@@ -819,227 +970,221 @@ public class Vision extends WindowAdapter {
                 angle = 180 + degreeAngle;
             }
         }
-        
+
         // DEBUG - attempts to draw a line at the angle it's facing.
-        image.getGraphics().drawLine(((int)(meanX-vectorX)), ((int)(meanY-vectorY)), meanX, meanY);
-        
+        image.getGraphics().drawLine(((int) (meanX - vectorX)), ((int) (meanY - vectorY)), meanX, meanY);
+
         System.out.println("VectorX = " + vectorX + ", VectorY = " + vectorY + ", Angle = " + angle);
         return angle;
     }
 }
-
 // FOLLOWING IS ALL CURRENTLY UNUSED CODE
 // This was a part of the findOrientation method.
 
 /* Calculate new angle using just the center of the T and the grey circle */
-        /*
-            length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
-                + Math.pow(frontY - backY, 2));
-        ax = (frontX - backX) / length;
-        ay = (frontY - backY) / length;
-	angle = (float) Math.acos(ax);
-        double angle3 = Math.toDegrees((double) Math.acos(ax));
-
-        if (frontY < meanY) {
-            angle3 = -angle3;
-        }
-
-	if(angle3<0) {
-		angle3 = Math.abs(angle3);
-	}
-	else {
-	   angle3 = 360 - angle3;
-	}
-	
-	
-
-        
-        length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
-                + Math.pow(meanY - backY, 2));
-        ax = (meanX - backX) / length;
-        ay = (meanY - backY) / length;
-        double angle4 = Math.toDegrees((double) Math.acos(ax));
-        angle = (float) Math.acos(ax);
-
-        if (frontY < meanY) {
-            angle4 = -angle4;
-        }
-
-	if(angle4<0) {
-		angle4 = Math.abs(angle4);
-	}
-	else {
-	   angle4 = 360 - angle4;
-	}
-        */
-
-        //Look in a cone in the opposite direction to try to find the grey circle
 /*
-        ArrayList<Integer> greyXPoints = new ArrayList<Integer>();
-        ArrayList<Integer> greyYPoints = new ArrayList<Integer>();
+length = (float) Math.sqrt(Math.pow(frontX - backX, 2)
++ Math.pow(frontY - backY, 2));
+ax = (frontX - backX) / length;
+ay = (frontY - backY) / length;
+angle = (float) Math.acos(ax);
+double angle3 = Math.toDegrees((double) Math.acos(ax));
 
-        for (int a=-20; a < 21; a++) {
-            ax = (float) Math.cos(radianAngleMF+((a*Math.PI)/180));
-            ay = (float) Math.sin(radianAngleMF+((a*Math.PI)/180));
-            for (int i = 15; i < 25; i++) {
-                int greyX = meanX - (int) (ax * i);
-                int greyY = meanY - (int) (ay * i);
-                try {
-                    Color c = new Color(image.getRGB(greyX, greyY));
-                    float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
-                    if (isGrey(c, hsbvals)) {
-                        greyXPoints.add(greyX);
-                        greyYPoints.add(greyY);
-                    }
-                } catch (Exception e) {
-                    //This happens if part of the search area goes outside the image
-                    //This is okay, just ignore and continue
-                }
-            }
-        }
+if (frontY < meanY) {
+angle3 = -angle3;
+}
+
+if(angle3<0) {
+angle3 = Math.abs(angle3);
+}
+else {
+angle3 = 360 - angle3;
+}
+
+
+
+
+length = (float) Math.sqrt(Math.pow(meanX - backX, 2)
++ Math.pow(meanY - backY, 2));
+ax = (meanX - backX) / length;
+ay = (meanY - backY) / length;
+double angle4 = Math.toDegrees((double) Math.acos(ax));
+angle = (float) Math.acos(ax);
+
+if (frontY < meanY) {
+angle4 = -angle4;
+}
+
+if(angle4<0) {
+angle4 = Math.abs(angle4);
+}
+else {
+angle4 = 360 - angle4;
+}
  */
-        /* No grey circle found
-         * The angle found is probably wrong, skip this value and return 0 */
+//Look in a cone in the opposite direction to try to find the grey circle
+/*
+ArrayList<Integer> greyXPoints = new ArrayList<Integer>();
+ArrayList<Integer> greyYPoints = new ArrayList<Integer>();
 
+for (int a=-20; a < 21; a++) {
+ax = (float) Math.cos(radianAngleMF+((a*Math.PI)/180));
+ay = (float) Math.sin(radianAngleMF+((a*Math.PI)/180));
+for (int i = 15; i < 25; i++) {
+int greyX = meanX - (int) (ax * i);
+int greyY = meanY - (int) (ay * i);
+try {
+Color c = new Color(image.getRGB(greyX, greyY));
+float hsbvals[] = new float[3];
+Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+if (isGrey(c, hsbvals)) {
+greyXPoints.add(greyX);
+greyYPoints.add(greyY);
+}
+} catch (Exception e) {
+//This happens if part of the search area goes outside the image
+//This is okay, just ignore and continue
+}
+}
+}
+ */
+/* No grey circle found
+ * The angle found is probably wrong, skip this value and return 0 */
 //        if (greyXPoints.size() < 30) {
 //            throw new NoAngleException("No grey circle found");
 //        }
 
-        /* Calculate center of grey circle points */
+/* Calculate center of grey circle points */
 /*
-        int totalX = 0;
-        int totalY = 0;
-        for (int i = 0; i < greyXPoints.size(); i++) {
-            totalX += greyXPoints.get(i);
-            totalY += greyYPoints.get(i);
-        }
-*/
-        /* Center of grey circle */
-        //float backX = totalX / greyXPoints.size();
-        //float backY = totalY / greyXPoints.size();
+int totalX = 0;
+int totalY = 0;
+for (int i = 0; i < greyXPoints.size(); i++) {
+totalX += greyXPoints.get(i);
+totalY += greyYPoints.get(i);
+}
+ */
+/* Center of grey circle */
+//float backX = totalX / greyXPoints.size();
+//float backY = totalY / greyXPoints.size();
+//imageGraphics.setColor(Color.red);
+//imageGraphics.drawOval((int)backX-15, (int) backY-15, 30,30);
 
-        //imageGraphics.setColor(Color.red);
-        //imageGraphics.drawOval((int)backX-15, (int) backY-15, 30,30);
+/* Check that the circle is surrounded by the green plate
+ * Currently checks above and below the circle */
+//int foundGreen = 0;
+//int greenSides = 0;
+/* Check if green points are above the grey circle */
+/*
+for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
+for (int y = (int) (backY-9); y < backY; y++) {
+try {
+Color c = new Color(image.getRGB(x, y));
+float hsbvals[] = new float[3];
+Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+if (isGreen(c, hsbvals)) {
+foundGreen++;
+break;
+}
+} catch (Exception e) {
+// Ignore.
+}
+}
+}
 
-        /* Check that the circle is surrounded by the green plate
-         * Currently checks above and below the circle */
+if (foundGreen >= 3) {
+greenSides++;
+}
 
-        //int foundGreen = 0;
-        //int greenSides = 0;
-           
-        /* Check if green points are above the grey circle */
-           /*
-        for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
-            for (int y = (int) (backY-9); y < backY; y++) {
-                try {
-                    Color c = new Color(image.getRGB(x, y));
-                    float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
-                    if (isGreen(c, hsbvals)) {
-                        foundGreen++;
-                        break;
-                    }
-                } catch (Exception e) {
-                    // Ignore.
-                }
-            }
-        }
+ * /
+/* Check if green points are below the grey circle */
+/*
+foundGreen = 0;
+for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
+for (int y = (int) (backY); y < backY+10; y++) {
+try {
+Color c = new Color(image.getRGB(x, y));
+float hsbvals[] = new float[3];
+Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+if (isGreen(c, hsbvals)) {
+foundGreen++;
+break;
+}
+} catch (Exception e) {
+// Ignore.
+}
+}
+}
 
-        if (foundGreen >= 3) {
-            greenSides++;
-        }
+if (foundGreen >= 3) {
+greenSides++;
+}
 
-         * /
-        /* Check if green points are below the grey circle */
+ * /
+/* Check if green points are left of the grey circle */
+/*
+foundGreen = 0;
+for (int x=(int) (backX-9); x < backX; x++) {
+for (int y = (int) (backY-2); y < backY+3; y++) {
+try {
+Color c = new Color(image.getRGB(x, y));
+float hsbvals[] = new float[3];
+Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+if (isGreen(c, hsbvals)) {
+foundGreen++;
+break;
+}
+} catch (Exception e) {
+// Ignore.
+}
+}
+}
+
+if (foundGreen >= 3) {
+greenSides++;
+}
+ * /
+/* Check if green points are right of the grey circle */
+//foundGreen = 0;
         /*
-        foundGreen = 0;
-        for (int x=(int) (backX-2); x < (int) (backX+3); x++) {
-            for (int y = (int) (backY); y < backY+10; y++) {
-                try {
-                    Color c = new Color(image.getRGB(x, y));
-                    float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
-                    if (isGreen(c, hsbvals)) {
-                        foundGreen++;
-                        break;
-                    }
-                } catch (Exception e) {
-                    // Ignore.
-                }
-            }
-        }
+for (int x=(int) (backX); x < (int) (backX+10); x++) {
+for (int y = (int) (backY-2); y < backY+3; y++) {
+try {
+Color c = new Color(image.getRGB(x, y));
+float hsbvals[] = new float[3];
+Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+if (isGreen(c, hsbvals)) {
+foundGreen++;
+break;
+}
+} catch (Exception e) {
+// Ignore.
+}
+}
+}
 
-        if (foundGreen >= 3) {
-            greenSides++;
-        }
-
-         * /
-        /* Check if green points are left of the grey circle */
-        /*
-        foundGreen = 0;
-        for (int x=(int) (backX-9); x < backX; x++) {
-            for (int y = (int) (backY-2); y < backY+3; y++) {
-                try {
-                    Color c = new Color(image.getRGB(x, y));
-                    float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
-                    if (isGreen(c, hsbvals)) {
-                        foundGreen++;
-                        break;
-                    }
-                } catch (Exception e) {
-                    // Ignore.
-                }
-            }
-        }
-
-        if (foundGreen >= 3) {
-            greenSides++;
-        }
-         * /
-        /* Check if green points are right of the grey circle */
-        //foundGreen = 0;
-        /*
-        for (int x=(int) (backX); x < (int) (backX+10); x++) {
-            for (int y = (int) (backY-2); y < backY+3; y++) {
-                try {
-                    Color c = new Color(image.getRGB(x, y));
-                    float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
-                    if (isGreen(c, hsbvals)) {
-                        foundGreen++;
-                        break;
-                    }
-                } catch (Exception e) {
-                    // Ignore.
-                }
-            }
-        }
-
-        if (foundGreen >= 3) {
-            greenSides++;
-        }
+if (foundGreen >= 3) {
+greenSides++;
+}
 
 
-        if (greenSides < 3) {
-            throw new NoAngleException("Not enough green areas around the grey circle");
-        }
-         * /
+if (greenSides < 3) {
+throw new NoAngleException("Not enough green areas around the grey circle");
+}
+ * /
 
-        /*
-         * At this point, the following is true:
-         * Center of the T has been found
-         * Front of the T has been found
-         * Grey circle has been found
-         * Grey circle is surrounded by green plate pixels on at least 3 sides
-         * The grey circle, center of the T and front of the T line up roughly with the same angle
-         */
-        /*
-        if (showImage) {
-            image.getGraphics().drawLine((int)backX, (int)backY, (int)(backX+ax*70), (int)(backY+ay*70));
-            image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
-        }
-         */
-	//System.out.println("F/M: "+angleMF);
+/*
+ * At this point, the following is true:
+ * Center of the T has been found
+ * Front of the T has been found
+ * Grey circle has been found
+ * Grey circle is surrounded by green plate pixels on at least 3 sides
+ * The grey circle, center of the T and front of the T line up roughly with the same angle
+ */
+/*
+if (showImage) {
+image.getGraphics().drawLine((int)backX, (int)backY, (int)(backX+ax*70), (int)(backY+ay*70));
+image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
+}
+ */
+//System.out.println("F/M: "+angleMF);
         //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
