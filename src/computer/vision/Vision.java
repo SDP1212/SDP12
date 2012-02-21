@@ -8,6 +8,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.io.*; //TEST
+import javax.imageio.ImageIO;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -101,21 +103,38 @@ public class Vision extends WindowAdapter {
                 e.printStackTrace();
             }
 
-            boolean singleCheck = true; // TESTING
+            int imCount = 0;
             
             public void nextFrame(VideoFrame frame) {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
                 
-                ShadowProcessing  s = new ShadowProcessing(pitchConstants);
-                frameImage =  s.sideNormalise(frameImage);
+                imCount += 1;
+                if (imCount == 10) {
+                    try {
+                        File sampleImage = new File("TestImage.jpeg");
+                        ImageIO.write(frameImage, "jpeg", sampleImage);
+                    } catch (Exception e) {
+                        // Obligatory comment
+                    }
+                }
+                
+                //ShadowProcessing  s = new ShadowProcessing(pitchConstants);
+                //frameImage =  s.sideNormalise(frameImage);
                 //frameImage = s.fullNormalise(frameImage);
                 
                 frame.recycle();
                 
+                BufferedImage img = null;
+                try {
+                    img = ImageIO.read(new File("TestImage.jpeg"));
+                } catch (IOException e) {
+                    img = frameImage;
+                }
+
                 // Switch between angle methods using true or false here.
                 // false is default.
-                processAndUpdateImage(frameImage, before, false);
+                processAndUpdateImage(frameImage, img, before, false);
             }
         });
 
@@ -161,7 +180,7 @@ public class Vision extends WindowAdapter {
      *
      * @param image     The image to process and then show.
      */
-    public void processAndUpdateImage(BufferedImage image, long before, boolean runAlternate) {
+    public void processAndUpdateImage(BufferedImage image, BufferedImage background, long before, boolean runAlternate) {
         
         /* NOTE!
          * The boolean "runAlternate" is used to differentiate between the normal method
@@ -203,16 +222,25 @@ public class Vision extends WindowAdapter {
         /* For every pixel within the pitch, test to see if it belongs to the ball,
          * the yellow T, the blue T, either green plate or a grey circle. */
         for (int row = topBuffer; row < image.getHeight() - bottomBuffer; row++) {
-
             for (int column = leftBuffer; column < image.getWidth() - rightBuffer; column++) {
-
+                
                 /* The RGB colours and hsv values for the current pixel. */
+                /* And the RBG values for the background image*/
                 Color c = new Color(image.getRGB(column, row));
-                float hsbvals[] = new float[3];
-		//System.out.println("This is red: "+(double)(c.getRed()/(double)(c.getRed()+c.getBlue()+c.getGreen()))*255);
-                Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+                Color c2 = new Color(background.getRGB(column, row));
+                
+                /* Subtract the RGB values of the current image from the background image  */
+                int red = Math.abs(c.getRed()-c2.getRed());
+                int blue = Math.abs(c.getBlue()-c2.getBlue());
+                int green = Math.abs(c.getGreen()-c2.getGreen());
 
-                /* Debug graphics for the grey circles and green plates.
+                float hsbvals[] = new float[3];
+                
+                int diffRange = 25;
+                
+                if(red > diffRange || blue > diffRange || green > diffRange) {
+	            Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+                    /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
                 if (thresholdsState.isGrey_debug() && isGrey(c, hsbvals)) {
                     image.setRGB(column, row, 0xFFFF0099);
@@ -279,9 +307,18 @@ public class Vision extends WindowAdapter {
                     /* If we're in the "Ball" tab, we show what pixels we're looking at,
                      * for debugging and to help with threshold setting. */
                     if (thresholdsState.isBall_debug()) {
-                        image.setRGB(column, row, 0xFF000000);
+                        image.setRGB(column, row, 0xFFFF0000);
                     }
                 }
+                }
+                else{
+                    //Color.RGBtoHSB(0, 0, 0, hsbvals);
+                    image.setRGB(column, row, 0x00000000);
+                }
+                
+
+
+                
             }
         }
 
@@ -709,6 +746,7 @@ public class Vision extends WindowAdapter {
         
         // #################
         // Vector Sum Method
+        /*
         double vectorX = 0;
         double vectorY = 0;
 
@@ -727,11 +765,11 @@ public class Vision extends WindowAdapter {
         if (vectorY == 0) {
             vectorY = 1;
         }
-        
+        */
         // End of Sum of Vectors Method
         // ################################
         // Squared Eclidean Distance Method
-        /*
+        
         double distance = 0; 
 	int pointX = 0;
         int pointY = 0;
@@ -749,9 +787,9 @@ public class Vision extends WindowAdapter {
         // DEBUG - draws a small circle around where the point is detected.
         //image.getGraphics().drawOval(pointX-5, pointY-5, 10, 10);
                 
-        double vectorX = meanX - pointX;
+        double vectorX = pointX - meanX;
         double vectorY = meanY - pointY;
-        */
+        
         // End of Longest Line method
         // ##################################
         
@@ -783,7 +821,7 @@ public class Vision extends WindowAdapter {
         }
         
         // DEBUG - attempts to draw a line at the angle it's facing.
-        image.getGraphics().drawLine((meanX - (int)vectorX), (meanY - (int)vectorY), meanX, meanY);
+        image.getGraphics().drawLine(((int)(meanX-vectorX)), ((int)(meanY-vectorY)), meanX, meanY);
         
         System.out.println("VectorX = " + vectorX + ", VectorY = " + vectorY + ", Angle = " + angle);
         return angle;
@@ -849,7 +887,7 @@ public class Vision extends WindowAdapter {
                 try {
                     Color c = new Color(image.getRGB(greyX, greyY));
                     float hsbvals[] = new float[3];
-                    Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), hsbvals);
+                    Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
                     if (isGrey(c, hsbvals)) {
                         greyXPoints.add(greyX);
                         greyYPoints.add(greyY);
