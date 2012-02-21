@@ -31,15 +31,13 @@ public class Shooter extends AI {
 	
 	@Override
 	public void run() {
-//		Goal goal = pitch.getTargetGoal();
-//		Box shootingBox = new Box(goal.getLowerPostCoordinates(), 
-//				new Coordinates(
-//				goal.getUpperPostCoordinates().getX() + 0.5, goal.getUpperPostCoordinates().getY()));
-//		if (shootingBox.isPointInside(self.getPosition()) && (new Date().getTime() - shotTime.getTime() > 2000)) {
-//			self.kick();
-//			shotTime = new Date();
-//		}
 		updateState();
+		if (state == DRIBBLING) {
+			if (inShootingBox()) {
+				self.kick();
+				shotTime = new Date();
+			}
+		}
 	}
 	
 	private void updateState() {
@@ -82,6 +80,13 @@ public class Shooter extends AI {
 		} else {
 			return false;
 		}
+	}
+	
+	private boolean inShootingBox() {
+		Coordinates c1 = pitch.getTargetGoal().getLowerPostCoordinates();
+		Coordinates c2 = new Coordinates(pitch.getTargetGoal().getUpperPostCoordinates().getX() + 0.8, pitch.getTargetGoal().getUpperPostCoordinates().getY());
+		Box shootingBox = new Box(c1, c2);
+		return shootingBox.isPointInside(self.getPosition());
 	}
 
 	@Override
