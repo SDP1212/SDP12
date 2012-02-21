@@ -222,7 +222,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="radioPenalty" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="88" max="32767" attributes="0"/>
+                      <EmptySpace pref="89" max="32767" attributes="0"/>
                       <Component id="buttonRunVision" min="-2" pref="60" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -309,17 +309,14 @@
                               <Component id="spinnerRadius" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
+                              <EmptySpace pref="283" max="32767" attributes="0"/>
+                              <Component id="buttonNorth" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
-                                      <EmptySpace pref="16" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
+                              <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
                               <EmptySpace pref="348" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -361,6 +358,11 @@
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace pref="189" max="32767" attributes="0"/>
+                      <Component id="buttonNorth" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -462,6 +464,14 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="spinnerRadius">
+            </Component>
+            <Component class="javax.swing.JButton" name="buttonNorth">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Go North"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonNorthActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -78,7 +78,7 @@ public class Communication implements Runnable, ControlInterface {
      * @param speed 
      */
     public void forward(int speed) {
-        sendMessage(Brick.FORWARDS | speed);
+        sendMessage(Brick.FORWARDS | (speed << 8));
     }
     
     /**
@@ -86,7 +86,7 @@ public class Communication implements Runnable, ControlInterface {
      * @param speed 
      */
     public void backward(int speed) {
-        sendMessage(Brick.BACKWARDS | speed);
+        sendMessage(Brick.BACKWARDS | (speed << 8));
     }
     
     /**
@@ -125,13 +125,22 @@ public class Communication implements Runnable, ControlInterface {
         sendMessage(arg | opcode);
     }
 	 
-    public void rotateRight() {
-        sendMessage(Brick.ROTATERIGHT);
+    public void rotateRight(int speed) {
+        sendMessage(Brick.ROTATERIGHT | (speed << 8));
     }
 
-    public void rotateLeft() {
-        sendMessage(Brick.ROTATELEFT);
+    public void rotateLeft(int speed ) {
+        sendMessage(Brick.ROTATELEFT | (speed << 8));
     }
+
+	public void rotateTo(int heading) {
+		System.out.println("Opcode: " + Brick.ROTATETO);
+		System.out.println("Arg: " + heading);
+		sendMessage(Brick.ROTATETO | (heading << 8));
+		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
+	}
+	
+	
     
     public void dribble() {
         forward(Brick.MEDIUM);
@@ -152,7 +161,7 @@ public class Communication implements Runnable, ControlInterface {
         try {
             if (commState == READY) {
                 byte[] buf = intToByteArray(message);
-    //            System.out.println("Message " + Arrays.toString(buf));
+//                System.out.println("Message " + Arrays.toString(buf));
                 outStream.write(buf);
                 outStream.flush();
                 commState = WAITING;
@@ -204,9 +213,9 @@ public class Communication implements Runnable, ControlInterface {
 //                    case (Brick.SENSING):
 //                        System.out.println("Sensing");
 //                        break;
-//                    case (Brick.SENSINGENDED):
-//                        System.out.println("Sensing ended");
-//                        break;
+                    case (Brick.SENSINGENDED):
+                        System.out.println("Sensing ended");
+                        break;
                 }
             } catch (IOException e) {
                 connected = false;
