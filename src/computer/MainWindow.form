@@ -222,7 +222,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="radioPenalty" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="82" max="32767" attributes="0"/>
+                      <EmptySpace pref="88" max="32767" attributes="0"/>
                       <Component id="buttonRunVision" min="-2" pref="60" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -288,10 +288,6 @@
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="radioBackward" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
-                                              <EmptySpace pref="85" max="-2" attributes="0"/>
-                                          </Group>
                                           <Component id="radioLeft" alignment="0" pref="195" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
@@ -307,13 +303,24 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="radioArcRight" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="radioArcLeft" alignment="0" pref="123" max="32767" attributes="1"/>
+                                  <Component id="radioArcLeft" alignment="0" min="-2" pref="123" max="-2" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
+                              <Component id="spinnerRadius" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="radioRight" min="-2" pref="110" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
+                                      <EmptySpace pref="16" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="348" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -337,15 +344,23 @@
                           <Component id="radioLeft" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                           <Component id="radioFast" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="radioRight" min="-2" pref="22" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="radioArcLeft" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="radioArcRight" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="kickRadio" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="radioRight" min="-2" pref="22" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="radioArcLeft" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="radioArcRight" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="kickRadio" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                              <Component id="spinnerRadius" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -445,6 +460,8 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Arc Right"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="spinnerRadius">
             </Component>
           </SubComponents>
         </Container>
