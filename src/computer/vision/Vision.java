@@ -74,6 +74,8 @@ public class Vision extends WindowAdapter {
         initFrameGrabber(videoDevice, width, height, channel, videoStandard, compressionQuality);
         initGUI();
     }
+    
+    
 
     /**
      * Initialises a FrameGrabber object with the given parameters.
@@ -119,7 +121,8 @@ public class Vision extends WindowAdapter {
                         File sampleImage = new File("TestImage.jpeg");
                         ImageIO.write(frameImage, "jpeg", sampleImage);
                     } catch (Exception e) {
-                        // Obligatory comment
+                        //Try again in 10 frames
+                        imCount = 0;
                     }
                 }
 
@@ -246,7 +249,7 @@ public class Vision extends WindowAdapter {
 
                 int diffRange = 25;
 
-                if (red > diffRange || blue > diffRange || green > diffRange) {
+               // if (red > diffRange || blue > diffRange || green > diffRange) {
                 Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
                 /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
@@ -317,10 +320,10 @@ public class Vision extends WindowAdapter {
                         image.setRGB(column, row, 0xFFFF0000);
                     }
                 }
-                } else {
+               // } else {
                 //Color.RGBtoHSB(0, 0, 0, hsbvals);
-                image.setRGB(column, row, 0x00000000);
-                }
+                //image.setRGB(column, row, 0x00000000);
+               // }
 
 
 
@@ -488,6 +491,44 @@ public class Vision extends WindowAdapter {
             yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
         }
 
+        //Find the orientation using Canny Edge detection
+            Integer firstRobotMaxX = 0;
+            Integer firstRobotMinX = 0;
+            Integer firstRobotMaxY = 0;
+            Integer firstRobotMinY = 0;
+            try {
+                firstRobotMaxX = Collections.max(firstRobotXPoints);
+                firstRobotMinX = Collections.min(firstRobotXPoints);
+                firstRobotMaxY = Collections.max(firstRobotYPoints);
+                firstRobotMinY = Collections.min(firstRobotYPoints);
+
+            } catch (Exception e) {
+                //No frame detected - square won't display
+            }
+
+            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
+                //imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
+                CannyEdge dimo = new CannyEdge();
+                int[][] output;
+                float threshold = 2.6f;
+                short sobel = 1;
+                short noise = 1;
+                output = dimo.detect(image, ((int) firstRobotMinX)-5, ((int) firstRobotMinY)-5, ((int)(firstRobotMaxX-firstRobotMinX))+5, ((int)(firstRobotMaxY - firstRobotMinY))+5, noise, sobel, threshold);
+                
+                for(int x=0; x<output.length; x++) {
+                    for(int y=0; y<output[0].length;y++) {
+                        if(output[x][y]==255) {
+                            System.out.print("1");
+                        }
+                        else {
+                        //System.out.print(output[x][y]);
+                        }
+                    }
+                    //System.out.println();
+                }
+
+            }
+            
 
 
         /* Attempt to find the blue robot's orientation. */
@@ -565,24 +606,6 @@ public class Vision extends WindowAdapter {
             imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480);
             imageGraphics.drawLine(0, secondRobot.getY(), 640, secondRobot.getY());
             imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480); */
-            Integer firstRobotMaxX = 0;
-            Integer firstRobotMinX = 0;
-            Integer firstRobotMaxY = 0;
-            Integer firstRobotMinY = 0;
-            try {
-                firstRobotMaxX = Collections.max(firstRobotXPoints);
-                firstRobotMinX = Collections.min(firstRobotXPoints);
-                firstRobotMaxY = Collections.max(firstRobotYPoints);
-                firstRobotMinY = Collections.min(firstRobotYPoints);
-
-            } catch (Exception e) {
-                //No frame detected - square won't display
-            }
-
-            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
-                imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
-            }
-            
             Integer secondRobotMaxX = 0;
             Integer secondRobotMinX = 0;
             Integer secondRobotMaxY = 0;
@@ -600,7 +623,8 @@ public class Vision extends WindowAdapter {
             if (secondRobotMaxX != 0 && secondRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
                 imageGraphics.drawRect(secondRobotMinX, secondRobotMinY, secondRobotMaxX - secondRobotMinX, secondRobotMaxY - secondRobotMinY);
             }
-
+            
+            
             imageGraphics.setColor(Color.blue);
             imageGraphics.drawOval(blue.getX() - 15, blue.getY() - 15, 30, 30);
             imageGraphics.setColor(Color.yellow);
