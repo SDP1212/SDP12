@@ -361,7 +361,7 @@ public class Brick {
      * Reverse away from an obstruction.
      * @param The direction to pivot. 
      */
-    public static void backOff(char direction) {
+    public synchronized static void backOff(char direction) {
         pilot.stop();
         pilot.backward();
         try {
