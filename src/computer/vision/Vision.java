@@ -249,7 +249,7 @@ public class Vision extends WindowAdapter {
 
                 int diffRange = 25;
 
-               // if (red > diffRange || blue > diffRange || green > diffRange) {
+                if (red > diffRange || blue > diffRange || green > diffRange) {
                 Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
                 /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
@@ -320,10 +320,10 @@ public class Vision extends WindowAdapter {
                         image.setRGB(column, row, 0xFFFF0000);
                     }
                 }
-               // } else {
+                } else {
                 //Color.RGBtoHSB(0, 0, 0, hsbvals);
-                //image.setRGB(column, row, 0x00000000);
-               // }
+                image.setRGB(column, row, 0x00000000);
+                }
 
 
 
@@ -518,7 +518,7 @@ public class Vision extends WindowAdapter {
                 for(int x=0; x<output.length; x++) {
                     for(int y=0; y<output[0].length;y++) {
                         if(output[x][y]==255) {
-                            System.out.print("1");
+                            //System.out.print("1");
                         }
                         else {
                         //System.out.print(output[x][y]);
