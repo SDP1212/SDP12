@@ -17,7 +17,7 @@ public class ButtonListener implements lejos.nxt.ButtonListener  {
         if (Button.ESCAPE == button) {
             Bluetooth.cancelConnect();
         } else {
-            Brick.closeConnection();
+            Brick.quit();
         }
     }
     
