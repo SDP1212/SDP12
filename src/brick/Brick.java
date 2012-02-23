@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.nxt.Sound;
+import lejos.nxt.addon.CompassHTSensor;
+import lejos.robotics.DirectionFinder;
+import lejos.robotics.navigation.CompassPilot;
 
 /**
  * Controller of the brick.
@@ -42,11 +45,13 @@ public class Brick {
     public final static int ROTATERIGHT = 0x07;
     public final static int ROTATELEFT = 0x08;
 	
+	public final static int ROTATETO = 0xa;
+	
     public final static int ARC = 0x09;
     
-    public final static int SLOW = 0X000100;
-    public final static int MEDIUM = 0X000200;
-    public final static int FAST = 0X000300;
+    public final static int SLOW = 180;
+    public final static int MEDIUM = 360;
+    public final static int FAST = 720;
     
     public final static int OPCODE = 0X000000FF;
     public final static int ARG = 0XFFFFFF00;
@@ -54,6 +59,7 @@ public class Brick {
     public final static int COLLISION = 0xa0;
     public final static int OK = 0xa1;
     public final static int SENSING = 0xa2;
+	public final static int SENSINGENDED = 0xa3;
     
     public final static char LEFT = 'l';
     public final static char RIGHT = 'r';
@@ -91,6 +97,7 @@ public class Brick {
         Button.ESCAPE.addButtonListener(buttonListener);
         Button.ENTER.addButtonListener(buttonListener);
         pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
+//		pilot = new CompassPilot(new CompassHTSensor(SensorPort.S3), (float)wheelDiameter, (float)trackWidth , Motor.A, Motor.B);
         sensorListener = new SensorListener();
         listenerThread = new Thread(sensorListener);
         listenerThread.start();
@@ -112,11 +119,11 @@ public class Brick {
                 switch (opcode) {
 
                     case FORWARDS:
-                        forwards(arg);
+                        forwards(arg >> 8);
                         break;
 
                     case BACKWARDS:
-                        backwards(arg);
+                        backwards(arg >> 8);
                         break;
 
                     case ROTATE:
@@ -124,12 +131,16 @@ public class Brick {
                         break;
 
                     case ROTATELEFT:
-                        rotateLeft();
+                        rotateLeft(arg >> 8);
                         break;
                         
                     case ROTATERIGHT:
-                        rotateRight();
+                        rotateRight(arg >> 8);
                         break;
+						
+					case ROTATETO:
+						rotateTo(arg >> 8);
+						break;
 						
                     case ARC:
                         arc(arg >> 8);
@@ -149,6 +160,7 @@ public class Brick {
                 }
 
                 // respond to say command was acted on
+				Thread.sleep(200);
                 sendMessage(OK);
                 if (n == QUIT || !isConnected()) {
                     closeConnection();
@@ -241,15 +253,17 @@ public class Brick {
      * @param message The message to write.
      */
     public synchronized static void logToFile(FileOutputStream outLog, String message) {
-        DataOutputStream dataOut = new DataOutputStream(outLog);
-        try { 
-            // write
-            dataOut.writeChars(System.currentTimeMillis() + " " + message+"\n");
-
-            outLog.flush(); // flush the buffer and write the file
-        } catch (IOException e) {
-            System.err.println("Failed to write to output stream");
-        }
+//        DataOutputStream dataOut = new DataOutputStream(outLog);
+//        try { 
+//            // write
+//            dataOut.writeChars(System.currentTimeMillis() + " " + message+"\n");
+//
+//            outLog.flush(); // flush the buffer and write the file
+//			dataOut.close();
+//        } catch (IOException e) {
+//            System.err.println("Failed to write to output stream");
+//        }
+		
     }
     /**
      * Send the robot forwards.
@@ -258,13 +272,7 @@ public class Brick {
      */
     public static void forwards(int speed) {
         pilot.forward();
-        if (speed == SLOW) {
-            pilot.setRotateSpeed(180);
-        } else if (speed == MEDIUM) {
-            pilot.setRotateSpeed(360);
-        } else if (speed == FAST) {
-            pilot.setRotateSpeed(720);
-        }
+        pilot.setRotateSpeed(speed);
     }
     
     /**
@@ -274,14 +282,7 @@ public class Brick {
      */
     public static void backwards(int speed) {
         pilot.backward();
-        if (speed == SLOW) {
-            pilot.setRotateSpeed(180);
-        } else if (speed == MEDIUM) {
-            Sound.playTone(2000, 500);
-            pilot.setRotateSpeed(360);
-        } else if (speed == FAST) {
-            pilot.setRotateSpeed(720);
-        }
+        pilot.setRotateSpeed(speed);
     }
     
     /**
@@ -295,22 +296,46 @@ public class Brick {
         } else {
             factor = 1;
         }
-        pilot.setRotateSpeed(180);
         pilot.rotate((finalAngle) * factor);
+		pilot.setRotateSpeed(180);
     }
     
-    public static void rotateRight() {
-        pilot.setRotateSpeed(100);
-        pilot.rotateRight();
+    public static void rotateRight(int speed) {
+        Motor.A.backward();
+		Motor.B.forward();
+		Motor.A.setSpeed(speed);
+		Motor.B.setSpeed(speed);
     }
     
-    public static void rotateLeft() {
-        pilot.setRotateSpeed(100);
-        pilot.rotateLeft();
+    public static void rotateLeft(int speed) {
+        Motor.B.backward();
+		Motor.A.forward();
+		Motor.A.setSpeed(speed);
+		Motor.B.setSpeed(speed);
     }
 	
+	public static void rotateTo(int heading) {
+		UltrasonicSensor compass = new UltrasonicSensor(SensorPort.S3);
+		int currentHeading = compass.getDistance() * 2;
+		int angle = currentHeading - heading;
+		if (angle > 0) {
+			pilot.rotateLeft();
+		} else {
+			pilot.rotateRight();
+		}
+		pilot.setRotateSpeed(50);
+		while (true) {
+			if (Math.abs(compass.getDistance() * 2 - heading) < 10) {
+				break;
+			}
+		}
+		pilot.stop();
+	}
+	
     public static void arc(int angle) {
+	
         pilot.arcForward(angle);
+			pilot.setRotateSpeed(SLOW / 2);
     }
     
     /**
@@ -336,7 +361,7 @@ public class Brick {
      * Reverse away from an obstruction.
      * @param The direction to pivot. 
      */
-    public static void backOff(char direction) {
+    public synchronized static void backOff(char direction) {
         pilot.stop();
         pilot.backward();
         try {

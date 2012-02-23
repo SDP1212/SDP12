@@ -52,7 +52,7 @@ public class SensorListener implements Runnable {
         } catch (InterruptedException ex) {
             return;
         } finally {
-//            Brick.sendMessage(Brick.SENSINGENDED);
+            Brick.sendMessage(Brick.SENSINGENDED);
         }
     }
 

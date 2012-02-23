@@ -4,6 +4,7 @@
  */
 package computer.ai;
 
+import brick.Brick;
 import computer.simulator.*;
 import java.util.Date;
 
@@ -20,6 +21,7 @@ public class Shooter extends AI {
 	private static final int SHOT = 2;
 	
 	private Date shotTime = new Date(0);
+	private Date movementTime = new Date(0);
 	private int state = SEARCHING;
 
 	public Shooter(Pitch pitch, Robot self) {
@@ -37,6 +39,20 @@ public class Shooter extends AI {
 				self.kick();
 				shotTime = new Date();
 			}
+		} else if (state == SEARCHING && (new Date().getTime() - movementTime.getTime() > 400)) {
+			Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
+			/*if (!facingBall()) {
+				if (angle < 0) {
+					self.arc(5);
+				} else {
+					self.arc(-5);
+				}
+			} else*/ if (!nearBall()) {
+				System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
+				self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5));
+			}
+			movementTime = new Date();
 		}
 	}
 	
@@ -60,7 +76,6 @@ public class Shooter extends AI {
 				}
 				break;
 		}
-		System.out.println("State: " + state);
 	}
 	
 	private boolean facingBall() {
@@ -91,7 +106,7 @@ public class Shooter extends AI {
 
 	@Override
 	public synchronized void robotCollided() {
-		
+		System.out.println("Collision");
 	}
 	
 }
