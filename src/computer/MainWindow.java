@@ -18,6 +18,8 @@ package computer;
 import brick.Brick;
 import computer.ai.AI;
 import computer.simulator.Direction;
+import computer.simulator.Pitch;
+import computer.simulator.Robot;
 import java.awt.Cursor;
 import java.awt.event.*;
 import javax.swing.JOptionPane;
@@ -95,6 +97,8 @@ public class MainWindow extends javax.swing.JFrame {
         buttonRunVision = new javax.swing.JButton();
         comboAI = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        comboTarget = new javax.swing.JComboBox();
+        comboRobot = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
@@ -197,6 +201,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        comboTarget.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Left", "Right" }));
+
+        comboRobot.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Blue", "Yellow" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -206,10 +214,15 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(radioRun)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 302, Short.MAX_VALUE)
-                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(radioPenalty))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioRun)
+                            .addComponent(radioPenalty))
+                        .addGap(40, 40, 40)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(comboRobot, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboTarget, javax.swing.GroupLayout.Alignment.LEADING, 0, 89, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -218,10 +231,13 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(radioRun)
-                    .addComponent(buttonDribble))
+                    .addComponent(buttonDribble)
+                    .addComponent(comboTarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioPenalty)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radioPenalty)
+                    .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -501,7 +517,19 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_radioFastActionPerformed
 
     private void buttonRunVisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRunVisionActionPerformed
-        appController.startEngine((Class<AI>)comboAI.getSelectedItem());
+        short colour;
+		short target;
+		if (comboTarget.getSelectedIndex() == 0) {
+			target = Pitch.TARGET_LEFT_GOAL;
+		} else {
+			target = Pitch.TARGET_RIGHT_GOAL;
+		}
+		if (comboRobot.getSelectedIndex() == 0) {
+			colour = Robot.YELLOW_PLATE;
+		} else {
+			colour = Robot.BLUE_PLATE;
+		}
+		appController.startEngine((Class<AI>)comboAI.getSelectedItem(), target, colour);
     }//GEN-LAST:event_buttonRunVisionActionPerformed
 
     private void buttonDribbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDribbleActionPerformed
@@ -556,6 +584,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonOrient;
     private javax.swing.JButton buttonRunVision;
     private javax.swing.JComboBox comboAI;
+    private javax.swing.JComboBox comboRobot;
+    private javax.swing.JComboBox comboTarget;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;

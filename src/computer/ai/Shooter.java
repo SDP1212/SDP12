@@ -114,6 +114,10 @@ public class Shooter extends AI {
 		Box shootingBox = new Box(c1, c2);
 		return shootingBox.isPointInside(self.getPosition());
 	}
+	
+	protected boolean facingGoal() {
+		return true;
+	}
 
 	@Override
 	public synchronized void robotCollided() {

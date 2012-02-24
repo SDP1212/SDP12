@@ -4,10 +4,7 @@
  */
 package computer.ai;
 
-import computer.ApplicationController;
-import computer.simulator.Coordinates;
-import computer.simulator.Pitch;
-import computer.simulator.Robot;
+import computer.simulator.*;
 import java.util.ArrayList;
 
 /**
