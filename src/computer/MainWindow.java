@@ -100,7 +100,8 @@ public class MainWindow extends javax.swing.JFrame {
         radioArcLeft = new javax.swing.JRadioButton();
         radioArcRight = new javax.swing.JRadioButton();
         spinnerRadius = new javax.swing.JSpinner();
-        buttonNorth = new javax.swing.JButton();
+        buttonOrient = new javax.swing.JButton();
+        spinnerOrient = new javax.swing.JSpinner();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -245,10 +246,10 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioArcRight);
         radioArcRight.setText("Arc Right");
 
-        buttonNorth.setText("Go North");
-        buttonNorth.addActionListener(new java.awt.event.ActionListener() {
+        buttonOrient.setText("Orient");
+        buttonOrient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonNorthActionPerformed(evt);
+                buttonOrientActionPerformed(evt);
             }
         });
 
@@ -279,12 +280,13 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(radioArcRight, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(radioArcLeft, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(kickRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 283, Short.MAX_VALUE)
-                        .addComponent(buttonNorth)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
+                        .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -317,11 +319,11 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(kickRadio))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(43, 43, 43)
-                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(21, 21, 21))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(189, Short.MAX_VALUE)
-                .addComponent(buttonNorth)
+                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonOrient)
+                            .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -496,9 +498,9 @@ public class MainWindow extends javax.swing.JFrame {
         commController.dribble();
     }//GEN-LAST:event_buttonDribbleActionPerformed
 
-	private void buttonNorthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNorthActionPerformed
-		commController.rotateTo(180);
-	}//GEN-LAST:event_buttonNorthActionPerformed
+	private void buttonOrientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOrientActionPerformed
+		commController.setHeading(((Integer)spinnerOrient.getValue()).intValue());
+	}//GEN-LAST:event_buttonOrientActionPerformed
     
     /**
      * @param args the command line arguments
@@ -541,7 +543,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton buttonDribble;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JButton buttonNorth;
+    private javax.swing.JButton buttonOrient;
     private javax.swing.JButton buttonRunVision;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
@@ -574,6 +576,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioSlow;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JSpinner spinnerOrient;
     private javax.swing.JSpinner spinnerRadius;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables

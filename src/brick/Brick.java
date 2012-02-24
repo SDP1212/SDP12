@@ -1,17 +1,6 @@
 package brick;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import java.io.InputStream;
-import java.io.OutputStream;
-import lejos.robotics.navigation.DifferentialPilot;
-import lejos.nxt.Sound;
-
 
 /**
  * Controller of the brick.
@@ -45,6 +34,8 @@ public class Brick {
 	public final static int ROTATETO = 0xa;
 	
     public final static int ARC = 0x09;
+	public final static int LOCKHEADING = 0x0b;
+	public final static int UNLOCKHEADING = 0x0c;
     
     public final static int SLOW = 180;
     public final static int MEDIUM = 360;
@@ -68,7 +59,7 @@ public class Brick {
         // Set up robotics objects
         buttonListener = new ButtonListener();
         Button.ESCAPE.addButtonListener(buttonListener);
-        Button.ENTER.addButtonListener(buttonListener);
+		Button.ENTER.addButtonListener(buttonListener);
         sensorListener = new SensorListener();
         listenerThread = new Thread(sensorListener);
         listenerThread.start();
@@ -79,10 +70,19 @@ public class Brick {
 		while (!quit) {
 			
 		}
-		commThread.interrupt();
-        listenerThread.interrupt();
-		movementThread.interrupt();
-		Logger.getInstance().close();
+		if (commThread.isAlive()) {
+			commThread.interrupt();
+		}
+		if (listenerThread.isAlive()) {
+			listenerThread.interrupt();
+		}
+        if (movementThread.isAlive()) {
+			movementThread.interrupt();
+		}
+		if (Logger.getInstance() != null) {
+			Logger.getInstance().close();
+		}
+		System.exit(0);
     }
 
     public static synchronized void quit() {

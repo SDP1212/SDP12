@@ -147,7 +147,7 @@ public class Communication implements Runnable {
             return;
         }
         int n = Brick.DO_NOTHING;
-
+		Movement movement = Movement.getInstance();
         while (n != Brick.QUIT && !Thread.interrupted() && connected) {
             try {
                 // Read in 4 bytes from the bluetooth stream
@@ -158,51 +158,58 @@ public class Communication implements Runnable {
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
                 int opcode = n & Brick.OPCODE;
-                int arg = (n & Brick.ARG) >> 8;
+                int arg = (n & Brick.ARG) >>> 8;
                 switch (opcode) {
 
                     case Brick.FORWARDS:
-                        Movement.forwards(arg);
+                        movement.forwards(arg);
                         break;
 
                     case Brick.BACKWARDS:
-                        Movement.backwards(arg);
+                        movement.backwards(arg);
                         break;
 
                     case Brick.ROTATE:
-                        Movement.rotate(arg);
+                        movement.rotate(arg);
                         break;
 
                     case Brick.ROTATELEFT:
-                        Movement.rotateLeft(arg);
+                        movement.rotateLeft(arg);
                         break;
                         
                     case Brick.ROTATERIGHT:
-                        Movement.rotateRight(arg);
+                        movement.rotateRight(arg);
                         break;
 						
 					case Brick.ROTATETO:
-						Movement.rotateTo(arg);
+						movement.rotateTo(arg);
 						break;
 						
                     case Brick.ARC:
-                        Movement.arc(arg);
+                        movement.arc(arg);
                         break;
 						
                     case Brick.STOP:
-                        Movement.stop();
+                        movement.stop();
                         break;
 
                     case Brick.KICK:
-                        Movement.kick();
+                        movement.kick();
                         break;
+						
+					case Brick.LOCKHEADING:
+						movement.setHeading(arg);
+						break;
+						
+					case Brick.UNLOCKHEADING:
+						movement.unlockHeading();
+						break;
 
                     case Brick.QUIT: // close connection
                         break;
 
                 }
                 // respond to say command was acted on
-				Thread.sleep(200);
                 sendMessage(Brick.OK);
             } catch (Throwable e) {
                 Logger.logToFile(e.toString());

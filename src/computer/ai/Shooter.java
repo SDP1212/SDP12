@@ -41,14 +41,17 @@ public class Shooter extends AI {
 			}
 		} else if (state == SEARCHING && (new Date().getTime() - movementTime.getTime() > 400)) {
 			Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
-			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-			/*if (!facingBall()) {
-				if (angle < 0) {
-					self.arc(5);
-				} else {
-					self.arc(-5);
-				}
-			} else*/ if (!nearBall()) {
+//			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
+			double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
+			self.setHeading((int)angle);
+			System.out.println("Heading: " + angle);
+//			if (!facingBall()) {
+//				if (angle < 0) {
+//					self.arc(5);
+//				} else {
+//					self.arc(-5);
+//				}
+			if (!nearBall()) {
 				System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
 				self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5));
 			}

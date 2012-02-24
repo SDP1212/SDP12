@@ -307,12 +307,13 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="spinnerRadius" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="kickRadio" min="-2" pref="94" max="-2" attributes="1"/>
-                              <EmptySpace pref="283" max="32767" attributes="0"/>
-                              <Component id="buttonNorth" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="210" max="32767" attributes="0"/>
+                              <Component id="spinnerOrient" min="-2" pref="59" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="buttonOrient" min="-2" pref="77" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
@@ -355,14 +356,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
                               <Component id="spinnerRadius" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="28" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="buttonOrient" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="spinnerOrient" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="189" max="32767" attributes="0"/>
-                      <Component id="buttonNorth" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -465,13 +466,15 @@
             </Component>
             <Component class="javax.swing.JSpinner" name="spinnerRadius">
             </Component>
-            <Component class="javax.swing.JButton" name="buttonNorth">
+            <Component class="javax.swing.JButton" name="buttonOrient">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Go North"/>
+                <Property name="text" type="java.lang.String" value="Orient"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonNorthActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonOrientActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="spinnerOrient">
             </Component>
           </SubComponents>
         </Container>

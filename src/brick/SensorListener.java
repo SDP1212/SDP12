@@ -39,7 +39,7 @@ public class SensorListener implements Runnable {
                 Communication.getInstance().sendMessage(Brick.SENSING);
                 if (pressed && !kicking) {
                     Communication.getInstance().sendMessage(Brick.COLLISION);
-                    Movement.backOff(Brick.LEFT);
+                    Movement.getInstance().backOff(Brick.LEFT);
                     pressed = false;
                 } else if (!kicking && (touchSensorL.isPressed() || touchSensorR.isPressed())) {
                     pressed = true;
