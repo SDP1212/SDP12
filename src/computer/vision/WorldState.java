@@ -2,6 +2,7 @@ package computer.vision;
 
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;
+import java.util.ArrayList;
 
 public class WorldState implements computer.simulator.VisionInterface {
 
@@ -22,6 +23,51 @@ public class WorldState implements computer.simulator.VisionInterface {
     private float yellowOrientation;
     private long counter;
 
+    boolean isDistortionCorrection = false;
+    boolean isOrientationCorrected = false;
+    
+    // Holds the history of the blue/yellow angles respectively.
+    ArrayList<Double> blueFiveAngles = new ArrayList<Double>();
+    ArrayList<Double> yellowFiveAngles = new ArrayList<Double>();
+    
+    // Adds an angle to the blue history and keeps size of 5.
+    public void addBlueAngle(double angle) {
+        blueFiveAngles.add(angle);
+        while (blueFiveAngles.size() > 5) {
+            blueFiveAngles.remove(0);
+        }
+    }
+    
+    // Returns the blue history.
+    public ArrayList<Double> getBlueAngle() {
+        return blueFiveAngles;
+    }
+    
+    // An alternative to getBlueOrientation.
+    public double getBlueOrientationFromHistory() {
+        AngleHistory angleHistory = new AngleHistory();
+        return angleHistory.getMean(blueFiveAngles);
+    }
+    
+    // Adds an angle to the yellow history and keeps size of 5.
+    public void addYellowAngle(double angle) {
+        blueFiveAngles.add(angle);
+        while (blueFiveAngles.size() > 5) {
+            blueFiveAngles.remove(0);
+        }
+    }
+    
+    // Returns the yellow history.
+    public ArrayList<Double> getYellowAngle() {
+        return yellowFiveAngles;
+    }
+    
+    // An alternative to getYellowOrientation.
+    public double getYellowOrientationFromHistory() {
+        AngleHistory angleHistory = new AngleHistory();
+        return angleHistory.getMean(yellowFiveAngles);
+    }
+    
     public WorldState() {
 
         /* control properties */
@@ -42,6 +88,7 @@ public class WorldState implements computer.simulator.VisionInterface {
         this.greenY2 = 0;
         this.blueOrientation = 0;
         this.yellowOrientation = 0;
+        
     }
 
     public int getBlueX() {
@@ -174,7 +221,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     public long getCounter() {
         return this.counter;
     }
-
+    
     // Following methods are for the interface.
     public PixelCoordinates[] getPitchCornerCoordinates() {
 
@@ -185,14 +232,12 @@ public class WorldState implements computer.simulator.VisionInterface {
         int rightBuffer = 640 - pitchConstants.rightBuffer;
         int bottomBuffer = 480 - pitchConstants.bottomBuffer;
 
-        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
-        boolean isOrientationCorrected = false;
         System.out.println("DEBUG: Corners: " + leftBuffer + ", " + rightBuffer + ", " + topBuffer + ", " + bottomBuffer);
 
-        PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer, topBuffer, isThereBarrelCorrection, isOrientationCorrected);
-        PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer, topBuffer, isThereBarrelCorrection, isOrientationCorrected);
-        PixelCoordinates bottomLeftCorner = new PixelCoordinates(leftBuffer, bottomBuffer, isThereBarrelCorrection, isOrientationCorrected);
-        PixelCoordinates bottomRightCorner = new PixelCoordinates(rightBuffer, bottomBuffer, isThereBarrelCorrection, isOrientationCorrected);
+        PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer, topBuffer, isDistortionCorrection, isOrientationCorrected);
+        PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer, topBuffer, isDistortionCorrection, isOrientationCorrected);
+        PixelCoordinates bottomLeftCorner = new PixelCoordinates(leftBuffer, bottomBuffer, isDistortionCorrection, isOrientationCorrected);
+        PixelCoordinates bottomRightCorner = new PixelCoordinates(rightBuffer, bottomBuffer, isDistortionCorrection, isOrientationCorrected);
 
         PixelCoordinates[] results;
 
@@ -206,7 +251,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public PixelCoordinates getYellowRobotCoordinates() {
-        return new PixelCoordinates(getYellowX(), getYellowY(), false, false);
+        return new PixelCoordinates(getYellowX(), getYellowY(), isDistortionCorrection, isOrientationCorrected);
     }
 
     public Direction getYellowRobotOrientation() {
@@ -214,7 +259,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public PixelCoordinates getBlueRobotCoordinates() {
-        return new PixelCoordinates(getBlueX(), getBlueY(), false, false);
+        return new PixelCoordinates(getBlueX(), getBlueY(), isDistortionCorrection, isOrientationCorrected);
     }
 
     public Direction getBlueRobotOrientation() {
@@ -230,11 +275,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = 640 - pitchConstants.rightBuffer;
         int bottomBuffer = 480 - pitchConstants.bottomBuffer;
-
-        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
-        boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
 
         // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
         // Thus we divide the width by 4 and add the ratio to the bottom.
@@ -243,8 +284,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         int topGoal = topBuffer + (goalWidth / 4);
         int bottomGoal = bottomBuffer - (goalWidth / 4);
 
-        PixelCoordinates topLeftGoal = new PixelCoordinates(leftBuffer, topGoal, isThereBarrelCorrection, isOrientationCorrected);
-        PixelCoordinates bottomLeftGoal = new PixelCoordinates(leftBuffer, bottomGoal, isThereBarrelCorrection, isOrientationCorrected);
+        PixelCoordinates topLeftGoal = new PixelCoordinates(leftBuffer, topGoal, isDistortionCorrection, isOrientationCorrected);
+        PixelCoordinates bottomLeftGoal = new PixelCoordinates(leftBuffer, bottomGoal, isDistortionCorrection, isOrientationCorrected);
 
         PixelCoordinates[] leftGoalCoordinates;
 
@@ -261,13 +302,9 @@ public class WorldState implements computer.simulator.VisionInterface {
 
         PitchConstants pitchConstants = new PitchConstants(pitch);
 
-        int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
         int rightBuffer = 640 - pitchConstants.rightBuffer;
         int bottomBuffer = 480 - pitchConstants.bottomBuffer;
-
-        boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
-        boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
 
         // The goal sides are 4ft (120cm) - goal width 2ft(60cm): ration is 1:2:1 (4).
         // Thus we divide the width by 4 and add the ratio to the bottom.
@@ -276,8 +313,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         int topGoal = topBuffer + (goalWidth / 4);
         int bottomGoal = bottomBuffer - (goalWidth / 4);
 
-        PixelCoordinates topRightGoal = new PixelCoordinates(rightBuffer, topGoal, isThereBarrelCorrection, isOrientationCorrected);
-        PixelCoordinates bottomRightGoal = new PixelCoordinates(rightBuffer, bottomGoal, isThereBarrelCorrection, isOrientationCorrected);
+        PixelCoordinates topRightGoal = new PixelCoordinates(rightBuffer, topGoal, isDistortionCorrection, isOrientationCorrected);
+        PixelCoordinates bottomRightGoal = new PixelCoordinates(rightBuffer, bottomGoal, isDistortionCorrection, isOrientationCorrected);
 
         PixelCoordinates[] rightGoalCoordinates;
 
@@ -289,6 +326,6 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public PixelCoordinates getBallCoordinates() {
-        return new PixelCoordinates(getBallX(), getBallY(), false, false);
+        return new PixelCoordinates(getBallX(), getBallY(), isDistortionCorrection, isOrientationCorrected);
     }
 }
