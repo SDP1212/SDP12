@@ -115,6 +115,7 @@ public class Vision extends WindowAdapter {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
 
+                
                 imCount += 1;
                 if (imCount == 10) {
                     try {
@@ -125,23 +126,22 @@ public class Vision extends WindowAdapter {
                         imCount = 0;
                     }
                 }
-
+                
                 //ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 //frameImage =  s.sideNormalise(frameImage);
                 //frameImage = s.fullNormalise(frameImage);
 
                 frame.recycle();
-
-                BufferedImage img = null;
+                
+                BufferedImage backgroundImage = null;
                 try {
-                    img = ImageIO.read(new File("TestImage.jpeg"));
+                    backgroundImage = ImageIO.read(new File("TestImage.jpeg"));
                 } catch (IOException e) {
-                    img = frameImage;
+                    backgroundImage = frameImage;
                 }
-
                 // Switch between angle methods using true or false here.
                 // false is default.
-                processAndUpdateImage(frameImage, img, before, false);
+                processAndUpdateImage(frameImage, backgroundImage, before, false);
             }
         });
 
@@ -194,7 +194,6 @@ public class Vision extends WindowAdapter {
          * for calculating the angle, and the vector method of calculating the angle.
          * True represents the vector method, false represents the normal method.
          */
-
 
         int ballX = 0;
         int ballY = 0;
@@ -250,7 +249,7 @@ public class Vision extends WindowAdapter {
                 int diffRange = 25;
 
                 if (red > diffRange || blue > diffRange || green > diffRange) {
-                Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+                    Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
                 /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
                 if (thresholdsState.isGrey_debug() && isGrey(c, hsbvals)) {
@@ -322,7 +321,8 @@ public class Vision extends WindowAdapter {
                 }
                 } else {
                 //Color.RGBtoHSB(0, 0, 0, hsbvals);
-                image.setRGB(column, row, 0x00000000);
+                    // Sets the non-object pixels to black using background image.
+                    image.setRGB(column, row, 0x00000000);
                 }
 
 
@@ -534,9 +534,13 @@ public class Vision extends WindowAdapter {
         /* Attempt to find the blue robot's orientation. */
 
         double blueOrientation;
+        AngleHistory angleHistory = new AngleHistory();
         try {
             if (runAlternate == false) {
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+                worldState.addBlueAngle(blueOrientation);
+                double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
+                //System.out.println("The mean of the last 5 blue angles was found as " + testAngle);
             } else {
                 blueOrientation = getVectorAngle(image, blueXPoints, blueYPoints, blue.getX(), blue.getY());
             }
@@ -554,8 +558,11 @@ public class Vision extends WindowAdapter {
         /* Attempt to find the yellow robot's orientation. */
         double yellowOrientation;
         try {
-            if (true == true) {
+            if (true != false) {
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
+                worldState.addYellowAngle(yellowOrientation);
+                double testAngle = angleHistory.getMean(worldState.yellowFiveAngles);
+                //System.out.println("The mean of the last 5 yellow angles was found as " + testAngle);
             } else {
                 yellowOrientation = getVectorAngle(image, yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY());
             }
@@ -867,6 +874,20 @@ public class Vision extends WindowAdapter {
             return (float) 0.001;
         }
 
+        // # Handles the history of values ################
+        /*
+        lastFiveAngles.add(angleMF);
+        
+        while (lastFiveAngles.size() > 5) { 
+            lastFiveAngles.remove(0);
+        }
+
+        if (lastFiveAngles.size() == 5) {
+            angleMF = angleHistory.getMean(lastFiveAngles);
+        }
+         */
+        // ################################################
+        
         // DEBUG
         //System.out.println("Front-T angle = " + angleMF + ".  Remember Yellow is turned off for testing!");
         return angleMF;

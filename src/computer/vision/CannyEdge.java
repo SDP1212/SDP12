@@ -177,9 +177,14 @@ public class CannyEdge {
 		if(oldmin>input[x][y])oldmin=input[x][y];
 		if(oldmax<input[x][y])oldmax=input[x][y];
 	    }
-	for(int x=1;x<input.length-1;x++)
-	    for(int y=1;y<input[0].length-1;y++)
+	for(int x=1;x<input.length-1;x++) {
+	    for(int y=1;y<input[0].length-1;y++) {
+                if ((oldmax - oldmin) == 0) {
+                    oldmax += 1;
+                }
 		input[x][y]=((input[x][y]-oldmin)*(newmax-newmin)/(oldmax-oldmin))+newmin;
+            }
+        }
     }
     
     /**
