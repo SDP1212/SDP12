@@ -230,4 +230,12 @@ public class LineTools {
         
         return lineIntersectingLines(ball, lines);
     }
+	
+	public static double angleBetweenLines(Line l, Line m){
+        double gamma;
+        
+        gamma = Math.acos((1+l.getGradient()*m.getGradient())/(Math.sqrt(1+l.getGradient()*l.getGradient())*Math.sqrt(1+m.getGradient()*m.getGradient())));
+        
+        return gamma;
+    }
 }
