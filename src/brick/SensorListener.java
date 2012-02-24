@@ -36,12 +36,12 @@ public class SensorListener implements Runnable {
     public void run() {
         try {
             while(!Thread.interrupted()) {
-                Communication.getInstance().sendMessage(Brick.SENSING);
-                if (pressed && !kicking) {
-                    Communication.getInstance().sendMessage(Brick.COLLISION);
+                if (Communication.getInstance() != null) Communication.getInstance().sendMessage(Brick.SENSING);
+                if (pressed) {
+                    if (Communication.getInstance() != null) Communication.getInstance().sendMessage(Brick.COLLISION);
                     Movement.getInstance().backOff(Brick.LEFT);
                     pressed = false;
-                } else if (!kicking && (touchSensorL.isPressed() || touchSensorR.isPressed())) {
+                } else if ((touchSensorL.isPressed() || touchSensorR.isPressed())) {
                     pressed = true;
                 }
                 /**
@@ -49,10 +49,11 @@ public class SensorListener implements Runnable {
                  */
                 Thread.sleep(300);
             }
-        } catch (InterruptedException ex) {
+        } catch (Throwable ex) {
+			Sound.buzz();
             return;
         } finally {
-            Communication.getInstance().sendMessage(Brick.SENSINGENDED);
+            if (Communication.getInstance() != null) Communication.getInstance().sendMessage(Brick.SENSINGENDED);
         }
     }
 

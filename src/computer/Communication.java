@@ -111,9 +111,8 @@ public class Communication implements Runnable, ControlInterface {
     
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
-//        System.out.println("Opcode: " + opcode);
-//        System.out.println("Angle " + angle);
         int arg = composeAngleArgument(angle) << 8;
+		System.out.println("Operation " + opcode);
 //        System.out.println("Arg " + arg);
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
@@ -218,9 +217,9 @@ public class Communication implements Runnable, ControlInterface {
                         commState = READY;
                         System.out.println("Acknowledged");
                         break;
-//                    case (Brick.SENSING):
-//                        System.out.println("Sensing");
-//                        break;
+                    case (Brick.SENSING):
+                        System.out.println("Sensing");
+                        break;
                     case (Brick.SENSINGENDED):
                         System.out.println("Sensing ended");
                         break;

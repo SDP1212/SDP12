@@ -34,10 +34,10 @@ public class Movement implements Runnable {
 	private Movement() {
 		pilot = new DifferentialPilot(wheelDiameter, trackWidth , Motor.A, Motor.B);
 		compass = new CompassHTSensor(SensorPort.S3);
-		compass.startCalibration();
-		pilot.setRotateSpeed(50);
-		pilot.rotate(600);
-		compass.stopCalibration();
+//		compass.startCalibration();
+//		pilot.setRotateSpeed(50);
+//		pilot.rotate(600);
+//		compass.stopCalibration();
 	}
 	
 	public static Movement getInstance() {
@@ -110,14 +110,17 @@ public class Movement implements Runnable {
     public void rotate(int angle) {
         int finalAngle = angle - 180;
         double factor;
+		// This doesn't do what you think it does
         if (finalAngle < 0) {
             factor = 1;
         } else {
             factor = 1;
         }
+		LCD.clear();
+		LCD.drawInt(finalAngle, 0, 0);
 		synchronized(movementLock) {
+			setSpeed(100);
 			pilot.rotate((finalAngle) * factor);
-			setSpeed(180);
 			state = ROTATE;
 		}
     }
@@ -195,7 +198,7 @@ public class Movement implements Runnable {
      */
     public void stop() {
 		synchronized(movementLock) {
-			pilot.stop();
+			pilot.quickStop();
 			state = STOPPED;
 		}
     }
@@ -219,7 +222,7 @@ public class Movement implements Runnable {
      * @param The direction to pivot. 
      */
     public void backOff(char direction) {
-		synchronized(movementLock) {
+//		synchronized(movementLock) {
 			pilot.stop();
 			pilot.backward();
 			try {
@@ -229,7 +232,7 @@ public class Movement implements Runnable {
 			}
 			pilot.stop();
 			state = STOPPED;
-		}
+//		}
         Communication.getInstance().sendMessage(Brick.OK);
     }
 	

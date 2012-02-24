@@ -158,7 +158,7 @@ public class Communication implements Runnable {
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
                 int opcode = n & Brick.OPCODE;
-                int arg = (n & Brick.ARG) >>> 8;
+                int arg = (n & Brick.ARG) >> 8;
                 switch (opcode) {
 
                     case Brick.FORWARDS:

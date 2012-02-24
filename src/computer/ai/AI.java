@@ -21,6 +21,7 @@ public abstract class AI {
     protected Pitch pitch=null;
     protected Robot self=null;
     protected ArrayList<Coordinates> actionPlan;
+	public static final Class[] ais = {Creeper.class, DumbAI.class, Shooter.class};
 
     /**
      * Allocates an AI object. Subclasses should call this, so that the
