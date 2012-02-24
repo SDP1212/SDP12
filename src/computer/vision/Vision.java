@@ -534,12 +534,12 @@ public class Vision extends WindowAdapter {
         /* Attempt to find the blue robot's orientation. */
 
         double blueOrientation;
+        AngleHistory angleHistory = new AngleHistory();
         try {
             if (runAlternate == false) {
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
-                //worldState.addBlueAngle(blueOrientation);
-                //AngleHistory angleHistory = new AngleHistory();
-                //double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
+                worldState.addBlueAngle(blueOrientation);
+                double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
                 //System.out.println("The mean of the last 5 blue angles was found as " + testAngle);
             } else {
                 blueOrientation = getVectorAngle(image, blueXPoints, blueYPoints, blue.getX(), blue.getY());
@@ -558,9 +558,11 @@ public class Vision extends WindowAdapter {
         /* Attempt to find the yellow robot's orientation. */
         double yellowOrientation;
         try {
-            if (true == true) {
+            if (true != false) {
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
                 worldState.addYellowAngle(yellowOrientation);
+                double testAngle = angleHistory.getMean(worldState.yellowFiveAngles);
+                //System.out.println("The mean of the last 5 yellow angles was found as " + testAngle);
             } else {
                 yellowOrientation = getVectorAngle(image, yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY());
             }

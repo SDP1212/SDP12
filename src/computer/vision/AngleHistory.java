@@ -88,7 +88,7 @@ public class AngleHistory {
         double minimum = 361;
         double maximum = -1;
         
-        for (int i = 0; i < angleList.size(); i++) {
+        for (int i = 0; i < 5; i++) {
             double currentValue = angleList.get(i);
             if (currentValue > maximum) {
                 maximum = currentValue;

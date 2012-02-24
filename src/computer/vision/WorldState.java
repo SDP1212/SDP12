@@ -32,7 +32,9 @@ public class WorldState implements computer.simulator.VisionInterface {
     
     // Adds an angle to the blue history and keeps size of 5.
     public void addBlueAngle(double angle) {
-        blueFiveAngles.add(angle);
+        while (blueFiveAngles.size() < 6) {
+            blueFiveAngles.add(angle);
+        }
         while (blueFiveAngles.size() > 5) {
             blueFiveAngles.remove(0);
         }
@@ -51,9 +53,11 @@ public class WorldState implements computer.simulator.VisionInterface {
     
     // Adds an angle to the yellow history and keeps size of 5.
     public void addYellowAngle(double angle) {
-        blueFiveAngles.add(angle);
-        while (blueFiveAngles.size() > 5) {
-            blueFiveAngles.remove(0);
+        while (yellowFiveAngles.size() < 6) {
+            yellowFiveAngles.add(angle);
+        }
+        while (yellowFiveAngles.size() > 5) {
+            yellowFiveAngles.remove(0);
         }
     }
     
@@ -173,6 +177,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 
     public float getBlueOrientation() {
         //System.out.println("Blue orientation: " + blueOrientation);
+        // return getBlueOrientationFromHistory();
         return blueOrientation;
     }
 
@@ -182,6 +187,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     }
 
     public float getYellowOrientation() {
+        // return getYellowOrientationFromHistory();
         return yellowOrientation;
     }
 
