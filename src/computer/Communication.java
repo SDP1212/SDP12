@@ -112,7 +112,7 @@ public class Communication implements Runnable, ControlInterface {
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
         int arg = composeAngleArgument(angle) << 8;
-		System.out.println("Operation " + opcode);
+//		System.out.println("Operation " + opcode);
 //        System.out.println("Arg " + arg);
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
@@ -133,10 +133,10 @@ public class Communication implements Runnable, ControlInterface {
     }
 
 	public void rotateTo(int heading) {
-		System.out.println("Opcode: " + Brick.ROTATETO);
-		System.out.println("Arg: " + heading);
+//		System.out.println("Opcode: " + Brick.ROTATETO);
+//		System.out.println("Arg: " + heading);
 		sendMessage(Brick.ROTATETO | (heading << 8));
-		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
+//		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
 	}
 
 	public void setHeading(int heading) {
@@ -167,6 +167,7 @@ public class Communication implements Runnable, ControlInterface {
     public void sendMessage(int message) {
         try {
             if (commState == READY) {
+				System.out.println("Message: " + Integer.toBinaryString(message));
                 byte[] buf = intToByteArray(message);
 //                System.out.println("Message " + Arrays.toString(buf));
                 outStream.write(buf);
@@ -217,9 +218,9 @@ public class Communication implements Runnable, ControlInterface {
                         commState = READY;
                         System.out.println("Acknowledged");
                         break;
-                    case (Brick.SENSING):
-                        System.out.println("Sensing");
-                        break;
+//                    case (Brick.SENSING):
+//                        System.out.println("Sensing");
+//                        break;
                     case (Brick.SENSINGENDED):
                         System.out.println("Sensing ended");
                         break;

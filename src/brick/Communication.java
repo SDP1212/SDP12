@@ -152,9 +152,7 @@ public class Communication implements Runnable {
             try {
                 // Read in 4 bytes from the bluetooth stream
                 byte[] byteBuffer = new byte[4];
-				synchronized(connectionLock) {
-					in.read(byteBuffer);
-				}
+				in.read(byteBuffer);
                 // Convert the 4 bytes to an integer and mask out the opcode and args
                 n = byteArrayToInt(byteBuffer);
                 int opcode = n & Brick.OPCODE;

@@ -54,9 +54,9 @@ public class Shooter extends AI {
 				if (!facingBall()) {
 					System.out.println("Not facing ball");
 					if (angle < 0) {
-						self.rotateLeft(Brick.SLOW / 2);
+						self.rotateLeft(Brick.SLOW);
 					} else {
-						self.rotateRight(Brick.SLOW / 2);
+						self.rotateRight(Brick.SLOW);
 					}
 				} else if (!nearBall()) {
 					System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
@@ -75,7 +75,7 @@ public class Shooter extends AI {
 				}
 				break;
 			case DRIBBLING :
-				if (!facingBall() || !nearBall()) {
+				if (!nearBall()) {
 					state = SEARCHING;
 				} else if (new Date().getTime() - shotTime.getTime() < 1500) {
 					state = SHOT;
@@ -92,7 +92,7 @@ public class Shooter extends AI {
 	protected boolean facingBall() {
 		Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		if (Math.abs(angle) < Math.PI / 16) {
+		if (Math.abs(angle) < Math.PI / 8) {
 			return true;
 		} else {
 			return false;

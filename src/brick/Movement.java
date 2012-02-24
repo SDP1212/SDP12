@@ -108,6 +108,7 @@ public class Movement implements Runnable {
      * Pivot the robot on a point. Positive anti-clockwise, negative clockwise.
      */
     public void rotate(int angle) {
+		pilot.stop();
         int finalAngle = angle - 180;
         double factor;
 		// This doesn't do what you think it does
@@ -198,7 +199,7 @@ public class Movement implements Runnable {
      */
     public void stop() {
 		synchronized(movementLock) {
-			pilot.quickStop();
+			pilot.stop();
 			state = STOPPED;
 		}
     }
@@ -222,7 +223,7 @@ public class Movement implements Runnable {
      * @param The direction to pivot. 
      */
     public void backOff(char direction) {
-//		synchronized(movementLock) {
+		synchronized(movementLock) {
 			pilot.stop();
 			pilot.backward();
 			try {
@@ -232,7 +233,7 @@ public class Movement implements Runnable {
 			}
 			pilot.stop();
 			state = STOPPED;
-//		}
+		}
         Communication.getInstance().sendMessage(Brick.OK);
     }
 	
