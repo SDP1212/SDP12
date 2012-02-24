@@ -28,9 +28,11 @@ public interface ControlInterface {
     
     public void rotate (double angle);
     
-    public void rotateRight();
+    public void rotateRight(int speed);
     
-    public void rotateLeft();
+    public void rotateLeft(int speed);
+	
+	public void rotateTo(int heading);
 	
     public void arc(int radius);
     

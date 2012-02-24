@@ -86,14 +86,14 @@ public class GoToBall extends AI {
         if (Math.abs(angle) > ANGLETHRESHOLD) {
             if (angle < 0) {
                 if (!rotatingRight) {
-                    robotinho.rotateRight();
+                    robotinho.rotateRight(100);
                     rotatingRight = true;
                     rotatingLeft = false;
                     forward = false;
                 }
             } else {
                 if (!rotatingLeft) {
-                    robotinho.rotateLeft();
+                    robotinho.rotateLeft(100);
                     rotatingLeft = true;
                     rotatingRight = false;
                     forward = false;

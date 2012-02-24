@@ -99,21 +99,27 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
     
-    public void rotateRight() {
-        if(this.control!=null && this.isReal())control.rotateRight();
+    public void rotateRight(int speed) {
+        if(this.control!=null && this.isReal())control.rotateRight(speed);
         else {
             rotMotionState=Double.NEGATIVE_INFINITY;
             commState=WAITING;
         }
     }
 
-    public void rotateLeft() {
-        if(this.control!=null && this.isReal())control.rotateLeft();
+    public void rotateLeft(int speed) {
+        if(this.control!=null && this.isReal())control.rotateLeft(speed);
         else {
             rotMotionState=Double.POSITIVE_INFINITY;
             commState=WAITING;
         }
     }
+
+	public void rotateTo(int heading) {
+		if(this.control!=null && this.isReal())control.rotateTo(heading);
+	}
+	
+	
     
     public void arc(int radius) {
         if(this.control!=null && this.isReal())control.arc(radius);
