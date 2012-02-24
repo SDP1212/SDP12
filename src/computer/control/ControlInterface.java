@@ -35,6 +35,10 @@ public interface ControlInterface {
 	public void rotateTo(int heading);
 	
     public void arc(int radius);
+	
+	public void setHeading(int heading);
+	
+	public void unlockHeading();
     
     public int getCommState();
     

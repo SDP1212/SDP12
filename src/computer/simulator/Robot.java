@@ -128,6 +128,16 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+	public void setHeading(int heading) {
+		if(this.control!=null && this.isReal())control.setHeading(heading);
+	}
+
+	public void unlockHeading() {
+		if(this.control!=null && this.isReal())control.unlockHeading();
+	}
+	
+	
+
     public int getCommState() {
         if(this.control!=null && this.isReal()) {
             return control.getCommState();

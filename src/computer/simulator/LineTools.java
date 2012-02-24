@@ -230,4 +230,16 @@ public class LineTools {
         
         return lineIntersectingLines(ball, lines);
     }
+	
+	public static double angleBetweenLines(Line l, Line m){
+        double gamma;
+        
+//        gamma = Math.acos((1+l.getGradient()*m.getGradient())/(Math.sqrt(1+l.getGradient()*l.getGradient())*Math.sqrt(1+m.getGradient()*m.getGradient())));
+		double lVectorX = l.getFirstPoint().getX() - l.getSecondPoint().getX();
+		double lVectorY = l.getFirstPoint().getY() - l.getSecondPoint().getY();
+		double mVectorX = m.getFirstPoint().getX() - m.getSecondPoint().getX();
+		double mVectorY = m.getFirstPoint().getY() - m.getSecondPoint().getY();
+        gamma = (Math.atan2(mVectorY, mVectorX) - Math.atan2(lVectorY, lVectorX)) % Math.PI;
+        return gamma;
+    }
 }
