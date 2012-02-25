@@ -122,7 +122,7 @@ public class CannyEdge {
 
         switch(kernelType){
             case 0:{
-                gradientX=filter(new int[][] {{ 1},
+                gradientX  =filter(new int[][] {{ 1},
                                               { 0},
                                               {-1}},input);
 
@@ -152,14 +152,18 @@ public class CannyEdge {
         }
 
         Gradient gradient=new Gradient(input.length,input[0].length);
-
+        double temp = 0;
+        int count = 0;
         for(int x=0;x<input.length;x++)
             for(int y=0;y<input[0].length;y++){
                 gradient.magnitude[x][y]=(int)(Math.sqrt(Math.pow((double)gradientX[x][y],2)+
                                                     Math.pow((double)gradientY[x][y],2)));
                 gradient.direction[x][y]=(int)(1000*Math.atan2(gradientX[x][y],gradientY[x][y]));
-            }
+                gradient.direction2[x][y]=(double)(Math.atan2(gradientY[x][y],gradientX[x][y]));
+                //System.out.print((Math.sqrt(Math.pow((double)gradientX[x][y],2)+Math.pow((double)gradientY[x][y],2)))+" ");
 
+            }
+       // System.out.println("Average angle: "+temp/count);
         return gradient;
     }
     
