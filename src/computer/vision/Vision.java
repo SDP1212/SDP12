@@ -622,299 +622,6 @@ public class Vision extends WindowAdapter {
         }
 
         if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
-
-            //imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
-            CannyEdge dimo = new CannyEdge();
-            int[][] output;
-            float threshold = 1.8f;
-            short sobel = 1;
-            short noise = 2;
-            Gradient angle = dimo.sobel(dimo.noiseReduction(dimo.getGrayscale(image, ((int) firstRobotMinX) - 2, ((int) firstRobotMinY) - 2, ((int) (firstRobotMaxX - firstRobotMinX)) + 2, ((int) (firstRobotMaxY - firstRobotMinY)) + 2), noise), sobel);
-            output = dimo.nonMaximaSuppression(threshold, angle);
-            ArrayList<Integer> edgePointsX = new ArrayList<Integer>();
-            ArrayList<Integer> edgePointsY = new ArrayList<Integer>();
-            ArrayList<Double> edgeDistanceAngles = new ArrayList<Double>();
-            ArrayList<Double> onefiftytotwohundred = new ArrayList<Double>();
-            ArrayList<Double> twohundredtotwofifty = new ArrayList<Double>();
-            ArrayList<Double> twofiftytothreehundred = new ArrayList<Double>();
-            ArrayList<Double> threehundredtothreesixty = new ArrayList<Double>();
-            int count = 0;
-            for (int x = 0; x < output.length; x++) {
-                for (int y = 0; y < output[0].length; y++) {
-                    if (output[x][y] == 255) {
-                        edgePointsX.add(x);
-                        edgePointsY.add(y);
-                    }
-
-                }
-                //  System.out.println();
-            }
-
-            //We have a list of the edge points
-            //We have the blue points (this will need to be abstracted, but for now, we assume
-            //we are dealing with the blue points
-            //
-
-            /*   for (int theta = 0; theta < 180; theta++) {
-            double distance = 0;
-            for (int x = 0; x < edgePointsX.size(); x++) {
-            if (theta == 90) {
-            distance += Math.abs(edgePointsX.get(x)-blue.getX());
-            } else {
-            double top = Math.abs((Math.tan(theta) * edgePointsX.get(x)) + ((-1) * edgePointsY.get(x)) + ((blue.getY() - blue.getX()) * Math.tan(theta)));
-            double bottom = Math.sqrt(Math.pow(Math.tan(theta), 2) + Math.pow(-1, 2));
-            distance += (top / bottom);
-            }
-            }
-            edgeDistanceAngles.add(distance);               
-            }
-            
-            Double test = Collections.min(edgeDistanceAngles);
-            for(int i=0; i<edgeDistanceAngles.size(); i++) {
-            if(edgeDistanceAngles.get(i)==test) {
-            System.out.print(i);
-            }
-            
-            
-            }
-            System.out.println();
-             */
-
-            double total = 0;
-            for (int x = 0; x < output.length; x++) {
-                for (int y = 0; y < output[0].length; y++) {
-                    // System.out.print(Math.toDegrees(angle.direction2[x][y]) + " ");
-                    if (Math.abs(Math.toDegrees(angle.direction2[x][y])) != 0) {
-                        if (output[x][y] == 255) {
-                            total += Math.abs(Math.toDegrees(angle.direction2[x][y]));
-                            count++;
-                        }
-                    }
-
-                }
-
-            }
-            // System.out.print(total / count);
-            int horcount = 0;
-            int vertcount = 0;
-            int diagcount1 = 0;
-            int diagcount2 = 0;
-            double hold = 0;
-            /* for (int x = 1; x < output.length - 1; x++) {
-            for (int y = 1; y < output[0].length - 1; y++) {
-            //Go through all the gradients, and check if there can be drawn a line through them. If so, use that angle. 
-            //System.out.print(angle.magnitude[x][y] + " ");
-            if (angle.magnitude[x][y] > 500) {
-            if (angle.direction[x + 1][y] != 0 && angle.direction[x - 1][y] != 0 && angle.direction[x][y] != 0) {
-            horcount++;
-            }
-            if (angle.direction[x + 1][y - 1] != 0 && angle.direction[x - 1][y + 1] != 0 && angle.direction[x][y] != 0) {
-            diagcount1++;
-            }
-            if (angle.direction[x][y + 1] != 0 && angle.direction[x][y - 1] != 0 && angle.direction[x][y] != 0) {
-            vertcount++;
-            }
-            
-            if (angle.direction[x + 1][y + 1] != 0 && angle.direction[x - 1][y - 1] != 0 && angle.direction[x][y] != 0) {
-            diagcount2++;
-            }
-            }
-            }
-            } */
-            /*   ArrayList<Double> zerotofifty = new ArrayList<Double>();
-            ArrayList<Double> fiftytohundred = new ArrayList<Double>();
-            ArrayList<Double> hundredtoonefifty = new ArrayList<Double>();
-            ArrayList<Double> onefiftytotwohundred = new ArrayList<Double>();
-            ArrayList<Double> twohundredtotwofifty = new ArrayList<Double>();
-            ArrayList<Double> twofiftytothreehundred = new ArrayList<Double>();
-            ArrayList<Double> threehundredtothreesixty = new ArrayList<Double>();
-             */
-            //Use the one that occurs the most as the primary angle
-            /*count = 0;
-            int chooser = Math.max(Math.max(Math.max(horcount, vertcount), diagcount1), diagcount2);
-            // if (chooser == horcount) {
-            for (int x = 1; x < output.length - 1; x++) {
-            for (int y = 1; y < output[0].length - 1; y++) {
-            //Go through all the gradients, and check if there can be drawn a line through them. If so, use that angle. 
-            
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) < 50) {
-            zerotofifty.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 50 && Math.abs(Math.toDegrees(angle.direction2[x][y])) < 100) {
-            fiftytohundred.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 100 && Math.abs(Math.toDegrees(angle.direction2[x][y])) < 150) {
-            hundredtoonefifty.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 150 && Math.abs(Math.toDegrees(angle.direction2[x][y])) < 200) {
-            onefiftytotwohundred.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 200 && Math.abs(Math.toDegrees(angle.direction2[x][y])) < 250) {
-            twohundredtotwofifty.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 250 && Math.abs(Math.toDegrees(angle.direction2[x][y])) < 300) {
-            twofiftytothreehundred.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            if (Math.abs(Math.toDegrees(angle.direction2[x][y])) >= 300) {
-            threehundredtothreesixty.add(Math.abs(Math.toDegrees(angle.direction2[x][y])));
-            }
-            count++;
-            
-            }
-            }
-            // }
-            
-             */
-            /*  if (chooser == vertcount) {
-            for (int x = 1; x < output.length - 1; x++) {
-            for (int y = 1; y < output[0].length - 1; y++) {
-            //Go through all the gradients, and check if there can be drawn a line through them. If so, use that angle. 
-            if (angle.direction[x][y + 1] != 0 && angle.direction[x][y - 1] != 0 && angle.direction[x][y] != 0) {
-            if (angle.direction2[x][y] < 50) {
-            zerotofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 50 && angle.direction2[x][y] < 100) {
-            fiftytohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 100 && angle.direction2[x][y] < 150) {
-            hundredtoonefifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 150 && angle.direction2[x][y] < 200) {
-            onefiftytotwohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 200 && angle.direction2[x][y] < 250) {
-            twohundredtotwofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 250 && angle.direction2[x][y] < 300) {
-            twofiftytothreehundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 300) {
-            threehundredtothreesixty.add(angle.direction2[x][y]);
-            }
-            count++;
-            }
-            }
-            }
-            }
-            if (chooser == diagcount1) {
-            for (int x = 1; x < output.length - 1; x++) {
-            for (int y = 1; y < output[0].length - 1; y++) {
-            //Go through all the gradients, and check if there can be drawn a line through them. If so, use that angle. 
-            if (angle.direction[x + 1][y - 1] != 0 && angle.direction[x - 1][y + 1] != 0 && angle.direction[x][y] != 0) {
-            if (angle.direction2[x][y] < 50) {
-            zerotofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 50 && angle.direction2[x][y] < 100) {
-            fiftytohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 100 && angle.direction2[x][y] < 150) {
-            hundredtoonefifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 150 && angle.direction2[x][y] < 200) {
-            onefiftytotwohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 200 && angle.direction2[x][y] < 250) {
-            twohundredtotwofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 250 && angle.direction2[x][y] < 300) {
-            twofiftytothreehundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 300) {
-            threehundredtothreesixty.add(angle.direction2[x][y]);
-            }
-            count++;
-            }
-            }
-            }
-            }
-            if (chooser == diagcount2) {
-            for (int x = 1; x < output.length - 1; x++) {
-            for (int y = 1; y < output[0].length - 1; y++) {
-            //Go through all the gradients, and check if there can be drawn a line through them. If so, use that angle. 
-            
-            if (angle.direction[x + 1][y + 1] != 0 && angle.direction[x - 1][y - 1] != 0 && angle.direction[x][y] != 0) {
-            if (angle.direction2[x][y] < 50) {
-            zerotofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 50 && angle.direction2[x][y] < 100) {
-            fiftytohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 100 && angle.direction2[x][y] < 150) {
-            hundredtoonefifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 150 && angle.direction2[x][y] < 200) {
-            onefiftytotwohundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 200 && angle.direction2[x][y] < 250) {
-            twohundredtotwofifty.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 250 && angle.direction2[x][y] < 300) {
-            twofiftytothreehundred.add(angle.direction2[x][y]);
-            }
-            if (angle.direction2[x][y] >= 300) {
-            threehundredtothreesixty.add(angle.direction2[x][y]);
-            }
-            count++;
-            }
-            }
-            }
-            }
-            
-            int chooser = (Math.max(Math.max(Math.max(Math.max(Math.max(Math.max(zerotofifty.size(), fiftytohundred.size()), hundredtoonefifty.size()), onefiftytotwohundred.size()), twohundredtotwofifty.size()), twofiftytothreehundred.size()), threehundredtothreesixty.size()));
-            String printer = "";
-            if (chooser == zerotofifty.size()) {
-            for (int i = 0; i < zerotofifty.size(); i++) {
-            hold += zerotofifty.get(i);
-            printer = "0-50";
-            }
-            hold /= zerotofifty.size();
-            }
-            if (chooser == fiftytohundred.size()) {
-            for (int i = 0; i < fiftytohundred.size(); i++) {
-            hold += fiftytohundred.get(i);
-            printer = "50-100";
-            }
-            hold /= fiftytohundred.size();
-            }
-            if (chooser == hundredtoonefifty.size()) {
-            for (int i = 0; i < hundredtoonefifty.size(); i++) {
-            hold += hundredtoonefifty.get(i);
-            printer = "100-150";
-            }
-            hold /= hundredtoonefifty.size();
-            }
-            if (chooser == onefiftytotwohundred.size()) {
-            for (int i = 0; i < onefiftytotwohundred.size(); i++) {
-            hold += onefiftytotwohundred.get(i);
-            printer = "150-200";
-            }
-            hold /= onefiftytotwohundred.size();
-            }
-            if (chooser == twohundredtotwofifty.size()) {
-            for (int i = 0; i < twohundredtotwofifty.size(); i++) {
-            hold += twohundredtotwofifty.get(i);
-            printer = "200-250";
-            }
-            hold /= twohundredtotwofifty.size();
-            }
-            if (chooser == twofiftytothreehundred.size()) {
-            for (int i = 0; i < twofiftytothreehundred.size(); i++) {
-            hold += twofiftytothreehundred.get(i);
-            printer = "250-300";
-            }
-            hold /= twofiftytothreehundred.size();
-            }
-            if (chooser == threehundredtothreesixty.size()) {
-            for (int i = 0; i < threehundredtothreesixty.size(); i++) {
-            hold += threehundredtothreesixty.get(i);
-            printer = "300-360";
-            }
-            hold /= threehundredtothreesixty.size();
-            }
-            
-            System.out.println(" " + hold);
-            //System.out.println(Math.toDegrees(Math.abs(hold / count)));
-             */
         }
 
 
@@ -925,6 +632,7 @@ public class Vision extends WindowAdapter {
         AngleHistory angleHistory = new AngleHistory();
         try {
             if (runAlternate == false) {
+                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image);
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
                 worldState.addBlueAngle(blueOrientation);
                 double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
@@ -1463,6 +1171,7 @@ public class Vision extends WindowAdapter {
             int frontPointY = 0;
             int backPointX = 0;
             int backPointY = 0;
+            boolean assigned = false;
 
             /*
              * 
@@ -1542,28 +1251,57 @@ public class Vision extends WindowAdapter {
                     && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY)) {
 
                 if (distance(blueoneX, blueoneY, whiteoneX, whiteoneY) == chooser) {
-                    frontPointX = (blueoneX + whiteoneX) / 2;
-                    frontPointY = (blueoneY + whiteoneY) / 2;
-                    //imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                    if (chooser < 6) {
+                        frontPointX = (blueoneX + whiteoneX) / 2;
+                        frontPointY = (blueoneY + whiteoneY) / 2;
+                        assigned = true;
+                    } else {
+                        backPointX = (blueoneX + whiteoneX) / 2;
+                        backPointY = (blueoneY + whiteoneY) / 2;
+                    }
+
+//                    imageGraphics.setColor(Color.black);
+//                    imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
                 } else {
-                    frontPointX = (blueoneX + redoneX) / 2;
-                    frontPointY = (blueoneY + redoneY) / 2;
-                    // imageGraphics.setColor(Color.red);
-                    // imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                    if (chooser < 6) {
+                        frontPointX = (blueoneX + redoneX) / 2;
+                        frontPointY = (blueoneY + redoneY) / 2;
+                        assigned = true;
+                    } else {
+                        backPointX = (blueoneX + redoneX) / 2;
+                        backPointY = (blueoneY + redoneY) / 2;
+                    }
+
+
                 }
 
-                chooser = Math.min(distance(blackoneX, blackoneY, whiteoneX, whiteoneY), distance(blackoneX, blackoneY, redoneX, redoneY));
-                if (distance(blackoneX, blackoneY, whiteoneX, whiteoneY) == chooser) {
-                    backPointX = (blackoneX + whiteoneX) / 2;
-                    backPointY = (blackoneY + whiteoneY) / 2;
-                    // imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-                } else {
-                    backPointX = (blackoneX + redoneX) / 2;
-                    backPointY = (blackoneY + redoneY) / 2;
-                    //imageGraphics.setColor(Color.red);
-                    // imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-                }
+                double chooser2 = Math.min(distance(blackoneX, blackoneY, whiteoneX, whiteoneY), distance(blackoneX, blackoneY, redoneX, redoneY));
+                if (distance(blackoneX, blackoneY, whiteoneX, whiteoneY) == chooser2) {
+                    if (!assigned) {
+                        frontPointX = (blackoneX + whiteoneX) / 2;
+                        frontPointY = (blackoneY + whiteoneY) / 2;
+                    } else {
+                        backPointX = (blackoneX + whiteoneX) / 2;
+                        backPointY = (blackoneY + whiteoneY) / 2;
+                    }
 
+                } else {
+                    if (!assigned) {
+                        frontPointX = (blackoneX + redoneX) / 2;
+                        frontPointY = (blackoneY + redoneY) / 2;
+                    } else {
+                        backPointX = (blackoneX + redoneX) / 2;
+                        backPointY = (blackoneY + redoneY) / 2;
+                    }
+//                    imageGraphics.setColor(Color.GRAY);
+//                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                }
+                imageGraphics.setColor(Color.blue);
+                imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
+                imageGraphics.setColor(Color.yellow);
+                imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                imageGraphics.setColor(Color.red);
+                imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
             }
             /*
             imageGraphics.drawOval(blueRobotMaxX - 5, blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMaxX)) - 5, 10, 10);
@@ -1587,87 +1325,50 @@ public class Vision extends WindowAdapter {
                  * The first uses the front and the mean.
                  */
 
-                float length = (float) Math.sqrt(Math.pow(frontPointX - meanX, 2)
-                        + Math.pow(frontPointY - meanY, 2));
-                float ax = (frontPointX - meanX) / length;
 
-                // Get the angle in radians first.
-                float radianAngleMF = (float) Math.acos(ax);
-
-                // Now convert to degrees.
-                double angleMF = Math.toDegrees((double) radianAngleMF);
-
-                if (frontPointY < meanY) {
-                    angleMF = -angleMF;
-                }
-
-                if (angleMF < 0) {
-                    angleMF = Math.abs(angleMF);
+                double angleMF = 0;
+                if (frontPointY > backPointY) {
+                    angleMF = (360 - Math.abs(Math.toDegrees(Math.atan2((frontPointY - meanY), (frontPointX - meanX)))));
                 } else {
-                    angleMF = 360 - angleMF;
-                }
-
-
-                /*
-                 * Next, we use the mean and the back
-                 */
-
-                length = (float) Math.sqrt(Math.pow(backPointX - meanX, 2)
-                        + Math.pow(backPointY - meanY, 2));
-                ax = (backPointX - meanX) / length;
-
-                // Get the angle in radians first.
-                float radianAngleMB = (float) Math.acos(ax);
-
-                // Now convert to degrees.
-                double angleMB = Math.toDegrees((double) radianAngleMB);
-
-                if (backPointY < meanY) {
-                    angleMB = -angleMB;
-                }
-
-                if (angleMB < 0) {
-                    angleMB = Math.abs(angleMB);
-                } else {
-                    angleMB = 360 - angleMB;
+                    angleMF = Math.abs(Math.toDegrees(Math.atan2((frontPointY - meanY), (frontPointX - meanX))));
                 }
 
                 /*
-                 * Finally, we use the front and the back
+                 * Next, we use the front and the back
                  */
 
-                length = (float) Math.sqrt(Math.pow(backPointX - frontPointX, 2)
-                        + Math.pow(backPointY - frontPointY, 2));
-                ax = (backPointX - frontPointX) / length;
+                double angleFB = 0;
 
-                // Get the angle in radians first.
-                float radianAngleFB = (float) Math.acos(ax);
-
-                // Now convert to degrees.
-                double angleFB = Math.toDegrees((double) radianAngleFB);
-
-                if (backPointY < frontPointY) {
-                    angleFB = -angleFB;
-                }
-
-                if (angleFB < 0) {
-                    angleFB = Math.abs(angleFB);
+                if (frontPointY > backPointY) {
+                    angleFB = (360 - Math.abs(Math.toDegrees(Math.atan2((frontPointY - backPointY), (frontPointX - backPointX)))));
                 } else {
-                    angleFB = 360 - angleFB;
+                    angleFB = Math.abs(Math.toDegrees(Math.atan2((frontPointY - backPointY), (frontPointX - backPointX))));
                 }
 
-                System.out.println("Angle 1: "+angleMF+" Angle 2: "+angleFB+" Angle 3: "+angleMB);
+                /*
+                 * Finally, we use the mean and the back
+                 */
 
-
-                if (radianAngleMF == 0) {
-                    return (float) 0.001;
+                double angleMB = 0;
+                if (frontPointY > backPointY) {
+                    angleMB = (360 - Math.abs(Math.toDegrees(Math.atan2((meanY - backPointY), (meanX - backPointX)))));
+                } else {
+                    angleMB = Math.abs(Math.toDegrees(Math.atan2((meanY - backPointY), (meanX - backPointX))));
                 }
 
-                return angleMF;
-            }
+               //FB seems to be the best
+                System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
 
 
-        } catch (Exception e) {
+//                    if (radianAngleMF == 0) {
+//                        return (float) 0.001;
+//                    }
+
+                    return angleFB;
+                }
+
+
+            }  catch (Exception e) {
             System.out.println("Not enough blue pixels");
             return findOrientation(xpoints, ypoints, meanX, meanY, image, false);
         }
