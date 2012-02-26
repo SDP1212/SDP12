@@ -476,121 +476,6 @@ public class Vision extends WindowAdapter {
             blue = new Position(worldState.getBlueX(), worldState.getBlueY());
         }
 
-        Integer blueRobotMaxX = 0;
-        Integer blueRobotMinX = 0;
-        Integer blueRobotMaxY = 0;
-        Integer blueRobotMinY = 0;
-        try {
-            blueRobotMaxX = Collections.max(blueXPoints);
-            blueRobotMaxY = Collections.max(blueYPoints);
-            blueRobotMinX = Collections.min(blueXPoints);
-            blueRobotMinY = Collections.min(blueYPoints);
-            Graphics imageGraphics3 = image.getGraphics();
-            /*
-             * These points represent the extrema of the colored T. The names are simply reflections
-             * of visual debugging, nothing more. Blue is MinimumY, White is the MaximumX, Red is the 
-             * MinimumX and Black is the MaximumY
-             */
-
-
-            int blueoneX = blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMinY));
-            int blueoneY = blueRobotMinY;
-            int whiteoneX = blueRobotMaxX;
-            int whiteoneY = blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMaxX));
-            int redoneX = blueRobotMinX;
-            int redoneY = blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMinX));
-            int blackoneX = blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMaxY));
-            int blackoneY = blueRobotMaxY;
-            int frontPointX = 0;
-            int frontPointY = 0;
-            int backPointX = 0;
-            int backPointY = 0;
-
-            double chooser = Math.min(distance(blueoneX, blueoneY, whiteoneX, whiteoneY), distance(blueoneX, blueoneY, redoneX, redoneY));
-            //Check all the clusters
-            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY)) {
-                // imageGraphics3.setColor(Color.blue);
-                //imageGraphics3.drawOval(blueoneX - 5, blueoneY - 5, 10, 10);
-                frontPointX = blueoneX;
-                frontPointY = blueoneY;
-                backPointX = (redoneX + blackoneX + whiteoneX) / 3;
-                backPointY = (redoneY + blackoneY + whiteoneY) / 3;
-                //  imageGraphics3.setColor(Color.black);
-                // imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-            }
-            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY)) {
-                //  imageGraphics3.setColor(Color.white);
-                //  imageGraphics3.drawOval(whiteoneX - 5, whiteoneY - 5, 10, 10);
-                frontPointX = whiteoneX;
-                frontPointY = whiteoneY;
-                backPointX = (redoneX + blackoneX + blueoneX) / 3;
-                backPointY = (redoneY + blackoneY + blueoneY) / 3;
-                // imageGraphics3.setColor(Color.black);
-                // imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-            }
-            if (clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY)) {
-                // imageGraphics3.setColor(Color.black);
-                // imageGraphics3.drawOval(blackoneX - 5, blackoneY - 5, 10, 10);
-                frontPointX = blackoneX;
-                frontPointY = blackoneY;
-                backPointX = (redoneX + whiteoneX + blueoneX) / 3;
-                backPointY = (redoneY + whiteoneY + blueoneY) / 3;
-                //  imageGraphics3.setColor(Color.white);
-                //  imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-            }
-            if (clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY)) {
-                imageGraphics3.setColor(Color.red);
-                imageGraphics3.drawOval(redoneX - 5, redoneY - 5, 10, 10);
-                frontPointX = redoneX;
-                frontPointY = redoneY;
-                backPointX = (whiteoneX + blackoneX + blueoneX) / 3;
-                backPointY = (whiteoneY + blackoneY + blueoneY) / 3;
-                // imageGraphics3.setColor(Color.black);
-                //  imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-            }
-
-            //If none of the cluster principles hold, use the average points
-            if (!clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY)
-                    && !clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY)
-                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY)
-                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY)) {
-
-                if (distance(blueoneX, blueoneY, whiteoneX, whiteoneY) == chooser) {
-                    frontPointX = (blueoneX + whiteoneX) / 2;
-                    frontPointY = (blueoneY + whiteoneY) / 2;
-                    //imageGraphics3.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
-                } else {
-                    frontPointX = (blueoneX + redoneX) / 2;
-                    frontPointY = (blueoneY + redoneY) / 2;
-                    // imageGraphics3.setColor(Color.red);
-                    // imageGraphics3.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
-                }
-
-                chooser = Math.min(distance(blackoneX, blackoneY, whiteoneX, whiteoneY), distance(blackoneX, blackoneY, redoneX, redoneY));
-                if (distance(blackoneX, blackoneY, whiteoneX, whiteoneY) == chooser) {
-                    backPointX = (blackoneX + whiteoneX) / 2;
-                    backPointY = (blackoneY + whiteoneY) / 2;
-                    // imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-                } else {
-                    backPointX = (blackoneX + redoneX) / 2;
-                    backPointY = (blackoneY + redoneY) / 2;
-                    //imageGraphics3.setColor(Color.red);
-                    // imageGraphics3.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-                }
-
-            }
-            /*
-            imageGraphics3.drawOval(blueRobotMaxX - 5, blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMaxX)) - 5, 10, 10);
-            imageGraphics3.setColor(Color.red);
-            imageGraphics3.drawOval(blueRobotMinX - 5, blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMinX)) - 5, 10, 10);
-            imageGraphics3.setColor(Color.blue);
-            imageGraphics3.drawOval(blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMinY)) - 5, blueRobotMinY - 5, 10, 10);
-            imageGraphics3.setColor(Color.black);
-            imageGraphics3.drawOval(blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMaxY)) - 5, blueRobotMaxY - 5, 10, 10);
-             */
-        } catch (Exception e) {
-            System.out.println("Not enough blue pixels");
-        }
 
         /* If we have only found a few 'Yellow' pixels, chances are that the 
          * yellow robot has not actually been detected. */
@@ -632,7 +517,7 @@ public class Vision extends WindowAdapter {
         AngleHistory angleHistory = new AngleHistory();
         try {
             if (runAlternate == false) {
-                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image);
+//                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image);
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
                 worldState.addBlueAngle(blueOrientation);
                 double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
@@ -655,6 +540,7 @@ public class Vision extends WindowAdapter {
         double yellowOrientation;
         try {
             if (true != false) {
+                yellowOrientation = getGeometricOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image);
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
                 worldState.addYellowAngle(yellowOrientation);
                 double testAngle = angleHistory.getMean(worldState.yellowFiveAngles);
@@ -1125,14 +1011,25 @@ public class Vision extends WindowAdapter {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
-    public boolean clusterChecker(int closeoneX, int closeoneY, int closetwoX, int closetwoY, int closethreeX, int closethreeY, int farX, int farY) {
-        if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
-                && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
-                && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)
-                && distance(closeoneX, closeoneY, closetwoX, closetwoY) < 17
-                && distance(closethreeX, closethreeY, closetwoX, closetwoY) < 17
-                && distance(closeoneX, closeoneY, closethreeX, closethreeY) < 17) {
-            return true;
+    public boolean clusterChecker(int closeoneX, int closeoneY, int closetwoX, int closetwoY, int closethreeX, int closethreeY, int farX, int farY, String test) {
+
+        //Check if the close ones are near on an x axis, y axis 
+        if (Math.abs(closeoneX - closetwoX) <= 6 && Math.abs(closeoneX - closethreeX) <= 6 && Math.abs(closetwoX - closethreeX) <= 6 && Math.abs(closeoneX - farX) > 10) {
+
+            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
+                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
+                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
+//                System.out.println(test + " Cluster");
+                return true;
+            }
+        }
+        if (Math.abs(closeoneY - closetwoY) <= 6 && Math.abs(closeoneY - closethreeY) <= 6 && Math.abs(closetwoY - closethreeY) <= 6 && Math.abs(closeoneY - farY) > 10) {
+            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
+                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
+                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
+//                System.out.println(test + " Cluster");
+                return true;
+            }
         }
         return false;
     }
@@ -1141,7 +1038,6 @@ public class Vision extends WindowAdapter {
             int meanX, int meanY, BufferedImage image) throws NoAngleException {
         assert (xpoints.size() == ypoints.size()) :
                 "Error: Must be equal number of x and y points!";
-        double angle = 0;
         Integer robotMaxX = 0;
         Integer robotMinX = 0;
         Integer robotMaxY = 0;
@@ -1171,6 +1067,7 @@ public class Vision extends WindowAdapter {
             int frontPointY = 0;
             int backPointX = 0;
             int backPointY = 0;
+//            System.out.println("BlueX: " + blueoneX + " BlueY: " + blueoneY + " WhiteX: " + whiteoneX + " WhiteY: " + whiteoneY + " RedX: " + redoneX + " RedY: " + redoneY + " BlackX: " + blackoneX + " BlackY: " + blackoneY);
             boolean assigned = false;
 
             /*
@@ -1184,7 +1081,7 @@ public class Vision extends WindowAdapter {
              */
             double chooser = Math.min(distance(blueoneX, blueoneY, whiteoneX, whiteoneY), distance(blueoneX, blueoneY, redoneX, redoneY));
             //Check all the clusters
-            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY)) {
+            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, "blue")) {
 
                 /*
                  * Here, red, black and white are clustered together, while blue is 
@@ -1204,7 +1101,7 @@ public class Vision extends WindowAdapter {
                  *  imageGraphics.drawOval(blueoneX - 5, blueoneY - 5, 10, 10);                 * 
                  */
             }
-            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY)) {
+            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, "white")) {
                 frontPointX = whiteoneX;
                 frontPointY = whiteoneY;
                 backPointX = (redoneX + blackoneX + blueoneX) / 3;
@@ -1217,7 +1114,7 @@ public class Vision extends WindowAdapter {
                  * imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
                  */
             }
-            if (clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY)) {
+            if (clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY, "black")) {
                 frontPointX = blackoneX;
                 frontPointY = blackoneY;
                 backPointX = (redoneX + whiteoneX + blueoneX) / 3;
@@ -1230,7 +1127,7 @@ public class Vision extends WindowAdapter {
                  * imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
                  */
             }
-            if (clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY)) {
+            if (clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY, "red")) {
                 frontPointX = redoneX;
                 frontPointY = redoneY;
                 backPointX = (whiteoneX + blackoneX + blueoneX) / 3;
@@ -1245,13 +1142,13 @@ public class Vision extends WindowAdapter {
             }
 
             //If none of the cluster principles hold, use the average points
-            if (!clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY)
-                    && !clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY)
-                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY)
-                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY)) {
+            if (!clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY, "")
+                    && !clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY, "")
+                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, "")
+                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, "")) {
 
                 if (distance(blueoneX, blueoneY, whiteoneX, whiteoneY) == chooser) {
-                    if (chooser < 6) {
+                    if (chooser < 7) {
                         frontPointX = (blueoneX + whiteoneX) / 2;
                         frontPointY = (blueoneY + whiteoneY) / 2;
                         assigned = true;
@@ -1263,7 +1160,7 @@ public class Vision extends WindowAdapter {
 //                    imageGraphics.setColor(Color.black);
 //                    imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
                 } else {
-                    if (chooser < 6) {
+                    if (chooser < 7) {
                         frontPointX = (blueoneX + redoneX) / 2;
                         frontPointY = (blueoneY + redoneY) / 2;
                         assigned = true;
@@ -1296,22 +1193,24 @@ public class Vision extends WindowAdapter {
 //                    imageGraphics.setColor(Color.GRAY);
 //                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
                 }
+                /*
                 imageGraphics.setColor(Color.blue);
                 imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
                 imageGraphics.setColor(Color.yellow);
                 imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
                 imageGraphics.setColor(Color.red);
                 imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 */
             }
-            /*
-            imageGraphics.drawOval(blueRobotMaxX - 5, blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMaxX)) - 5, 10, 10);
+
+            imageGraphics.drawOval(robotMaxX - 5, ypoints.get(xpoints.lastIndexOf(robotMaxX)) - 5, 10, 10);
             imageGraphics.setColor(Color.red);
-            imageGraphics.drawOval(blueRobotMinX - 5, blueYPoints.get(blueXPoints.lastIndexOf(blueRobotMinX)) - 5, 10, 10);
+            imageGraphics.drawOval(robotMinX - 5, ypoints.get(xpoints.lastIndexOf(robotMinX)) - 5, 10, 10);
             imageGraphics.setColor(Color.blue);
-            imageGraphics.drawOval(blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMinY)) - 5, blueRobotMinY - 5, 10, 10);
+            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMinY)) - 5, robotMinY - 5, 10, 10);
             imageGraphics.setColor(Color.black);
-            imageGraphics.drawOval(blueXPoints.get(blueYPoints.lastIndexOf(blueRobotMaxY)) - 5, blueRobotMaxY - 5, 10, 10);
-             */
+            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMaxY)) - 5, robotMaxY - 5, 10, 10);
+
 
             /*
              * If we have reached here and frontPoint and backPoint are still zero, then we should run the alternate angle. 
@@ -1356,7 +1255,7 @@ public class Vision extends WindowAdapter {
                     angleMB = Math.abs(Math.toDegrees(Math.atan2((meanY - backPointY), (meanX - backPointX))));
                 }
 
-               //FB seems to be the best
+                //FB seems to be the best
                 System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
 
 
@@ -1364,12 +1263,12 @@ public class Vision extends WindowAdapter {
 //                        return (float) 0.001;
 //                    }
 
-                    return angleFB;
-                }
+                return angleFB;
+            }
 
 
-            }  catch (Exception e) {
-            System.out.println("Not enough blue pixels");
+        } catch (Exception e) {
+            System.out.println("Not enough pixels");
             return findOrientation(xpoints, ypoints, meanX, meanY, image, false);
         }
     }
