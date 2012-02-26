@@ -16,7 +16,10 @@ package computer;
  * @author Matt Jeffryes
  */
 import brick.Brick;
+import computer.ai.AI;
 import computer.simulator.Direction;
+import computer.simulator.Pitch;
+import computer.simulator.Robot;
 import java.awt.Cursor;
 import java.awt.event.*;
 import javax.swing.JOptionPane;
@@ -42,6 +45,9 @@ public class MainWindow extends javax.swing.JFrame {
                 System.exit(0);
             }});
 		spinnerRadius.setValue(Integer.valueOf(20));
+		for (Class aiClass : AI.ais) {
+			comboAI.addItem(aiClass);
+		}
     }
     
     public void setStatus(int newConnected) {
@@ -86,13 +92,16 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         radioRun = new javax.swing.JRadioButton();
         radioPenalty = new javax.swing.JRadioButton();
-        buttonRunVision = new javax.swing.JButton();
         buttonDribble = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        buttonRunVision = new javax.swing.JButton();
+        comboAI = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        comboTarget = new javax.swing.JComboBox();
+        comboRobot = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
-        radioLeft = new javax.swing.JRadioButton();
-        radioRight = new javax.swing.JRadioButton();
         kickRadio = new javax.swing.JRadioButton();
         radioSlow = new javax.swing.JRadioButton();
         radioMedium = new javax.swing.JRadioButton();
@@ -100,7 +109,10 @@ public class MainWindow extends javax.swing.JFrame {
         radioArcLeft = new javax.swing.JRadioButton();
         radioArcRight = new javax.swing.JRadioButton();
         spinnerRadius = new javax.swing.JSpinner();
-        buttonNorth = new javax.swing.JButton();
+        buttonOrient = new javax.swing.JButton();
+        spinnerOrient = new javax.swing.JSpinner();
+        radioRotate = new javax.swing.JRadioButton();
+        spinnerRotate = new javax.swing.JSpinner();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -145,13 +157,6 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioPenalty);
         radioPenalty.setText("Penalty");
 
-        buttonRunVision.setText("Run Vision");
-        buttonRunVision.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonRunVisionActionPerformed(evt);
-            }
-        });
-
         buttonDribble.setText("Dribble");
         buttonDribble.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,19 +164,65 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        buttonRunVision.setText("Run Vision");
+        buttonRunVision.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRunVisionActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("AI");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(194, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addComponent(buttonRunVision)
+                .addContainerGap())
+        );
+
+        comboTarget.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Left", "Right" }));
+
+        comboRobot.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Blue", "Yellow" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(radioRun)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 302, Short.MAX_VALUE)
-                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(radioPenalty, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioRun)
+                            .addComponent(radioPenalty))
+                        .addGap(40, 40, 40)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(comboRobot, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboTarget, javax.swing.GroupLayout.Alignment.LEADING, 0, 89, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -180,11 +231,14 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(radioRun)
-                    .addComponent(buttonDribble))
+                    .addComponent(buttonDribble)
+                    .addComponent(comboTarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioPenalty)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
-                .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radioPenalty)
+                    .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -198,22 +252,6 @@ public class MainWindow extends javax.swing.JFrame {
         radioBackward.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioBackwardActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(radioLeft);
-        radioLeft.setText("Turn Left");
-        radioLeft.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioLeftActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(radioRight);
-        radioRight.setText("Turn Right");
-        radioRight.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioRightActionPerformed(evt);
             }
         });
 
@@ -245,12 +283,15 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioArcRight);
         radioArcRight.setText("Arc Right");
 
-        buttonNorth.setText("Go North");
-        buttonNorth.addActionListener(new java.awt.event.ActionListener() {
+        buttonOrient.setText("Orient");
+        buttonOrient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonNorthActionPerformed(evt);
+                buttonOrientActionPerformed(evt);
             }
         });
+
+        buttonGroup.add(radioRotate);
+        radioRotate.setText("Rotate");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -261,34 +302,31 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(radioForward)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 217, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(radioBackward)
-                                    .addComponent(radioLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
-                                .addGap(98, 98, 98)))
+                            .addComponent(radioForward)
+                            .addComponent(radioBackward)
+                            .addComponent(radioRotate)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(kickRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(29, 29, 29))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(radioArcRight, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(radioArcLeft, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(spinnerRadius)
+                            .addComponent(spinnerRotate, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(radioMedium, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(radioSlow)
                             .addComponent(radioFast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(91, 91, 91))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(radioArcRight, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(radioArcLeft, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(kickRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 283, Short.MAX_VALUE)
-                        .addComponent(buttonNorth)
-                        .addContainerGap())
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(348, Short.MAX_VALUE))))
+                        .addComponent(buttonOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,25 +341,24 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(radioMedium))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(radioLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(radioFast))
+                    .addComponent(radioFast)
+                    .addComponent(radioRotate)
+                    .addComponent(spinnerRotate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioRight, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioArcLeft)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioArcRight)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(kickRadio))
+                        .addComponent(kickRadio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonOrient)
+                            .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
+                        .addGap(10, 10, 10)
                         .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(21, 21, 21))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(189, Short.MAX_VALUE)
-                .addComponent(buttonNorth)
                 .addContainerGap())
         );
 
@@ -444,10 +481,8 @@ public class MainWindow extends javax.swing.JFrame {
             commController.backward(speed);
         } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
             commController.kick();
-        } else if (radioLeft.isSelected()) {
-            commController.rotateLeft(700);
-        } else if (radioRight.isSelected()) {
-            commController.rotateRight(50);
+        } else if (radioRotate.isSelected()) {
+            commController.rotate(Math.toRadians(((Integer)spinnerRotate.getValue()).intValue()));
         } else if (radioArcLeft.isSelected()) {
 			commController.arc(-((Integer)spinnerRadius.getValue()).intValue());
 		} else if (radioArcRight.isSelected()) {
@@ -460,6 +495,7 @@ public class MainWindow extends javax.swing.JFrame {
             appController.connect();
         } else if (status() == STATUS_CONNECTED) {
             appController.disconnect();
+			appController.stopEngine();
         }
     }//GEN-LAST:event_connectButtonActionPerformed
 
@@ -472,14 +508,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_radioBackwardActionPerformed
 
-    private void radioLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioLeftActionPerformed
-
-    }//GEN-LAST:event_radioLeftActionPerformed
-
-    private void radioRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioRightActionPerformed
-
-    }//GEN-LAST:event_radioRightActionPerformed
-
     private void kickRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kickRadioActionPerformed
 
         // TODO add your handling code here:}//GEN-LAST:event_kickRadioActionPerformed
@@ -489,16 +517,28 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_radioFastActionPerformed
 
     private void buttonRunVisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRunVisionActionPerformed
-        appController.startEngine();
+        short colour;
+		short target;
+		if (comboTarget.getSelectedIndex() == 0) {
+			target = Pitch.TARGET_LEFT_GOAL;
+		} else {
+			target = Pitch.TARGET_RIGHT_GOAL;
+		}
+		if (comboRobot.getSelectedIndex() == 0) {
+			colour = Robot.YELLOW_PLATE;
+		} else {
+			colour = Robot.BLUE_PLATE;
+		}
+		appController.startEngine((Class<AI>)comboAI.getSelectedItem(), target, colour);
     }//GEN-LAST:event_buttonRunVisionActionPerformed
 
     private void buttonDribbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDribbleActionPerformed
         commController.dribble();
     }//GEN-LAST:event_buttonDribbleActionPerformed
 
-	private void buttonNorthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNorthActionPerformed
-		commController.rotateTo(180);
-	}//GEN-LAST:event_buttonNorthActionPerformed
+	private void buttonOrientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOrientActionPerformed
+		commController.setHeading(((Integer)spinnerOrient.getValue()).intValue());
+	}//GEN-LAST:event_buttonOrientActionPerformed
     
     /**
      * @param args the command line arguments
@@ -541,8 +581,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton buttonDribble;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JButton buttonNorth;
+    private javax.swing.JButton buttonOrient;
     private javax.swing.JButton buttonRunVision;
+    private javax.swing.JComboBox comboAI;
+    private javax.swing.JComboBox comboRobot;
+    private javax.swing.JComboBox comboTarget;
     private javax.swing.JButton connectButton;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
@@ -554,8 +597,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton goButton;
     private javax.swing.ButtonGroup groupSpeed;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JRadioButton kickRadio;
     private javax.swing.JMenuBar menuBar;
@@ -566,15 +611,16 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioBackward;
     private javax.swing.JRadioButton radioFast;
     private javax.swing.JRadioButton radioForward;
-    private javax.swing.JRadioButton radioLeft;
     private javax.swing.JRadioButton radioMedium;
     private javax.swing.JRadioButton radioPenalty;
-    private javax.swing.JRadioButton radioRight;
+    private javax.swing.JRadioButton radioRotate;
     private javax.swing.JRadioButton radioRun;
     private javax.swing.JRadioButton radioSlow;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JSpinner spinnerOrient;
     private javax.swing.JSpinner spinnerRadius;
+    private javax.swing.JSpinner spinnerRotate;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
 }
