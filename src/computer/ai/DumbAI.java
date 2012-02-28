@@ -4,7 +4,6 @@
  */
 package computer.ai;
 
-import brick.Brick;
 import computer.simulator.Pitch;
 import computer.simulator.Robot;
 
@@ -26,13 +25,7 @@ public class DumbAI extends AI{
 
     @Override
     public void run(){
-		if (count < 20) {
-			self.forward(Brick.MEDIUM);
-			count++;
-		} else if (count == 20) {
-			self.rotate(Math.PI);
-		}
-	}
+    }
 
     @Override
     public void robotCollided() {

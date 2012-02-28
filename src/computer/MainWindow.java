@@ -16,7 +16,7 @@ package computer;
  * @author Matt Jeffryes
  */
 import brick.Brick;
-import computer.ai.AI;
+import computer.ai.*;
 import computer.simulator.Direction;
 import computer.simulator.Pitch;
 import computer.simulator.Robot;
@@ -44,10 +44,10 @@ public class MainWindow extends javax.swing.JFrame {
                 appController.close();
                 System.exit(0);
             }});
-		spinnerRadius.setValue(Integer.valueOf(20));
-		for (Class aiClass : AI.ais) {
-			comboAI.addItem(aiClass);
-		}
+            spinnerRadius.setValue(Integer.valueOf(20));
+            for (Class aiClass : new Class[]{Creeper.class, DumbAI.class, Shooter.class, PenaltyGoalie.class, PenaltyShooter.class}) {
+                comboAI.addItem(aiClass);
+            }
     }
     
     public void setStatus(int newConnected) {

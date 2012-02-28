@@ -5,6 +5,7 @@
 package computer.simulator;
 
 import computer.control.ControlInterface;
+import javax.swing.JFrame;
 
 /**
  * Implements the entire simulator logic.
@@ -15,8 +16,9 @@ public class Engine implements Runnable{
     
     public static final short SIMULATOR_TICK_LENGTH_IN_MILLISECONDS=40;
     private boolean barrelEffectPresent=false,tableMisalignmentPresent=false;
-    private static Pitch pitch=null;
+    private Pitch pitch=null;
     private VisionInterface vision;
+    private VisorRenderer visor;
     
     /**
      * Allocates a simulator Engine object and initializes it with
@@ -145,7 +147,7 @@ public class Engine implements Runnable{
             testPixelCoordinates(tempCoordinates);
             this.pitch.insertBall(tempCoordinates);
         }else{
-            this.pitch.insertBallInternal(new Coordinates(1f, 0.5f));
+            this.pitch.insertBallInternal(new Coordinates(1.0, 0.5));
         }
         
         // Initialise goals
@@ -160,6 +162,19 @@ public class Engine implements Runnable{
         
         // Remember VisionInterface
         this.vision=vision;
+        
+        // make the frame
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        this.visor=new VisorRenderer(pitch);
+        
+        // add the canvas
+        frame.getContentPane().add(visor);
+
+        // show the frame
+        frame.pack();
+        frame.setVisible(true);
     }
     
     private void testPixelCoordinates(PixelCoordinates coordinates){
@@ -200,7 +215,7 @@ public class Engine implements Runnable{
      */
     @Override
     public void run(){
-        long lastRun=0,thisRun;
+        long lastRun=System.currentTimeMillis(),thisRun;
         // TODO: Remove next line for production version:
         int i=0;
         while(true){
@@ -212,7 +227,7 @@ public class Engine implements Runnable{
             if((thisRun=System.currentTimeMillis())<=lastRun+Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS)try{
                 Thread.sleep(Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS-(thisRun-lastRun));
             }catch(InterruptedException e) {return;} // stop if interrupted
-            lastRun=System.currentTimeMillis();
+            thisRun=System.currentTimeMillis();
             
             // Process Robotinho
             pitch.robotinho.brain.run();
@@ -273,38 +288,45 @@ public class Engine implements Runnable{
             }else{
                 // ball-robot collisions
                 Double collisionAngle=null;
-                if(pitch.ball.getPosition().distance(pitch.robotinho.getPosition())<0.17)//about 21 cm
+                Double collisionSpeed=null;
+                if(pitch.ball.getPosition().distance(pitch.robotinho.getPosition())<Coordinates.distanceFromCentimetres(22)/2){//about 21 cm
                     collisionAngle=LineTools.angleBetweenLineAndDirection(new Line(pitch.robotinho.getPosition(),pitch.ball.getPosition()), new Direction(0));
-                if(pitch.ball.getPosition().distance(pitch.nemesis.getPosition())<0.17)//about 21 cm
+                    collisionSpeed=pitch.robotinho.getV().getSpeed();
+                }
+                if(pitch.ball.getPosition().distance(pitch.nemesis.getPosition())<Coordinates.distanceFromCentimetres(22)/2){//about 21 cm
                     collisionAngle=LineTools.angleBetweenLineAndDirection(new Line(pitch.nemesis.getPosition(),pitch.ball.getPosition()), new Direction(0));
+                    collisionSpeed=pitch.robotinho.getV().getSpeed();
+                }
                 if(collisionAngle!=null)
-                    pitch.ball.getV().set(0.04*Math.cos(collisionAngle), 0.04*Math.sin(collisionAngle));
+                    pitch.ball.getV().set(collisionSpeed*Math.cos(collisionAngle), collisionSpeed*Math.sin(collisionAngle));
                 
                 // ball-wall collisions
                 double ballX=pitch.ball.getPosition().getX(),ballY=pitch.ball.getPosition().getY();
                 Velocity ballV=pitch.ball.getV();
                 if(ballX<0){
                     pitch.ball.setPosition(-ballX, ballY);
-                    ballV.set(-ballV.getXcomponent(), ballV.getYcomonent());
+                    ballV.set(-ballV.getXcomponent(), ballV.getYcomponent());
                 }
                 if(ballX>2){
                     pitch.ball.setPosition(2-(ballX-2), ballY);
-                    ballV.set(-ballV.getXcomponent(), ballV.getYcomonent());
+                    ballV.set(-ballV.getXcomponent(), ballV.getYcomponent());
                 }
                 if(ballY<0){
                     pitch.ball.setPosition(ballX, -ballY);
-                    ballV.set(ballV.getXcomponent(), -ballV.getYcomonent());
+                    ballV.set(ballV.getXcomponent(), -ballV.getYcomponent());
                 }
                 if(ballY>1){
                     pitch.ball.setPosition(ballX, 1-(ballY-1));
-                    ballV.set(ballV.getXcomponent(), -ballV.getYcomonent());
+                    ballV.set(ballV.getXcomponent(), -ballV.getYcomponent());
                 }
                 pitch.ball.animate(thisRun-lastRun);
                 
                 // TODO: simulate ball behaviour. and uncomment below.
                 //pitch.ball.updateVelocity();
             }
-            
+            System.out.println(thisRun-lastRun);
+            this.visor.repaint();
+            lastRun=thisRun;
             // TODO: Remove next two lines for production version:
             i++;
 //            System.out.println("Simulation iteration "+i+" complete.");

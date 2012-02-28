@@ -122,6 +122,10 @@ public class Line {
         return secondPoint;
     }
     
+    public double getLength() {
+        return Math.sqrt(Math.pow(firstPoint.getX() - secondPoint.getX(), 2) + Math.pow(firstPoint.getY() - secondPoint.getY(), 2));
+    }
+    
     public boolean isOnLineAndInRange(Coordinates point){
         if(gradient != Double.POSITIVE_INFINITY){
             if(point.getX()*gradient + offset == point.getY() && rangeMin <= point.getX() && point.getX() <= rangeMax)

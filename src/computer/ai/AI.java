@@ -4,7 +4,9 @@
  */
 package computer.ai;
 
-import computer.simulator.*;
+import computer.simulator.Coordinates;
+import computer.simulator.Pitch;
+import computer.simulator.Robot;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +20,6 @@ public abstract class AI {
     protected Pitch pitch=null;
     protected Robot self=null;
     protected ArrayList<Coordinates> actionPlan;
-	public static final Class[] ais = {Creeper.class, DumbAI.class, Shooter.class, PenaltyGoalie.class, PenaltyShooter.class};
 
     /**
      * Allocates an AI object. Subclasses should call this, so that the

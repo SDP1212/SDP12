@@ -4,6 +4,8 @@
  */
 package computer.simulator;
 
+import java.awt.Shape;
+
 /**
  * Used to represent a template for a dynamic object within the world.
  * It keeps track of its current and previous location, as well as if it's a
@@ -56,5 +58,7 @@ public abstract class SimulatableObject {
     }
     
     protected abstract void animate(long timeDeltaInMilliseconds);
+    
+    protected abstract Shape[] getVisualisation(int width, int height);
     
 }
