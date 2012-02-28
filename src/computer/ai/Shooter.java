@@ -111,7 +111,7 @@ public class Shooter extends AI {
 	
 	protected boolean inShootingBox() {
 		Coordinates c1 = pitch.getTargetGoal().getLowerPostCoordinates();
-		Coordinates c2 = new Coordinates(pitch.getTargetGoal().getUpperPostCoordinates().getX() + 0.8, pitch.getTargetGoal().getUpperPostCoordinates().getY());
+		Coordinates c2 = new Coordinates(pitch.getTargetGoal().getUpperPostCoordinates().getX() * 0.2 + pitch.getCentreSpot().getX(), pitch.getTargetGoal().getUpperPostCoordinates().getY());
 		Box shootingBox = new Box(c1, c2);
 		return shootingBox.isPointInside(self.getPosition());
 	}

@@ -266,6 +266,10 @@ public class Pitch {
             return rightGoal;
         else return null;
     }
+		
+		public Coordinates getCentreSpot() {
+				return new Coordinates(0.5, 1);
+		}
     
     public Goal getLeftGoal(){
         return leftGoal;
