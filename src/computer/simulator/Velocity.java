@@ -12,23 +12,22 @@ package computer.simulator;
  */
 public final class Velocity {
     
-    public static final short SIMULATOR_TICK_LENGTH_IN_MILLISECONDS=Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS;    
     private double vX,vY;
     private double vXold,vYold;
     private double vXmax,vYmax;
     
     public Velocity(Coordinates previousPosition, Coordinates currentPosition, long timeDeltaInMilliseconds){
-        double TIME_FACTOR=SIMULATOR_TICK_LENGTH_IN_MILLISECONDS/(double)timeDeltaInMilliseconds;
-        this.set((currentPosition.getX()-previousPosition.getX())*TIME_FACTOR,
-                 (currentPosition.getY()-previousPosition.getY())*TIME_FACTOR);
+        double TIME_FACTOR=(double)timeDeltaInMilliseconds/1000.0;
+        this.set((currentPosition.getX()-previousPosition.getX())/TIME_FACTOR,
+                 (currentPosition.getY()-previousPosition.getY())/TIME_FACTOR);
     }
     
     public void recalculate(Coordinates previousPosition, Coordinates currentPosition, long timeDeltaInMilliseconds){
-        double TIME_FACTOR=SIMULATOR_TICK_LENGTH_IN_MILLISECONDS/(double)timeDeltaInMilliseconds;
+        double TIME_FACTOR=(double)timeDeltaInMilliseconds/1000.0;
         this.vXold=this.vX;
         this.vYold=this.vY;
-        this.vX=(currentPosition.getX()-previousPosition.getX())*TIME_FACTOR;
-        this.vY=(currentPosition.getY()-previousPosition.getY())*TIME_FACTOR;
+        this.vX=(currentPosition.getX()-previousPosition.getX())/TIME_FACTOR;
+        this.vY=(currentPosition.getY()-previousPosition.getY())/TIME_FACTOR;
         if(this.vX>this.vXmax)this.vXmax=this.vX;
         if(this.vY>this.vYmax)this.vYmax=this.vY;
     }
@@ -51,16 +50,20 @@ public final class Velocity {
         return this.vX;
     }
     
-    public double getYcomonent(){
+    public double getYcomponent(){
         return this.vY;
     }
     
+    public double getSpeed() {
+        return Math.sqrt(Math.pow(getXcomponent(),2)+Math.pow(getYcomponent(), 2));
+    }
+    
     public double getXDistanceTravelled(long timeDeltaInMilliseconds){
-        return this.getXcomponent()*((double)timeDeltaInMilliseconds/SIMULATOR_TICK_LENGTH_IN_MILLISECONDS);
+        return this.getXcomponent()*((double)timeDeltaInMilliseconds/1000.0);
     }
     
     public double getYDistanceTravelled(long timeDeltaInMilliseconds){
-        return this.getYcomonent()*((double)timeDeltaInMilliseconds/SIMULATOR_TICK_LENGTH_IN_MILLISECONDS);
+        return this.getYcomponent()*((double)timeDeltaInMilliseconds/1000.0);
     }
     
     public double getPreviousXcomponent(){
@@ -78,5 +81,5 @@ public final class Velocity {
     public double getMaximumObservedYcomponent(){
         return this.vYmax;
     }
-    
+  
 }

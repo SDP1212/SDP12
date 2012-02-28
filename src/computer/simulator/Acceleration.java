@@ -10,7 +10,7 @@ package computer.simulator;
  * 
  * @author Dimo Petroff
  */
-public class Acceleration {
+public final class Acceleration {
     
     public static final short SIMULATOR_TICK_LENGTH_IN_MILLISECONDS=Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS;    
     private double aX,aY;
@@ -21,7 +21,7 @@ public class Acceleration {
     
     public void recalculate(Velocity v){
         this.aX=v.getXcomponent()-v.getPreviousXcomponent();
-        this.aY=v.getYcomonent()-v.getPreviousYcomonent();
+        this.aY=v.getYcomponent()-v.getPreviousYcomonent();
     }
     
     public double getXcomponent(){
