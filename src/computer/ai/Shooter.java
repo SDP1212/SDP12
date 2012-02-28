@@ -53,10 +53,11 @@ public class Shooter extends AI {
 //				System.out.println("Heading: " + angle);
 				if (!facingBall()) {
 					//System.out.println("Not facing ball");
+					
 					if (angle < 0) {
-						self.rotateLeft(Brick.SLOW);
+						self.arcLeft(8);
 					} else {
-						self.rotateRight(Brick.SLOW);
+						self.arcRight(8);
 					}
                                         
 				} else if (!nearBall()) {

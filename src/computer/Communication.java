@@ -41,7 +41,7 @@ public class Communication implements Runnable, ControlInterface {
         try {
             bluetoothLink.open(info);
         } catch (NXTCommException e) {
-            System.out.println(e.toString());
+            System.out.println("Comm error" + e.toString());
             return false;
         }
         inStream = bluetoothLink.getInputStream();
@@ -67,7 +67,7 @@ public class Communication implements Runnable, ControlInterface {
                 inStream.close();
             }
         } catch (IOException e) {
-            System.out.println(e.toString());
+            System.out.println("IO error" + e.toString());
         }
         connected = false;
         commState = DISCONNECTED;
@@ -118,8 +118,14 @@ public class Communication implements Runnable, ControlInterface {
         sendMessage(arg | opcode);
     }
 
-    public void arc(int radius) {
-        int opcode = Brick.ARC;
+	public void arcLeft (int radius) {
+        int opcode = Brick.ARCLEFT;
+        int arg = radius << 8;
+        sendMessage(arg | opcode);
+    }
+	
+    public void arcRight (int radius) {
+        int opcode = Brick.ARCRIGHT;
         int arg = radius << 8;
         sendMessage(arg | opcode);
     }

@@ -324,7 +324,6 @@ public class Engine implements Runnable{
                 // TODO: simulate ball behaviour. and uncomment below.
                 //pitch.ball.updateVelocity();
             }
-            System.out.println(thisRun-lastRun);
             this.visor.repaint();
             lastRun=thisRun;
             // TODO: Remove next two lines for production version:

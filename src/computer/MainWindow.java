@@ -484,9 +484,9 @@ public class MainWindow extends javax.swing.JFrame {
         } else if (radioRotate.isSelected()) {
             commController.rotate(Math.toRadians(((Integer)spinnerRotate.getValue()).intValue()));
         } else if (radioArcLeft.isSelected()) {
-			commController.arc(-((Integer)spinnerRadius.getValue()).intValue());
+			commController.arcLeft(((Integer)spinnerRadius.getValue()).intValue());
 		} else if (radioArcRight.isSelected()) {
-			commController.arc(((Integer)spinnerRadius.getValue()).intValue());
+			commController.arcRight(((Integer)spinnerRadius.getValue()).intValue());
 		}
     }//GEN-LAST:event_goButtonActionPerformed
 
