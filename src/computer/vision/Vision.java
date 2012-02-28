@@ -74,8 +74,6 @@ public class Vision extends WindowAdapter {
         initFrameGrabber(videoDevice, width, height, channel, videoStandard, compressionQuality);
         initGUI();
     }
-    
-    
 
     /**
      * Initialises a FrameGrabber object with the given parameters.
@@ -115,7 +113,7 @@ public class Vision extends WindowAdapter {
                 long before = System.currentTimeMillis();
                 BufferedImage frameImage = frame.getBufferedImage();
 
-                
+
                 imCount += 1;
                 if (imCount == 10) {
                     try {
@@ -126,13 +124,13 @@ public class Vision extends WindowAdapter {
                         imCount = 0;
                     }
                 }
-                
+
                 //ShadowProcessing  s = new ShadowProcessing(pitchConstants);
                 //frameImage =  s.sideNormalise(frameImage);
                 //frameImage = s.fullNormalise(frameImage);
 
                 frame.recycle();
-                
+
                 BufferedImage backgroundImage = null;
                 try {
                     backgroundImage = ImageIO.read(new File("TestImage.jpeg"));
@@ -248,8 +246,8 @@ public class Vision extends WindowAdapter {
 
                 int diffRange = 25;
 
-                if (red > diffRange || blue > diffRange || green > diffRange) {
-                    Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
+                //if (red > diffRange || blue > diffRange || green > diffRange) {
+                Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), hsbvals);
                 /* Debug graphics for the grey circles and green plates.
                  * TODO: Move these into the actual detection. */
                 if (thresholdsState.isGrey_debug() && isGrey(c, hsbvals)) {
@@ -319,11 +317,11 @@ public class Vision extends WindowAdapter {
                         image.setRGB(column, row, 0xFFFF0000);
                     }
                 }
-                } else {
+                //} else {
                 //Color.RGBtoHSB(0, 0, 0, hsbvals);
-                    // Sets the non-object pixels to black using background image.
-                    image.setRGB(column, row, 0x00000000);
-                }
+                // Sets the non-object pixels to black using background image.
+                //image.setRGB(column, row, 0x00000000);
+                // }
 
 
 
@@ -478,6 +476,7 @@ public class Vision extends WindowAdapter {
             blue = new Position(worldState.getBlueX(), worldState.getBlueY());
         }
 
+
         /* If we have only found a few 'Yellow' pixels, chances are that the 
          * yellow robot has not actually been detected. */
         if (numYellowPos > 0) {
@@ -492,43 +491,24 @@ public class Vision extends WindowAdapter {
         }
 
         //Find the orientation using Canny Edge detection
-            Integer firstRobotMaxX = 0;
-            Integer firstRobotMinX = 0;
-            Integer firstRobotMaxY = 0;
-            Integer firstRobotMinY = 0;
-            try {
-                firstRobotMaxX = Collections.max(firstRobotXPoints);
-                firstRobotMinX = Collections.min(firstRobotXPoints);
-                firstRobotMaxY = Collections.max(firstRobotYPoints);
-                firstRobotMinY = Collections.min(firstRobotYPoints);
+        Integer firstRobotMaxX = 0;
+        Integer firstRobotMinX = 0;
+        Integer firstRobotMaxY = 0;
+        Integer firstRobotMinY = 0;
 
-            } catch (Exception e) {
-                //No frame detected - square won't display
-            }
+        try {
+            firstRobotMaxX = Collections.max(firstRobotXPoints);
+            firstRobotMinX = Collections.min(firstRobotXPoints);
+            firstRobotMaxY = Collections.max(firstRobotYPoints);
+            firstRobotMinY = Collections.min(firstRobotYPoints);
 
-            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
-                //imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
-                CannyEdge dimo = new CannyEdge();
-                int[][] output;
-                float threshold = 2.6f;
-                short sobel = 1;
-                short noise = 1;
-                output = dimo.detect(image, ((int) firstRobotMinX)-5, ((int) firstRobotMinY)-5, ((int)(firstRobotMaxX-firstRobotMinX))+5, ((int)(firstRobotMaxY - firstRobotMinY))+5, noise, sobel, threshold);
-                
-                for(int x=0; x<output.length; x++) {
-                    for(int y=0; y<output[0].length;y++) {
-                        if(output[x][y]==255) {
-                            //System.out.print("1");
-                        }
-                        else {
-                        //System.out.print(output[x][y]);
-                        }
-                    }
-                    //System.out.println();
-                }
+        } catch (Exception e) {
+            //No frame detected - square won't display
+        }
 
-            }
-            
+        if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
+        }
+
 
 
         /* Attempt to find the blue robot's orientation. */
@@ -537,6 +517,7 @@ public class Vision extends WindowAdapter {
         AngleHistory angleHistory = new AngleHistory();
         try {
             if (runAlternate == false) {
+//                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image);
                 blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
                 worldState.addBlueAngle(blueOrientation);
                 double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
@@ -559,6 +540,7 @@ public class Vision extends WindowAdapter {
         double yellowOrientation;
         try {
             if (true != false) {
+                yellowOrientation = getGeometricOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image);
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
                 worldState.addYellowAngle(yellowOrientation);
                 double testAngle = angleHistory.getMean(worldState.yellowFiveAngles);
@@ -630,8 +612,11 @@ public class Vision extends WindowAdapter {
             if (secondRobotMaxX != 0 && secondRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
                 imageGraphics.drawRect(secondRobotMinX, secondRobotMinY, secondRobotMaxX - secondRobotMinX, secondRobotMaxY - secondRobotMinY);
             }
-            
-            
+
+            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
+                imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
+            }
+
             imageGraphics.setColor(Color.blue);
             imageGraphics.drawOval(blue.getX() - 15, blue.getY() - 15, 30, 30);
             imageGraphics.setColor(Color.yellow);
@@ -870,30 +855,29 @@ public class Vision extends WindowAdapter {
             angleMF = 360 - angleMF;
         }
 
+
         if (radianAngleMF == 0) {
             return (float) 0.001;
         }
-
         // # Handles the history of values ################
         /*
         lastFiveAngles.add(angleMF);
         
         while (lastFiveAngles.size() > 5) { 
-            lastFiveAngles.remove(0);
+        lastFiveAngles.remove(0);
         }
-
+        
         if (lastFiveAngles.size() == 5) {
-            angleMF = angleHistory.getMean(lastFiveAngles);
+        angleMF = angleHistory.getMean(lastFiveAngles);
         }
          */
         // ################################################
-        
         // DEBUG
         //System.out.println("Front-T angle = " + angleMF + ".  Remember Yellow is turned off for testing!");
         return angleMF;
     }
+// getVectorAngle can either find the "longestLine" or the sum of vectors for attempting to get an angle.
 
-    // getVectorAngle can either find the "longestLine" or the sum of vectors for attempting to get an angle.
     public double getVectorAngle(BufferedImage image, ArrayList<Integer> xPoints, ArrayList<Integer> yPoints, int meanX, int meanY) {
 
         int minX = meanX;
@@ -1021,6 +1005,272 @@ public class Vision extends WindowAdapter {
 
         System.out.println("VectorX = " + vectorX + ", VectorY = " + vectorY + ", Angle = " + angle);
         return angle;
+    }
+
+    public double distance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    public boolean clusterChecker(int closeoneX, int closeoneY, int closetwoX, int closetwoY, int closethreeX, int closethreeY, int farX, int farY, String test) {
+
+        //Check if the close ones are near on an x axis, y axis 
+        if (Math.abs(closeoneX - closetwoX) <= 6 && Math.abs(closeoneX - closethreeX) <= 6 && Math.abs(closetwoX - closethreeX) <= 6 && Math.abs(closeoneX - farX) > 10) {
+
+            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
+                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
+                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
+//                System.out.println(test + " Cluster");
+                return true;
+            }
+        }
+        if (Math.abs(closeoneY - closetwoY) <= 6 && Math.abs(closeoneY - closethreeY) <= 6 && Math.abs(closetwoY - closethreeY) <= 6 && Math.abs(closeoneY - farY) > 10) {
+            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
+                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
+                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
+//                System.out.println(test + " Cluster");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public double getGeometricOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
+            int meanX, int meanY, BufferedImage image) throws NoAngleException {
+        assert (xpoints.size() == ypoints.size()) :
+                "Error: Must be equal number of x and y points!";
+        Integer robotMaxX = 0;
+        Integer robotMinX = 0;
+        Integer robotMaxY = 0;
+        Integer robotMinY = 0;
+        try {
+            robotMaxX = Collections.max(xpoints);
+            robotMaxY = Collections.max(ypoints);
+            robotMinX = Collections.min(xpoints);
+            robotMinY = Collections.min(ypoints);
+            Graphics imageGraphics = image.getGraphics();
+            /*
+             * These points represent the extrema of the colored T. The names are simply reflections
+             * of visual debugging, nothing more. Blue is MinimumY, White is the MaximumX, Red is the 
+             * MinimumX and Black is the MaximumY
+             */
+
+
+            int blueoneX = xpoints.get(ypoints.lastIndexOf(robotMinY));
+            int blueoneY = robotMinY;
+            int whiteoneX = robotMaxX;
+            int whiteoneY = ypoints.get(xpoints.lastIndexOf(robotMaxX));
+            int redoneX = robotMinX;
+            int redoneY = ypoints.get(xpoints.lastIndexOf(robotMinX));
+            int blackoneX = xpoints.get(ypoints.lastIndexOf(robotMaxY));
+            int blackoneY = robotMaxY;
+            int frontPointX = 0;
+            int frontPointY = 0;
+            int backPointX = 0;
+            int backPointY = 0;
+//            System.out.println("BlueX: " + blueoneX + " BlueY: " + blueoneY + " WhiteX: " + whiteoneX + " WhiteY: " + whiteoneY + " RedX: " + redoneX + " RedY: " + redoneY + " BlackX: " + blackoneX + " BlackY: " + blackoneY);
+            boolean assigned = false;
+
+            /*
+             * 
+             * Depending on how the robot is orientated, the distance along the top/bottom 
+             * of the T will be between blue and white, or blue and red. The same is true on 
+             * the other side, but this time between black and white or black and red. 
+             * But, because we are dealing with Maximas and Minimas, we occasionally 
+             * have a result where all the points are near one side. We don't know which points
+             * to use, so we first check for clusters. 
+             */
+            double chooser = Math.min(distance(blueoneX, blueoneY, whiteoneX, whiteoneY), distance(blueoneX, blueoneY, redoneX, redoneY));
+            //Check all the clusters
+            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, "blue")) {
+
+                /*
+                 * Here, red, black and white are clustered together, while blue is 
+                 * far away. We say that blue is a good point, and then take the 
+                 * average of the cluster for the other. If you want to see this,
+                 * uncomment the imagegraphics lines
+                 */
+                frontPointX = blueoneX;
+                frontPointY = blueoneY;
+                backPointX = (redoneX + blackoneX + whiteoneX) / 3;
+                backPointY = (redoneY + blackoneY + whiteoneY) / 3;
+
+                /* 
+                 *  imageGraphics.setColor(Color.black);
+                 *  imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 *  imageGraphics.setColor(Color.blue);
+                 *  imageGraphics.drawOval(blueoneX - 5, blueoneY - 5, 10, 10);                 * 
+                 */
+            }
+            if (clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, "white")) {
+                frontPointX = whiteoneX;
+                frontPointY = whiteoneY;
+                backPointX = (redoneX + blackoneX + blueoneX) / 3;
+                backPointY = (redoneY + blackoneY + blueoneY) / 3;
+
+                /*             
+                 * imageGraphics.setColor(Color.white);
+                 * imageGraphics.drawOval(whiteoneX - 5, whiteoneY - 5, 10, 10); 
+                 * imageGraphics.setColor(Color.black);
+                 * imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 */
+            }
+            if (clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY, "black")) {
+                frontPointX = blackoneX;
+                frontPointY = blackoneY;
+                backPointX = (redoneX + whiteoneX + blueoneX) / 3;
+                backPointY = (redoneY + whiteoneY + blueoneY) / 3;
+
+                /*
+                 * imageGraphics.setColor(Color.black);
+                 * imageGraphics.drawOval(blackoneX - 5, blackoneY - 5, 10, 10);
+                 * imageGraphics.setColor(Color.white);
+                 * imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 */
+            }
+            if (clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY, "red")) {
+                frontPointX = redoneX;
+                frontPointY = redoneY;
+                backPointX = (whiteoneX + blackoneX + blueoneX) / 3;
+                backPointY = (whiteoneY + blackoneY + blueoneY) / 3;
+
+                /*
+                 * imageGraphics.setColor(Color.red);
+                 * imageGraphics.drawOval(redoneX - 5, redoneY - 5, 10, 10);
+                 * imageGraphics.setColor(Color.black);
+                 * imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 */
+            }
+
+            //If none of the cluster principles hold, use the average points
+            if (!clusterChecker(blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, redoneX, redoneY, "")
+                    && !clusterChecker(redoneX, redoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, blackoneX, blackoneY, "")
+                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, blueoneX, blueoneY, whiteoneX, whiteoneY, "")
+                    && !clusterChecker(redoneX, redoneY, blackoneX, blackoneY, whiteoneX, whiteoneY, blueoneX, blueoneY, "")) {
+
+                if (distance(blueoneX, blueoneY, whiteoneX, whiteoneY) == chooser) {
+                    if (chooser < 7) {
+                        frontPointX = (blueoneX + whiteoneX) / 2;
+                        frontPointY = (blueoneY + whiteoneY) / 2;
+                        assigned = true;
+                    } else {
+                        backPointX = (blueoneX + whiteoneX) / 2;
+                        backPointY = (blueoneY + whiteoneY) / 2;
+                    }
+
+//                    imageGraphics.setColor(Color.black);
+//                    imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                } else {
+                    if (chooser < 7) {
+                        frontPointX = (blueoneX + redoneX) / 2;
+                        frontPointY = (blueoneY + redoneY) / 2;
+                        assigned = true;
+                    } else {
+                        backPointX = (blueoneX + redoneX) / 2;
+                        backPointY = (blueoneY + redoneY) / 2;
+                    }
+
+
+                }
+
+                double chooser2 = Math.min(distance(blackoneX, blackoneY, whiteoneX, whiteoneY), distance(blackoneX, blackoneY, redoneX, redoneY));
+                if (distance(blackoneX, blackoneY, whiteoneX, whiteoneY) == chooser2) {
+                    if (!assigned) {
+                        frontPointX = (blackoneX + whiteoneX) / 2;
+                        frontPointY = (blackoneY + whiteoneY) / 2;
+                    } else {
+                        backPointX = (blackoneX + whiteoneX) / 2;
+                        backPointY = (blackoneY + whiteoneY) / 2;
+                    }
+
+                } else {
+                    if (!assigned) {
+                        frontPointX = (blackoneX + redoneX) / 2;
+                        frontPointY = (blackoneY + redoneY) / 2;
+                    } else {
+                        backPointX = (blackoneX + redoneX) / 2;
+                        backPointY = (blackoneY + redoneY) / 2;
+                    }
+//                    imageGraphics.setColor(Color.GRAY);
+//                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                }
+                /*
+                imageGraphics.setColor(Color.blue);
+                imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
+                imageGraphics.setColor(Color.yellow);
+                imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                imageGraphics.setColor(Color.red);
+                imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                 */
+            }
+
+            imageGraphics.drawOval(robotMaxX - 5, ypoints.get(xpoints.lastIndexOf(robotMaxX)) - 5, 10, 10);
+            imageGraphics.setColor(Color.red);
+            imageGraphics.drawOval(robotMinX - 5, ypoints.get(xpoints.lastIndexOf(robotMinX)) - 5, 10, 10);
+            imageGraphics.setColor(Color.blue);
+            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMinY)) - 5, robotMinY - 5, 10, 10);
+            imageGraphics.setColor(Color.black);
+            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMaxY)) - 5, robotMaxY - 5, 10, 10);
+
+
+            /*
+             * If we have reached here and frontPoint and backPoint are still zero, then we should run the alternate angle. 
+             */
+            if (frontPointX == 0 || backPointX == 0 || frontPointY == 0 || backPointY == 0) {
+                return findOrientation(xpoints, ypoints, meanX, meanY, image, false);
+            } else {
+
+                /*
+                 * Here, we take our two points and use them with the mean pixels to compute three angles. 
+                 * The first uses the front and the mean.
+                 */
+
+
+                double angleMF = 0;
+                if (frontPointY > backPointY) {
+                    angleMF = (360 - Math.abs(Math.toDegrees(Math.atan2((frontPointY - meanY), (frontPointX - meanX)))));
+                } else {
+                    angleMF = Math.abs(Math.toDegrees(Math.atan2((frontPointY - meanY), (frontPointX - meanX))));
+                }
+
+                /*
+                 * Next, we use the front and the back
+                 */
+
+                double angleFB = 0;
+
+                if (frontPointY > backPointY) {
+                    angleFB = (360 - Math.abs(Math.toDegrees(Math.atan2((frontPointY - backPointY), (frontPointX - backPointX)))));
+                } else {
+                    angleFB = Math.abs(Math.toDegrees(Math.atan2((frontPointY - backPointY), (frontPointX - backPointX))));
+                }
+
+                /*
+                 * Finally, we use the mean and the back
+                 */
+
+                double angleMB = 0;
+                if (frontPointY > backPointY) {
+                    angleMB = (360 - Math.abs(Math.toDegrees(Math.atan2((meanY - backPointY), (meanX - backPointX)))));
+                } else {
+                    angleMB = Math.abs(Math.toDegrees(Math.atan2((meanY - backPointY), (meanX - backPointX))));
+                }
+
+                //FB seems to be the best
+                //System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
+
+
+//                    if (radianAngleMF == 0) {
+//                        return (float) 0.001;
+//                    }
+
+                return angleFB;
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("Not enough pixels");
+            return findOrientation(xpoints, ypoints, meanX, meanY, image, false);
+        }
     }
 }
 // FOLLOWING IS ALL CURRENTLY UNUSED CODE
@@ -1232,4 +1482,5 @@ image.getGraphics().drawOval((int) backX-4, (int) backY-4, 8, 8);
 }
  */
 //System.out.println("F/M: "+angleMF);
-        //System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
+//System.out.println("F/M: "+angleMF+". F/B: "+angle3+". M/B: "+angle4);
+

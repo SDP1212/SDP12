@@ -90,8 +90,8 @@ public class ApplicationController {
         disconnect();
     }
     
-    public void startEngine(Class<AI> ai) {
-        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, Pitch.TARGET_LEFT_GOAL, Robot.YELLOW_PLATE, ai, DumbAI.class);
+    public void startEngine(Class<AI> ai, short target, short nemesisColour) {
+        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, false, false, target, nemesisColour, ai, DumbAI.class);
         engineThread = new Thread(engine);
         engineThread.start();
     }

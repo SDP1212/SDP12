@@ -15,6 +15,8 @@ import computer.simulator.VisionInterface;
  */
 public class FakeVision implements VisionInterface{
 
+    int i=0;
+    
     @Override
     public PixelCoordinates[] getPitchCornerCoordinates() {
         return new PixelCoordinates[] {new PixelCoordinates(0,0,true,true),new PixelCoordinates(100,0,true,true),new PixelCoordinates(100,50,true,true),new PixelCoordinates(0,50,true,true)};
@@ -22,12 +24,12 @@ public class FakeVision implements VisionInterface{
 
     @Override
     public PixelCoordinates getYellowRobotCoordinates() {
-        return new PixelCoordinates(25,25, true, true);
+        return new PixelCoordinates(25+i++,25+(int)(0.1*i), true, true);
     }
 
     @Override
     public Direction getYellowRobotOrientation() {
-        return new Direction(0);
+        return new Direction(0-0.001*i);
     }
 
     @Override
@@ -42,12 +44,12 @@ public class FakeVision implements VisionInterface{
 
     @Override
     public PixelCoordinates[] getLeftGoalCoordinates() {
-        return new PixelCoordinates[] {new PixelCoordinates(0,12,true,true),new PixelCoordinates(0,75,true,true)};
+        return new PixelCoordinates[] {new PixelCoordinates(0,12,true,true),new PixelCoordinates(0,37,true,true)};
     }
 
     @Override
     public PixelCoordinates[] getRightGoalCoordinates() {
-        return new PixelCoordinates[] {new PixelCoordinates(100,12,true,true),new PixelCoordinates(100,75,true,true)};
+        return new PixelCoordinates[] {new PixelCoordinates(100,12,true,true),new PixelCoordinates(100,37,true,true)};
     }
 
     @Override
