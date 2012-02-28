@@ -163,18 +163,7 @@ public class Engine implements Runnable{
         // Remember VisionInterface
         this.vision=vision;
         
-        // make the frame
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         this.visor=new VisorRenderer(pitch);
-        
-        // add the canvas
-        frame.getContentPane().add(visor);
-
-        // show the frame
-        frame.pack();
-        frame.setVisible(true);
     }
     
     private void testPixelCoordinates(PixelCoordinates coordinates){
@@ -221,12 +210,18 @@ public class Engine implements Runnable{
         while(true){
             
             // stop running if interrupted
-            if(Thread.interrupted())return;
+            if(Thread.interrupted()){
+                this.visor.kill();
+                return;
+            }
             
             // Make sure this only runs at most once every 40 milliseconds - the camera framerate is 25Hz, so there will be no new information to process more frequently.
             if((thisRun=System.currentTimeMillis())<=lastRun+Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS)try{
                 Thread.sleep(Engine.SIMULATOR_TICK_LENGTH_IN_MILLISECONDS-(thisRun-lastRun));
-            }catch(InterruptedException e) {return;} // stop if interrupted
+            }catch(InterruptedException e) {
+                this.visor.kill();
+                return;
+            } // stop if interrupted
             thisRun=System.currentTimeMillis();
             
             // Process Robotinho
@@ -324,7 +319,6 @@ public class Engine implements Runnable{
                 // TODO: simulate ball behaviour. and uncomment below.
                 //pitch.ball.updateVelocity();
             }
-            System.out.println(thisRun-lastRun);
             this.visor.repaint();
             lastRun=thisRun;
             // TODO: Remove next two lines for production version:

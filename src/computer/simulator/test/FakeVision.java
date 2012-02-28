@@ -19,7 +19,7 @@ public class FakeVision implements VisionInterface{
     
     @Override
     public PixelCoordinates[] getPitchCornerCoordinates() {
-        return new PixelCoordinates[] {new PixelCoordinates(0,50,true,true),new PixelCoordinates(100,50,true,true),new PixelCoordinates(100,0,true,true),new PixelCoordinates(0,0,true,true)};
+        return new PixelCoordinates[] {new PixelCoordinates(0,0,true,true),new PixelCoordinates(100,0,true,true),new PixelCoordinates(100,50,true,true),new PixelCoordinates(0,50,true,true)};
     }
 
     @Override
@@ -44,12 +44,12 @@ public class FakeVision implements VisionInterface{
 
     @Override
     public PixelCoordinates[] getLeftGoalCoordinates() {
-        return new PixelCoordinates[] {new PixelCoordinates(0,37,true,true),new PixelCoordinates(0,12,true,true)};
+        return new PixelCoordinates[] {new PixelCoordinates(0,12,true,true),new PixelCoordinates(0,37,true,true)};
     }
 
     @Override
     public PixelCoordinates[] getRightGoalCoordinates() {
-        return new PixelCoordinates[] {new PixelCoordinates(100,37,true,true),new PixelCoordinates(100,12,true,true)};
+        return new PixelCoordinates[] {new PixelCoordinates(100,12,true,true),new PixelCoordinates(100,37,true,true)};
     }
 
     @Override

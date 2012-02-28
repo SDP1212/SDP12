@@ -37,6 +37,7 @@ public class Ball extends SimulatableObject{
             }
     }
 
+    @Override
     protected void animate(long timeDeltaInMilliseconds) {
         setPosition(position.getX()+v.getXDistanceTravelled(timeDeltaInMilliseconds),
                     position.getY()+v.getYDistanceTravelled(timeDeltaInMilliseconds));
