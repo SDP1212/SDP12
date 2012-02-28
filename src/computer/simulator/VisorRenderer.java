@@ -6,16 +6,20 @@ package computer.simulator;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Dimo Petroff
  */
-public class VisorRenderer extends Canvas{
+public class VisorRenderer extends JPanel{
     
-    public static int RENDER_HEIGHT=300,RENDER_WIDTH=600;
+    private static final int RENDER_HEIGHT=300,RENDER_WIDTH=600;
+    private static Dimension dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
     private Shape[] robotinho,nemesis,ball,leftGoal,rightGoal;
     private Pitch pitch;
+    private JFrame frame;
     
     public VisorRenderer(Pitch pitch){
         this.pitch=pitch;
@@ -30,7 +34,19 @@ public class VisorRenderer extends Canvas{
                                                   (int)(RENDER_HEIGHT-pitch.getRightGoal().getUpperPostCoordinates().getY()*RENDER_HEIGHT),
                                                   RENDER_WIDTH/50,
                                                   (int)((pitch.getRightGoal().getUpperPostCoordinates().getY()-pitch.getRightGoal().getLowerPostCoordinates().getY())*RENDER_HEIGHT))};
-        super.setSize(RENDER_WIDTH, RENDER_HEIGHT);
+        super.setMinimumSize(dimension);
+        init();
+    }
+    
+    private void init(){
+        frame=new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(this);
+        frame.pack();
+        frame.setVisible(true);
+        dimension.height+=frame.getInsets().bottom+frame.getInsets().top;
+        dimension.width+=frame.getInsets().left+frame.getInsets().right;
+        frame.setMinimumSize(dimension);
     }
     
     @Override
@@ -61,23 +77,27 @@ public class VisorRenderer extends Canvas{
         for(Shape s : rightGoal)
             g.draw(s);
 
-        g.setTransform(AffineTransform.getTranslateInstance(pitch.robotinho.position.getX()*RENDER_WIDTH/2, pitch.robotinho.position.getY()*RENDER_HEIGHT));
+        g.setTransform(AffineTransform.getTranslateInstance(pitch.robotinho.position.getX()*RENDER_WIDTH/2, (1.0-pitch.robotinho.position.getY())*RENDER_HEIGHT));
         g.rotate(-pitch.robotinho.getOrientation().getDirectionRadians());
         g.setColor(Color.GREEN);
         for(Shape s : robotinho)
             g.draw(s);
 
-        g.setTransform(AffineTransform.getTranslateInstance(pitch.nemesis.position.getX()*RENDER_WIDTH/2, pitch.nemesis.position.getY()*RENDER_HEIGHT));
+        g.setTransform(AffineTransform.getTranslateInstance(pitch.nemesis.position.getX()*RENDER_WIDTH/2, (1.0-pitch.nemesis.position.getY())*RENDER_HEIGHT));
         g.rotate(-pitch.nemesis.getOrientation().getDirectionRadians());
         g.setColor(Color.RED);
         for(Shape s : nemesis)
             g.draw(s);
 
-        g.setTransform(AffineTransform.getTranslateInstance(pitch.ball.position.getX()*RENDER_WIDTH/2, pitch.ball.position.getY()*RENDER_HEIGHT));
+        g.setTransform(AffineTransform.getTranslateInstance(pitch.ball.position.getX()*RENDER_WIDTH/2, (1.0-pitch.ball.position.getY())*RENDER_HEIGHT));
         g.setColor(Color.RED);
         for(Shape s : ball)
             g.fill(s);
 
+    }
+    
+    protected void kill(){
+        frame.dispose();
     }
     
 }

@@ -71,6 +71,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         return this.colour;
     }
 
+    @Override
     public void forward(int speed) {
         if(this.control!=null && this.isReal())control.forward(speed);
         else{
@@ -80,6 +81,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+    @Override
     public void backward(int speed) {
         if(this.control!=null && this.isReal())control.backward(speed);
         else{
@@ -89,6 +91,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+    @Override
     public void stop() {
         if(this.control!=null && this.isReal())control.stop();
         else {
@@ -99,11 +102,13 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+    @Override
     public void kick() {
         if(this.control!=null && this.isReal())control.kick();
         else pitch.ball.kick(position, orientation);
     }
 
+    @Override
     public void rotate(double angle) {
         if(this.control!=null && this.isReal())control.rotate(angle);
         else {
@@ -113,6 +118,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
     
+    @Override
     public void rotateRight(int speed) {
         if(this.control!=null && this.isReal())control.rotateRight(speed);
         else {
@@ -121,6 +127,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+    @Override
     public void rotateLeft(int speed) {
         if(this.control!=null && this.isReal())control.rotateLeft(speed);
         else {
@@ -129,18 +136,18 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+    @Override
     public void rotateTo(int heading) {
         if(this.control!=null && this.isReal())control.rotateTo(heading);
         else throw new UnsupportedOperationException("Simulator does not implement rotateTo() method.");
     }	
     
+	@Override
     public void arcLeft(int radius) {
         if(this.control!=null && this.isReal())control.arcLeft(radius);
-        else {
-            arcMotionState=radius;
-        }
-    }
-
+	}
+	
+	@Override
     public void arcRight(int radius) {
         if(this.control!=null && this.isReal())control.arcRight(radius);
         else {
@@ -148,16 +155,19 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }	
 	
+    @Override
     public void setHeading(int heading) {
         if(this.control!=null && this.isReal())control.setHeading(heading);
         else throw new UnsupportedOperationException("Simulator does not implement setHeading() method.");
     }
 
+    @Override
     public void unlockHeading() {
         if(this.control!=null && this.isReal())control.unlockHeading();
         else throw new UnsupportedOperationException("Simulator does not implement unlockHeading() method.");
     }
 
+    @Override
     public int getCommState() {
         if(this.control!=null && this.isReal()) {
             return control.getCommState();
@@ -165,10 +175,12 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         else return commState;
     }
 
+    @Override
     public void addAI(AI ai) {
         this.brain=ai;
     }
     
+    @Override
     protected void animate(long timeDeltaInMilliseconds){
         
         double ROT_FACTOR=rotSpeed*timeDeltaInMilliseconds/1000;

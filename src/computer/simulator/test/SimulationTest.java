@@ -32,7 +32,7 @@ public class SimulationTest {
         Thread.sleep(5000);
         
         // Stop simulator. Not sure if this is necessary when next action is to quit.
-        //enginethread.interrupt();
+//        enginethread.interrupt();
         
         // Quit or do some other stuff.
     }
