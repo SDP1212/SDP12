@@ -162,14 +162,20 @@ public class Movement implements Runnable {
 
     public void arcLeft(int radius) {
 	synchronized (movementLock) {
-	    pilot.arcForward(radius);
+	    Motor.A.forward();
+		Motor.B.forward();
+		Motor.A.setSpeed(Brick.FAST);
+		Motor.B.setSpeed(Brick.SLOW);
 	    state = ARC;
 	}
     }
     
     public void arcRight(int radius) {
 	synchronized (movementLock) {
-	    pilot.arcForward(-radius);
+	    Motor.A.forward();
+		Motor.B.forward();
+		Motor.A.setSpeed(Brick.SLOW);
+		Motor.B.setSpeed(Brick.FAST);
 	    state = ARC;
 	}
     }

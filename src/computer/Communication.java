@@ -120,12 +120,14 @@ public class Communication implements Runnable, ControlInterface {
 
 	public void arcLeft (int radius) {
         int opcode = Brick.ARCLEFT;
+		System.out.println("arc left");
         int arg = radius << 8;
         sendMessage(arg | opcode);
     }
 	
     public void arcRight (int radius) {
         int opcode = Brick.ARCRIGHT;
+		System.out.println("arc right");
         int arg = radius << 8;
         sendMessage(arg | opcode);
     }
@@ -173,7 +175,7 @@ public class Communication implements Runnable, ControlInterface {
     public void sendMessage(int message) {
         try {
             if (commState == READY) {
-				System.out.println("Message: " + Integer.toBinaryString(message));
+				//System.out.println("Message: " + Integer.toBinaryString(message));
                 byte[] buf = intToByteArray(message);
 //                System.out.println("Message " + Arrays.toString(buf));
                 outStream.write(buf);
