@@ -1256,7 +1256,7 @@ public class Vision extends WindowAdapter {
                 }
 
                 //FB seems to be the best
-                System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
+                //System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
 
 
 //                    if (radianAngleMF == 0) {

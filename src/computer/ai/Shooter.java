@@ -36,7 +36,7 @@ public class Shooter extends AI {
 	public void run() {
 		updateState();
 		if (state == DRIBBLING) {
-			if (inShootingBox()) {
+			if (inShootingBox() && facingGoal()) {
 				self.kick();
 				shotTime = new Date();
 			}
@@ -50,17 +50,18 @@ public class Shooter extends AI {
 			} else {
 	//			double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
 	//			self.setHeading((int)angle);
-				System.out.println("Heading: " + angle);
+//				System.out.println("Heading: " + angle);
 				if (!facingBall()) {
-					System.out.println("Not facing ball");
+					//System.out.println("Not facing ball");
 					if (angle < 0) {
 						self.rotateLeft(Brick.SLOW);
 					} else {
 						self.rotateRight(Brick.SLOW);
 					}
+                                        
 				} else if (!nearBall()) {
-					System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
-					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 100);
+					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
+					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
 				}
 				movementTime = new Date();
 			}
@@ -116,7 +117,15 @@ public class Shooter extends AI {
 	}
 	
 	protected boolean facingGoal() {
-		return true;
+            Coordinates centreOfGoal = new Coordinates((pitch.getTargetGoal().getLowerPostCoordinates().getX() +pitch.getTargetGoal().getUpperPostCoordinates().getX())/2 , pitch.getTargetGoal().getLowerPostCoordinates().getY());
+            Line lineToCentreOfPitch = new Line (self.getPosition(), centreOfGoal);
+            double angle = LineTools.angleBetweenLineAndDirection (lineToCentreOfPitch, self.getOrientation());
+            if (Math.abs(angle) < Math.PI/4) {
+                System.out.println("facing goal");
+                return true;
+            } else {
+                return false;
+            }
 	}
 
 	@Override

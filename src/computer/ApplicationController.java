@@ -91,7 +91,7 @@ public class ApplicationController {
     }
     
     public void startEngine(Class<AI> ai, short target, short nemesisColour) {
-        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, target, nemesisColour, ai, DumbAI.class);
+        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, false, false, target, nemesisColour, ai, DumbAI.class);
         engineThread = new Thread(engine);
         engineThread.start();
     }
