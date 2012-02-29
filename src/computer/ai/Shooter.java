@@ -64,11 +64,13 @@ public class Shooter extends AI {
 					//System.out.println("Not facing ball");
 					
 					if (angle < 0 && movementState != ARCLEFT) {
-						self.arcLeft(8);
+						self.rotateLeft(Brick.MEDIUM);
+						//self.arcLeft(8);
 						movementState = ARCLEFT;
 						rotatingTime = new Date();
 					} else  if (movementState != ARCRIGHT){
-						self.arcRight(8);
+						self.rotateRight(Brick.MEDIUM);
+						//self.arcRight(8);
 						movementState = ARCRIGHT;
 						rotatingTime = new Date();
 					}
