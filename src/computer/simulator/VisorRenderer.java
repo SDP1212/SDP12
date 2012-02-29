@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 public class VisorRenderer extends JPanel{
     
     private static final int RENDER_HEIGHT=300,RENDER_WIDTH=600;
-    private static Dimension dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
+    private static Dimension dimension;
     private Shape[] robotinho,nemesis,ball,leftGoal,rightGoal;
     private Pitch pitch;
     private JFrame frame;
@@ -34,6 +34,7 @@ public class VisorRenderer extends JPanel{
                                                   (int)(RENDER_HEIGHT-pitch.getRightGoal().getUpperPostCoordinates().getY()*RENDER_HEIGHT),
                                                   RENDER_WIDTH/50,
                                                   (int)((pitch.getRightGoal().getUpperPostCoordinates().getY()-pitch.getRightGoal().getLowerPostCoordinates().getY())*RENDER_HEIGHT))};
+        dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
         super.setMinimumSize(dimension);
         init();
     }
