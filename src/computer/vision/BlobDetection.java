@@ -16,8 +16,9 @@ public class BlobDetection {
         // Default constructor
     }
     
-    public ArrayList getCoordinatesOfBlob(ArrayList<Integer> xPoints, ArrayList<Integer> yPoints) {
+    public BlobObject getCoordinatesOfBlob(ArrayList<Integer> xPoints, ArrayList<Integer> yPoints) {
 
+        
         // Some variable declarations.
         int[] xMinMax = getMinMax(xPoints);
         int[] yMinMax = getMinMax(yPoints);
@@ -117,28 +118,30 @@ public class BlobDetection {
         //    System.out.println("Index i = " + i + " has mass " + massArray.get(i));
         //}
         
-        System.out.println("#Blobs = " + massArray.size() + ".   Mass = " + massArray.get(largestBlob));
+//        System.out.println("#Blobs = " + massArray.size() + ".   Mass = " + massArray.get(largestBlob));
         
-        ArrayList<Integer> xyPoints = new ArrayList<Integer>();
+        ArrayList<Integer> xBlobPoints = new ArrayList<Integer>();
+        ArrayList<Integer> yBlobPoints = new ArrayList<Integer>();
         
         if (largestBlob >= 1) {
             for (int i = 0; i < labelTable.length; i++) {
                 if (labelTable[i] == largestBlob) {
-                    xyPoints.add((i % xRange) + xMin);
-                    xyPoints.add((int) ((i / xRange) + yMin));
+                    xBlobPoints.add((i % xRange) + xMin);
+                    yBlobPoints.add((int) ((i / xRange) + yMin));
                 }
             }
         // Adds a point if no object detected.
         } else {
-            xyPoints.add(320);
-            xyPoints.add(240);
+            xBlobPoints.add(320);
+            yBlobPoints.add(240);
         }
         
+        BlobObject returner = new BlobObject(xBlobPoints, yBlobPoints);
         // Note! Order is: {x1,y1,x2,y2,..,xn,yn}
         //for (int i = 0; i < labelTable.length ; i++) { 
             
         //}
-        return xyPoints;
+        return returner;
         
     }
 

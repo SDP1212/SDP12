@@ -167,7 +167,7 @@ public class Vision2 extends WindowAdapter {
     public void processAndUpdateImage(BufferedImage image, long before) {
         
         /* Used to calculate the FPS. */
-        Preprocessing pTest = new Preprocessing(pitchConstants);
+        Preprocessing pTest = new Preprocessing(pitchConstants, thresholdsState);
         pTest.fullNormalise(image);
         
         long after = System.currentTimeMillis();
