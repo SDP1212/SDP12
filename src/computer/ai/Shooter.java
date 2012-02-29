@@ -43,16 +43,17 @@ public class Shooter extends AI {
 	@Override
 	public void run() {
 		updateState();
+
 		if (state == DRIBBLING) {
-			if (inShootingBox() && facingGoal()) {
+			if ((inShootingBox() || unobstructedShot()) && facingGoal()) {
 				self.kick();
 				shotTime = new Date();
 			}
 		} else if (state == SEARCHING && (new Date().getTime() - movementTime.getTime() > 500)) {
-			Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+			Line lineToBall = new Line(self.getPosition(), target());
 			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 
-			if (firstRun < 20) {
+			if (firstRun < 15) {
 				self.forward(Brick.FAST);
 				movementState = FORWARD;
 				firstRun++;
@@ -109,7 +110,7 @@ public class Shooter extends AI {
 	}
 	
 	protected boolean facingBall() {
-		Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+		Line lineToBall = new Line(self.getPosition(), target());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 		if (Math.abs(angle) < Math.PI / 8) {
 			return true;
@@ -119,12 +120,19 @@ public class Shooter extends AI {
 	}
 	
 	protected boolean nearBall() {
-		Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+		Line lineToBall = new Line(self.getPosition(), target());
 		if (lineToBall.getLength() < 0.2) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	protected boolean unobstructedShot() {
+		Line lineToBall = new Line(self.getPosition(), target());
+		Line lineToEnemy = new Line(self.getPosition(), pitch.nemesis.getPosition());
+		double angle = LineTools.angleBetweenLines(lineToBall, lineToEnemy);
+		return (Math.abs(angle) > Math.PI / 6);
 	}
 	
 	protected boolean inShootingBox() {
@@ -145,11 +153,17 @@ public class Shooter extends AI {
                 return false;
             }
 	}
+	
+	protected Coordinates target() {
+		double x = (pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX()) * 0.1 + pitch.ball.getPosition().getX();
+		return new Coordinates(x, pitch.ball.getPosition().getY());
+	}
 
 	@Override
 	public synchronized void robotCollided() {
 		System.out.println("Collision");
 		movementState = NOTHING;
+		
 	}
 	
 }
