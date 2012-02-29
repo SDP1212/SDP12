@@ -16,13 +16,16 @@ import computer.simulator.Robot;
  * @author Dimo Petroff
  */
 public class DumbAI extends AI{
+	private int count = 0;
     
     public DumbAI(Pitch pitch, Robot self){
         super(pitch, self);
+		
     }
 
     @Override
-    public void run(){}
+    public void run(){
+    }
 
     @Override
     public void robotCollided() {

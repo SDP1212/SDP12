@@ -5,7 +5,7 @@
 package computer.simulator;
 
 /**
- * LineTools contains functions for manipulating objects from class Line.
+ * Documentation for the classes Line and LineTools is provided in the file SDP12/doc/LineClasses.pdf.
  * @author Evgeniya Sotirova
  */
 public class LineTools {
@@ -13,28 +13,29 @@ public class LineTools {
     public static Coordinates intersectionOfLines(Line l, Line m){
         
         Coordinates intersectionPoint;
-        intersectionPoint = new Coordinates();
+        intersectionPoint = null;
         
-        if(l.getGradient() == m.getGradient()){ // if(the lines are parallel)
-            intersectionPoint.set(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-        }
-        else {
-            if(l.getGradient() == Double.POSITIVE_INFINITY || l.getGradient() == Double.NEGATIVE_INFINITY){
+        if(l.getGradient() != m.getGradient()){ // The lines should not be parallel.
+            if(l.getGradient() == Double.POSITIVE_INFINITY){
+                intersectionPoint = new Coordinates();
                 intersectionPoint.setX(l.getFirstPoint().getX());
                 intersectionPoint.setY(m.getGradient()*intersectionPoint.getX() + m.getOffset());
             }
             else{
-                if(m.getGradient() == Double.POSITIVE_INFINITY || m.getGradient() == Double.NEGATIVE_INFINITY){
+                if(m.getGradient() == Double.POSITIVE_INFINITY){
+                    intersectionPoint = new Coordinates();
                     intersectionPoint.setX(m.getFirstPoint().getX());
                     intersectionPoint.setY(l.getGradient()*intersectionPoint.getX() + l.getOffset());
                 }
                 else{
+                    intersectionPoint = new Coordinates();
                     intersectionPoint.setX((m.getOffset()-l.getOffset()) / (l.getGradient()-m.getGradient()));
                     intersectionPoint.setY(l.getGradient()*intersectionPoint.getX() + l.getOffset());
                 }
             }
+            if(!l.isOnLineAndInRange(intersectionPoint) || !m.isOnLineAndInRange(intersectionPoint))
+                intersectionPoint = null;
         }
-                
         return intersectionPoint;
     }
         
@@ -44,7 +45,7 @@ public class LineTools {
             newPoint.set(point.getX(), point.getY() + 2*(line.getOffset()-point.getY()));
         }
         else{
-            if(line.getGradient() == Double.POSITIVE_INFINITY || line.getGradient() == Double.NEGATIVE_INFINITY){
+            if(line.getGradient() == Double.POSITIVE_INFINITY){
                 newPoint.set(point.getX() + 2*(line.getFirstPoint().getX()-point.getX()), point.getY());
             }
             else{
@@ -62,7 +63,7 @@ public class LineTools {
  
         double distance;
         if(line.getGradient() == Double.POSITIVE_INFINITY){
-            distance = Math.abs(point.getX()-line.getXmin());
+            distance = Math.abs(point.getX()-line.getRangeMin());
         } else {
             distance = Math.abs(-line.getGradient()*point.getX()-(line.getOffset() - point.getY()))/Math.sqrt((line.getGradient()*line.getGradient()+1));
         }
@@ -133,70 +134,61 @@ public class LineTools {
     }
     
     /*
-     * The function formLinesAroundPoint creates lines from the points that the above function (formRectagleAroundPoint) returns.
+     * The function formLinesAroundPoint creates lines from the points that
+     * the above function (formRectagleAroundPoint) returns.
+     * It also adds range for each of the lines, so that they can be used as segments.
      * NOTE: LineToolsTest does not test the function formLinesAroundPoint.
      */
     public static Line[] formLinesAroundPoint(Coordinates point, Direction direction, double length, double width){
         Line[] lines = new Line[4];
         Coordinates[] points = formRectagleAroundPoint(point, direction, length, width);
         
-        lines[0] = new Line(points[0], points[1]);
-        lines[1] = new Line(points[1], points[2]);
-        lines[2] = new Line(points[2], points[3]);
-        lines[3] = new Line(points[3], points[0]);
+        for(int i=0; i<3; i++){
+            if(points[i].getX() == points[i+1].getX())
+                lines[i] = new Line(points[i], points[i+1], Math.min(points[i].getY(),points[i+1].getY()), Math.max(points[i].getY(), points[i+1].getY()));
+            else
+                lines[i] = new Line(points[i], points[i+1], Math.min(points[i].getX(),points[i+1].getX()), Math.max(points[i].getX(), points[i+1].getX()));
+        }
+       if(points[3].getX() == points[0].getX())
+           lines[3] = new Line(points[3], points[0], Math.min(points[3].getY(),points[0].getY()), Math.max(points[3].getY(), points[0].getY()));
+       else
+           lines[3] = new Line(points[3], points[0], Math.min(points[3].getX(),points[0].getX()), Math.max(points[3].getX(), points[0].getX()));
         
         return lines;
     }
     
     /**
-     * @return the index of the line from the array of lines which is first intersected by a given line.
-     * The line "line" cannot intersect lines which are "behind" it, i.e. here the line is treated as a ray.
+     * @return the line from the array of lines which is first intersected by a given line.
      */
-    public static int lineIntersectingLines(Line line, Line[] lines){
-        int numOfClosestLine = -1;
-        double quotient = -1;
-        double quotient2;
-        double x = line.getSecondPoint().getX() - line.getFirstPoint().getX();
-        double y = line.getSecondPoint().getY() - line.getFirstPoint().getY();
+    public static Line lineIntersectingLines(Line line, Line[] lines){
+        Line closestLine;
+        closestLine = null;
+        double minDistance = -1;
+        double newDistance;
+        
+        Coordinates firstFeasiblePoint;
+        if(line.getDirection())
+            firstFeasiblePoint = new Coordinates(line.getRangeMin(), line.getRangeMin()*line.getGradient()+line.getOffset());
+        else firstFeasiblePoint = new Coordinates(line.getRangeMax(), line.getRangeMax()*line.getGradient()+line.getOffset());
         
         for(int i=0; i<lines.length; i++){
             Coordinates intersectionPoint = intersectionOfLines(line, lines[i]);
-            
-            if(Coordinates.distance(intersectionPoint, lines[i].getFirstPoint())+Coordinates.distance(intersectionPoint, lines[i].getSecondPoint())==Coordinates.distance(lines[i].getSecondPoint(), lines[i].getFirstPoint())){
-                if(x == 0){
-                    quotient2 = (intersectionPoint.getY() -line.getFirstPoint().getY())/y;
-                }
-                else{
-                    quotient2 = (intersectionPoint.getX() -line.getFirstPoint().getX())/x;
-                }
-
-                if(quotient2!=Double.POSITIVE_INFINITY && quotient2 >= 1 && (quotient > quotient2 || quotient < 1)){
-                    quotient = quotient2;
-                    numOfClosestLine = i;
+            if(intersectionPoint != null){
+                newDistance = firstFeasiblePoint.distance(intersectionPoint);
+                if(minDistance > newDistance || minDistance < 0){
+                    minDistance = newDistance;
+                    closestLine = lines[i];
                 }
             }            
         }
         
-        return numOfClosestLine;
+        return closestLine;
     }
 
     /**
      * This function returns the side of the table or the robots the ball will hit first.
-     * @return 0-3 : the sides of the table;
-     * @return 0 : the side from (0,0) to (2,0)
-     * @return 1 : the side from (2,0) to (2,1)
-     * @return 2 : the side from (2,1) to (0,1)
-     * @return 3 : the side from (0,1) to (2,0)
-     * 
-     * @return 4-7 : robot1;
-     * @return 4 : the side perpendicular to the direction of the robot
-     * The rest of the sides are numbered in a counterclockwise order.
-     * 
-     * @return 8-11: robot2;
-     * @return 8 : the side perpendicular to the direction of the robot
-     * The rest of the sides are numbered in a counterclockwise order.
      */
-    public static int ballOnTheTable(Line ball, Coordinates robot1, Direction dirR1, double lengthR1, double widthR1, Coordinates robot2, Direction dirR2, double lengthR2, double widthR2){
+    public static Line ballOnTheTable(Line ball, Coordinates robot1, Direction dirR1, double lengthR1, double widthR1, Coordinates robot2, Direction dirR2, double lengthR2, double widthR2){
         //Basically, this function uses the function lineIntersectingLines().
         Line[] lines = new Line[12];
         
@@ -206,28 +198,33 @@ public class LineTools {
         tableCorners[2] = new Coordinates(2,1);
         tableCorners[3] = new Coordinates(0,1);
         
-        lines[0] = new Line(tableCorners[0],tableCorners[1]);
-        lines[1] = new Line(tableCorners[1],tableCorners[2]);
-        lines[2] = new Line(tableCorners[2],tableCorners[3]);
-        lines[3] = new Line(tableCorners[3],tableCorners[0]);
+        lines[0] = new Line(tableCorners[0],tableCorners[1],0,2);
+        lines[1] = new Line(tableCorners[1],tableCorners[2],0,1);
+        lines[2] = new Line(tableCorners[2],tableCorners[3],0,2);
+        lines[3] = new Line(tableCorners[3],tableCorners[0],0,1);
         
-        Coordinates[] robot1Coordinates = new Coordinates[4];
-        robot1Coordinates = formRectagleAroundPoint(robot1, dirR1, lengthR1, widthR1);
+        lines[4] = formLinesAroundPoint(robot1, dirR1, lengthR1, widthR1)[0];
+        lines[5] = formLinesAroundPoint(robot1, dirR1, lengthR1, widthR1)[1];
+        lines[6] = formLinesAroundPoint(robot1, dirR1, lengthR1, widthR1)[2];
+        lines[7] = formLinesAroundPoint(robot1, dirR1, lengthR1, widthR1)[3];
         
-        lines[4] = new Line(robot1Coordinates[0], robot1Coordinates[1]);
-        lines[5] = new Line(robot1Coordinates[1], robot1Coordinates[2]);
-        lines[6] = new Line(robot1Coordinates[2], robot1Coordinates[3]);
-        lines[7] = new Line(robot1Coordinates[3], robot1Coordinates[0]);
-        
-        Coordinates[] robot2Coordinates = new Coordinates[4];
-        robot2Coordinates = formRectagleAroundPoint(robot2, dirR2, lengthR2, widthR2);
-        
-        lines[8] = new Line(robot2Coordinates[0], robot2Coordinates[1]);
-        lines[9] = new Line(robot2Coordinates[1], robot2Coordinates[2]);
-        lines[10] = new Line(robot2Coordinates[2], robot2Coordinates[3]);
-        lines[11] = new Line(robot2Coordinates[3], robot2Coordinates[0]);
-        
+        lines[8] = formLinesAroundPoint(robot2, dirR2, lengthR2, widthR2)[0];
+        lines[9] = formLinesAroundPoint(robot2, dirR2, lengthR2, widthR2)[1];
+        lines[10] = formLinesAroundPoint(robot2, dirR2, lengthR2, widthR2)[2];
+        lines[11] = formLinesAroundPoint(robot2, dirR2, lengthR2, widthR2)[3];
         
         return lineIntersectingLines(ball, lines);
+    }
+	
+	public static double angleBetweenLines(Line l, Line m){
+        double gamma;
+        
+//        gamma = Math.acos((1+l.getGradient()*m.getGradient())/(Math.sqrt(1+l.getGradient()*l.getGradient())*Math.sqrt(1+m.getGradient()*m.getGradient())));
+		double lVectorX = l.getFirstPoint().getX() - l.getSecondPoint().getX();
+		double lVectorY = l.getFirstPoint().getY() - l.getSecondPoint().getY();
+		double mVectorX = m.getFirstPoint().getX() - m.getSecondPoint().getX();
+		double mVectorY = m.getFirstPoint().getY() - m.getSecondPoint().getY();
+        gamma = (Math.atan2(mVectorY, mVectorX) - Math.atan2(lVectorY, lVectorX)) % Math.PI;
+        return gamma;
     }
 }

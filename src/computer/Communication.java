@@ -41,7 +41,7 @@ public class Communication implements Runnable, ControlInterface {
         try {
             bluetoothLink.open(info);
         } catch (NXTCommException e) {
-            System.out.println(e.toString());
+            System.out.println("Comm error" + e.toString());
             return false;
         }
         inStream = bluetoothLink.getInputStream();
@@ -67,7 +67,7 @@ public class Communication implements Runnable, ControlInterface {
                 inStream.close();
             }
         } catch (IOException e) {
-            System.out.println(e.toString());
+            System.out.println("IO error" + e.toString());
         }
         connected = false;
         commState = DISCONNECTED;
@@ -111,16 +111,23 @@ public class Communication implements Runnable, ControlInterface {
     
     public void rotate (double angle) {
         int opcode = Brick.ROTATE;
-//        System.out.println("Opcode: " + opcode);
-//        System.out.println("Angle " + angle);
         int arg = composeAngleArgument(angle) << 8;
+//		System.out.println("Operation " + opcode);
 //        System.out.println("Arg " + arg);
 //        System.out.println("Message " + Integer.toBinaryString(arg | opcode));
         sendMessage(arg | opcode);
     }
 
-    public void arc(int radius) {
-        int opcode = Brick.ARC;
+	public void arcLeft (int radius) {
+        int opcode = Brick.ARCLEFT;
+		System.out.println("arc left");
+        int arg = radius << 8;
+        sendMessage(arg | opcode);
+    }
+	
+    public void arcRight (int radius) {
+        int opcode = Brick.ARCRIGHT;
+		System.out.println("arc right");
         int arg = radius << 8;
         sendMessage(arg | opcode);
     }
@@ -134,10 +141,18 @@ public class Communication implements Runnable, ControlInterface {
     }
 
 	public void rotateTo(int heading) {
-		System.out.println("Opcode: " + Brick.ROTATETO);
-		System.out.println("Arg: " + heading);
+//		System.out.println("Opcode: " + Brick.ROTATETO);
+//		System.out.println("Arg: " + heading);
 		sendMessage(Brick.ROTATETO | (heading << 8));
-		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
+//		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
+	}
+
+	public void setHeading(int heading) {
+		sendMessage(Brick.LOCKHEADING | ((heading - 90) << 8));
+	}
+
+	public void unlockHeading() {
+		sendMessage(Brick.UNLOCKHEADING);
 	}
 	
 	
@@ -160,6 +175,7 @@ public class Communication implements Runnable, ControlInterface {
     public void sendMessage(int message) {
         try {
             if (commState == READY) {
+				//System.out.println("Message: " + Integer.toBinaryString(message));
                 byte[] buf = intToByteArray(message);
 //                System.out.println("Message " + Arrays.toString(buf));
                 outStream.write(buf);

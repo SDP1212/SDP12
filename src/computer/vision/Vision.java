@@ -1301,6 +1301,7 @@ public class Vision extends WindowAdapter {
 
 
 
+
 //                    if (radianAngleMF == 0) {
 //                        return (float) 0.001;
 //                    }

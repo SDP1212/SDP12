@@ -228,7 +228,7 @@ public class Pitch {
     }
     
     private double convertY(PixelCoordinates coordinates){
-        return ((double)corners[3].getY()-coordinates.getY())/(corners[3].getY()-corners[0].getY());
+        return (coordinates.getY()-(double)corners[3].getY())/(corners[0].getY()-corners[3].getY());
     }
     
     public Coordinates[] getCorners() {
@@ -265,6 +265,18 @@ public class Pitch {
         else if(rightGoal.isTarget())
             return rightGoal;
         else return null;
+    }
+		
+		public Coordinates getCentreSpot() {
+				return new Coordinates(0.5, 1);
+		}
+    
+    public Goal getLeftGoal(){
+        return leftGoal;
+    }
+    
+    public Goal getRightGoal(){
+        return rightGoal;
     }
     
 }
