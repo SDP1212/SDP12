@@ -19,6 +19,8 @@ public class WorldState implements computer.simulator.VisionInterface {
     private int greenY;
     private int greenX2;
     private int greenY2;
+    private int greensoloX;
+    private int greensoloY;
     private float blueOrientation;
     private float yellowOrientation;
     private long counter;
@@ -28,8 +30,11 @@ public class WorldState implements computer.simulator.VisionInterface {
     private boolean showBAngle;
     private boolean showBlueTriple;
     private boolean showYellowTriple;
+    private boolean detectTwoGreen;
+    private boolean showBounding;
     boolean isDistortionCorrection = false;
     boolean isOrientationCorrected = false;
+    
     // Holds the history of the blue/yellow angles respectively.
     ArrayList<Double> blueFiveAngles = new ArrayList<Double>();
     ArrayList<Double> yellowFiveAngles = new ArrayList<Double>();
@@ -94,6 +99,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         this.greenY = 0;
         this.greenX2 = 0;
         this.greenY2 = 0;
+        this.greensoloX = 0;
+        this.greensoloY = 0;
         this.blueOrientation = 0;
         this.yellowOrientation = 0;
         this.showBAngle = false;
@@ -102,6 +109,8 @@ public class WorldState implements computer.simulator.VisionInterface {
         this.showYAngle = false;
         this.showYellowExtrema = false;
         this.showYellowTriple = false;
+        this.detectTwoGreen = true;
+        this.showBounding = false;
 
     }
 
@@ -184,6 +193,22 @@ public class WorldState implements computer.simulator.VisionInterface {
     public void setGreenY2(int greenY) {
         this.greenY2 = greenY;
     }
+    
+    public int getGreenSoloX() {
+        return greensoloX;
+    }
+    
+    public void setGreenSoloX(int green) {      
+        this.greensoloX = green;
+    }
+    
+    public int getGreenSoloY() {
+        return greensoloY;
+    }
+    
+    public void setGreenSoloY(int green) {
+        this.greensoloY = green;
+    }
 
     public void setBlueExtrema(boolean show) {
         this.showBlueExtrema = show;
@@ -231,6 +256,22 @@ public class WorldState implements computer.simulator.VisionInterface {
 
     public boolean getYAngle() {
         return showYAngle;
+    }
+    
+    public void setDetectTwo(boolean green) {
+        this.detectTwoGreen = green;
+    }
+    
+    public boolean getDetectTwo() {
+        return detectTwoGreen;
+    }
+    
+    public void setBounding(boolean bounding) {
+        this.showBounding = bounding;
+    }
+    
+    public boolean getBounding() {
+        return showBounding;
     }
 
     public float getBlueOrientation() {
