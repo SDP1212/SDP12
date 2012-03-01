@@ -8,7 +8,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.io.*; //TEST
+import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.Collections;
 
@@ -329,12 +330,18 @@ public class Vision extends WindowAdapter {
             }
         }
 
+         BlobDetection bd = new BlobDetection();
+         BlobObject bo = bd.getCoordinatesOfBlob(blueXPoints, blueYPoints);
+         ArrayList<Integer> blueFilteredX = bo.xpoints;
+         ArrayList<Integer> blueFilteredY = bo.ypoints;
+
         /* Position objects to hold the centre point of the ball and both robots. */
         Position ball;
         Position blue;
         Position yellow;
         Position firstRobot;
         Position secondRobot;
+        Position green;
 
         //These are new arraylists to keep track of the values of the Green plates
         ArrayList<Integer> firstRobotXPoints = new ArrayList<Integer>();
@@ -356,63 +363,74 @@ public class Vision extends WindowAdapter {
 
         if (numGreenPos > 0) {
 
-            //Find the max and min points along the Greens, assuming two different plates
-            Integer max = Collections.max(greenXPoints);
-            Integer min = Collections.min(greenXPoints);
-            //  Find a midpoint to perform a division along the X Axis
-            int average = (((int) max + (int) min) / 2);
-            //System.out.println("Max: " + max + " Min: " + min+ " Avg: "+average);
+            if (worldState.getDetectTwo()) {
+                //Find the max and min points along the Greens, assuming two different plates
+                Integer max = Collections.max(greenXPoints);
+                Integer min = Collections.min(greenXPoints);
+                //  Find a midpoint to perform a division along the X Axis
+                int average = (((int) max + (int) min) / 2);
+                //System.out.println("Max: " + max + " Min: " + min+ " Avg: "+average);
 
-            /*
-             * If the values have very similar X points (layered atop one another), this will not work. 
-             * So instead, if the values are too similar, then we will use the Y
-             */
-            if (average + 35 > max && average - 35 < min) {
-                Integer maxY = Collections.max(greenYPoints);
-                Integer minY = Collections.min(greenYPoints);
+                /*
+                 * If the values have very similar X points (layered atop one another), this will not work. 
+                 * So instead, if the values are too similar, then we will use the Y
+                 */
+                if (average + 35 > max && average - 35 < min) {
+                    Integer maxY = Collections.max(greenYPoints);
+                    Integer minY = Collections.min(greenYPoints);
 
-                average = (((int) maxY + (int) minY) / 2);
-                //System.out.println("MaxY: " + maxY + " MinY: " + minY+ " AvgY: "+average);
+                    average = (((int) maxY + (int) minY) / 2);
+                    //System.out.println("MaxY: " + maxY + " MinY: " + minY+ " AvgY: "+average);
 
-                //Using the Y instead
+                    //Using the Y instead
 
-                for (int i = 0; i < greenXPoints.size(); i++) {
-                    //Go through every point. If less than the average, it belongs to one robot. Else, the other
-                    if (greenYPoints.get(i) < average) {
-                        greenfirstx += greenXPoints.get(i);
-                        greenfirsty += greenYPoints.get(i);
-                        numgreenFirst++;
-                        firstRobotXPoints.add(greenXPoints.get(i));
-                        firstRobotYPoints.add(greenYPoints.get(i));
-                    } else {
-                        greensecondx += greenXPoints.get(i);
-                        greensecondy += greenYPoints.get(i);
-                        numgreenSecond++;
-                        secondRobotXPoints.add(greenXPoints.get(i));
-                        secondRobotYPoints.add(greenYPoints.get(i));
+                    for (int i = 0; i < greenXPoints.size(); i++) {
+                        //Go through every point. If less than the average, it belongs to one robot. Else, the other
+                        if (greenYPoints.get(i) < average) {
+                            greenfirstx += greenXPoints.get(i);
+                            greenfirsty += greenYPoints.get(i);
+                            numgreenFirst++;
+                            firstRobotXPoints.add(greenXPoints.get(i));
+                            firstRobotYPoints.add(greenYPoints.get(i));
+                        } else {
+                            greensecondx += greenXPoints.get(i);
+                            greensecondy += greenYPoints.get(i);
+                            numgreenSecond++;
+                            secondRobotXPoints.add(greenXPoints.get(i));
+                            secondRobotYPoints.add(greenYPoints.get(i));
+                        }
+
                     }
 
-                }
+                } else {
+                    for (int i = 0; i < greenXPoints.size(); i++) {
+                        //Go through every point. If less than the average, it belongs to one robot. Else, the other
+                        if (greenXPoints.get(i) < average) {
+                            greenfirstx += greenXPoints.get(i);
+                            greenfirsty += greenYPoints.get(i);
+                            numgreenFirst++;
+                            firstRobotXPoints.add(greenXPoints.get(i));
+                            firstRobotYPoints.add(greenYPoints.get(i));
+                        } else {
+                            greensecondx += greenXPoints.get(i);
+                            greensecondy += greenYPoints.get(i);
+                            numgreenSecond++;
+                            secondRobotXPoints.add(greenXPoints.get(i));
+                            secondRobotYPoints.add(greenYPoints.get(i));
+                        }
 
+                    }
+                }
             } else {
-                for (int i = 0; i < greenXPoints.size(); i++) {
-                    //Go through every point. If less than the average, it belongs to one robot. Else, the other
-                    if (greenXPoints.get(i) < average) {
-                        greenfirstx += greenXPoints.get(i);
-                        greenfirsty += greenYPoints.get(i);
-                        numgreenFirst++;
-                        firstRobotXPoints.add(greenXPoints.get(i));
-                        firstRobotYPoints.add(greenYPoints.get(i));
-                    } else {
-                        greensecondx += greenXPoints.get(i);
-                        greensecondy += greenYPoints.get(i);
-                        numgreenSecond++;
-                        secondRobotXPoints.add(greenXPoints.get(i));
-                        secondRobotYPoints.add(greenYPoints.get(i));
-                    }
+                greenX /= numGreenPos;
+                greenY /= numGreenPos;
 
-                }
+                green = new Position(greenX, greenY);
+                green.fixValues(worldState.getGreenSoloX(), worldState.getGreenSoloY());
+                green.filterPoints(greenXPoints, greenYPoints);
+
             }
+
         }
 
 
@@ -432,7 +450,6 @@ public class Vision extends WindowAdapter {
 
         } else {
             firstRobot = new Position(worldState.getGreenX(), worldState.getGreenY());
-
         }
 
 
@@ -490,35 +507,21 @@ public class Vision extends WindowAdapter {
             yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
         }
 
-        //Find the orientation using Canny Edge detection
-        Integer firstRobotMaxX = 0;
-        Integer firstRobotMinX = 0;
-        Integer firstRobotMaxY = 0;
-        Integer firstRobotMinY = 0;
-
-        try {
-            firstRobotMaxX = Collections.max(firstRobotXPoints);
-            firstRobotMinX = Collections.min(firstRobotXPoints);
-            firstRobotMaxY = Collections.max(firstRobotYPoints);
-            firstRobotMinY = Collections.min(firstRobotYPoints);
-
-        } catch (Exception e) {
-            //No frame detected - square won't display
-        }
-
-        if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && firstRobotMinX != 0 && firstRobotMinY != 0) {
-        }
-
-
-
         /* Attempt to find the blue robot's orientation. */
 
+        //Debugging Attempt for Blob Detection
+        
+        
         double blueOrientation;
+        double blueOrientation2;
+        // double blueOrientation3;
         AngleHistory angleHistory = new AngleHistory();
+        Preprocessing pp = new Preprocessing(pitchConstants, thresholdsState);
         try {
             if (runAlternate == false) {
-//                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image);
-                blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+                blueOrientation = getGeometricOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
+                // blueOrientation3 = getGeometricOrientation(blueFilteredX, blueFilteredY, blue.getX(), blue.getY(), image, false);
+//                blueOrientation = findOrientation(blueXPoints, blueYPoints, blue.getX(), blue.getY(), image, true);
                 worldState.addBlueAngle(blueOrientation);
                 double testAngle = angleHistory.getMean(worldState.blueFiveAngles);
                 //System.out.println("The mean of the last 5 blue angles was found as " + testAngle);
@@ -532,7 +535,7 @@ public class Vision extends WindowAdapter {
                 worldState.setBlueOrientation((float) (angle / 180 * Math.PI));
             }
         } catch (NoAngleException e) {
-            //worldState.setBlueOrientation(worldState.getBlueOrientation());
+            worldState.setBlueOrientation(worldState.getBlueOrientation());
             //System.out.println("Blue robot: " + e.getMessage());
         }
 
@@ -540,7 +543,7 @@ public class Vision extends WindowAdapter {
         double yellowOrientation;
         try {
             if (true != false) {
-                yellowOrientation = getGeometricOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image);
+                yellowOrientation = getGeometricOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, false);
                 yellowOrientation = findOrientation(yellowXPoints, yellowYPoints, yellow.getX(), yellow.getY(), image, true);
                 worldState.addYellowAngle(yellowOrientation);
                 double testAngle = angleHistory.getMean(worldState.yellowFiveAngles);
@@ -555,7 +558,7 @@ public class Vision extends WindowAdapter {
                 worldState.setYellowOrientation((float) (angle / 180 * Math.PI));
             }
         } catch (NoAngleException e) {
-            //worldState.setYellowOrientation(worldState.getYellowOrientation());
+            worldState.setYellowOrientation(worldState.getYellowOrientation());
             //System.out.println("Yellow robot: " + e.getMessage());
         }
 
@@ -587,52 +590,72 @@ public class Vision extends WindowAdapter {
             imageGraphics.drawLine(0, ball.getY(), 640, ball.getY());
             imageGraphics.drawLine(ball.getX(), 0, ball.getX(), 480);
             imageGraphics.setColor(Color.green);
-            /*imageGraphics.drawLine(0, firstRobot.getY(), 640, firstRobot.getY());
-            imageGraphics.drawLine(firstRobot.getX(), 0, firstRobot.getX(), 480);
-            imageGraphics.drawLine(0, firstRobot.getY(), 640, firstRobot.getY());
-            imageGraphics.drawLine(firstRobot.getX(), 0, firstRobot.getX(), 480);
-            imageGraphics.drawLine(0, secondRobot.getY(), 640, secondRobot.getY());
-            imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480);
-            imageGraphics.drawLine(0, secondRobot.getY(), 640, secondRobot.getY());
-            imageGraphics.drawLine(secondRobot.getX(), 0, secondRobot.getX(), 480); */
+
+            Integer firstRobotMaxX = 0;
+            Integer firstRobotMinX = 0;
+            Integer firstRobotMaxY = 0;
+            Integer firstRobotMinY = 0;
             Integer secondRobotMaxX = 0;
             Integer secondRobotMinX = 0;
             Integer secondRobotMaxY = 0;
             Integer secondRobotMinY = 0;
-            try {
-                secondRobotMaxX = Collections.max(secondRobotXPoints);
-                secondRobotMinX = Collections.min(secondRobotXPoints);
-                secondRobotMaxY = Collections.max(secondRobotYPoints);
-                secondRobotMinY = Collections.min(secondRobotYPoints);
+            Integer singleRobotMaxX = 0;
+            Integer singleRobotMinX = 0;
+            Integer singleRobotMaxY = 0;
+            Integer singleRobotMinY = 0;
 
-            } catch (Exception e) {
-                //No frame detected - square won't display
+            if (worldState.getDetectTwo()) {
+
+                try {
+                    firstRobotMaxX = Collections.max(firstRobotXPoints);
+                    firstRobotMinX = Collections.min(firstRobotXPoints);
+                    firstRobotMaxY = Collections.max(firstRobotYPoints);
+                    firstRobotMinY = Collections.min(firstRobotYPoints);
+
+                } catch (Exception e) {
+                    //No frame detected - square won't display
+                }
+
+                try {
+                    secondRobotMaxX = Collections.max(secondRobotXPoints);
+                    secondRobotMinX = Collections.min(secondRobotXPoints);
+                    secondRobotMaxY = Collections.max(secondRobotYPoints);
+                    secondRobotMinY = Collections.min(secondRobotYPoints);
+
+                } catch (Exception e) {
+                    //No frame detected - square won't display
+                }
+            } else {
+                try {
+                    singleRobotMaxX = Collections.max(greenXPoints);
+                    singleRobotMaxY = Collections.max(greenYPoints);
+                    singleRobotMinX = Collections.min(greenXPoints);
+                    singleRobotMinY = Collections.min(greenYPoints);
+                } catch (Exception e) {
+                    //No frame detected - square won't display
+                }
             }
 
-            if (secondRobotMaxX != 0 && secondRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
-                imageGraphics.drawRect(secondRobotMinX, secondRobotMinY, secondRobotMaxX - secondRobotMinX, secondRobotMaxY - secondRobotMinY);
+
+
+            if (worldState.getBounding()) {
+                if (worldState.getDetectTwo()) {
+                    if (secondRobotMaxX != 0 && secondRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
+                        imageGraphics.drawRect(secondRobotMinX, secondRobotMinY, secondRobotMaxX - secondRobotMinX, secondRobotMaxY - secondRobotMinY);
+                    }
+
+                    if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
+                        imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
+                    }
+                } else {
+                    if (singleRobotMaxX != 0 && singleRobotMaxY != 0 && singleRobotMinX != 0 && singleRobotMinY != 0) {
+                        imageGraphics.drawRect(singleRobotMinX, singleRobotMinY, singleRobotMaxX - singleRobotMinX, singleRobotMaxY - singleRobotMinY);
+
+                    }
+                }
+
             }
 
-            if (firstRobotMaxX != 0 && firstRobotMaxY != 0 && secondRobotMinX != 0 && secondRobotMinY != 0) {
-                imageGraphics.drawRect(firstRobotMinX, firstRobotMinY, firstRobotMaxX - firstRobotMinX, firstRobotMaxY - firstRobotMinY);
-            }
-
-            imageGraphics.setColor(Color.blue);
-            imageGraphics.drawOval(blue.getX() - 15, blue.getY() - 15, 30, 30);
-            imageGraphics.setColor(Color.yellow);
-            imageGraphics.drawOval(yellow.getX() - 15, yellow.getY() - 15, 30, 30);
-            imageGraphics.setColor(Color.white);
-
-
-            /*
-            float ax = (float) Math.cos(worldState.getBlueOrientation());
-            float ay = (float) Math.sin(worldState.getBlueOrientation());
-            imageGraphics.drawLine(blue.getX(), blue.getY(), (int) (ax*70), (int) (ay*70));
-            
-            ax = (float) Math.sin(worldState.getYellowOrientation());
-            ay = (float) Math.cos(worldState.getYellowOrientation());
-            imageGraphics.drawLine(yellow.getX(), yellow.getY(), (int) (ax*70), (int) (ay*70));
-             */
         }
 
         /* Used to calculate the FPS. */
@@ -697,7 +720,9 @@ public class Vision extends WindowAdapter {
      *                      false otherwise.
      */
     private boolean isBall(Color colour, float[] hsbvals) {
-        return hsbvals[0] <= thresholdsState.getBall_h_high() && hsbvals[0] >= thresholdsState.getBall_h_low()
+        
+        return (hsbvals[0] <= thresholdsState.getBall_hlower_high() && hsbvals[0] >= thresholdsState.getBall_hlower_low() ||
+                hsbvals[0] <= thresholdsState.getBall_hupper_high() && hsbvals[0] >= thresholdsState.getBall_hupper_low())
                 && hsbvals[1] <= thresholdsState.getBall_s_high() && hsbvals[1] >= thresholdsState.getBall_s_low()
                 && hsbvals[2] <= thresholdsState.getBall_v_high() && hsbvals[2] >= thresholdsState.getBall_v_low()
                 && colour.getRed() <= thresholdsState.getBall_r_high() && colour.getRed() >= thresholdsState.getBall_r_low()
@@ -1013,21 +1038,27 @@ public class Vision extends WindowAdapter {
 
     public boolean clusterChecker(int closeoneX, int closeoneY, int closetwoX, int closetwoY, int closethreeX, int closethreeY, int farX, int farY, String test) {
 
-        //Check if the close ones are near on an x axis, y axis 
-        if (Math.abs(closeoneX - closetwoX) <= 6 && Math.abs(closeoneX - closethreeX) <= 6 && Math.abs(closetwoX - closethreeX) <= 6 && Math.abs(closeoneX - farX) > 10) {
 
-            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
-                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
-                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
-//                System.out.println(test + " Cluster");
+        double closefarone = distance(closeoneX, closeoneY, farX, farY);
+        double closefartwo = distance(closetwoX, closetwoY, farX, farY);
+        double closefarthree = distance(closethreeX, closethreeY, farX, farY);
+        double distone = distance(closeoneX, closeoneY, closetwoX, closetwoY);
+        double disttwo = distance(closeoneX, closeoneY, closethreeX, closethreeY);
+        double distthree = distance(closetwoX, closetwoY, closethreeX, closethreeY);
+
+
+        //Find the shortest distances from the potential cluster and the potential front point
+        double min = Math.min(Math.min(closefarone, closefartwo), closefarthree);
+        
+        //If the close distances are all smaller than the smallest distance to the far one and...
+        if (distone < min && disttwo < min && distthree < min) {
+            //...if the close ones are near on an x axis, y axis, then it is a cluster.
+            if (Math.abs(closeoneX - closetwoX) <= 6 && Math.abs(closeoneX - closethreeX) <= 6
+                    && Math.abs(closetwoX - closethreeX) <= 6 && Math.abs(closeoneX - farX) > 10) {
                 return true;
             }
-        }
-        if (Math.abs(closeoneY - closetwoY) <= 6 && Math.abs(closeoneY - closethreeY) <= 6 && Math.abs(closetwoY - closethreeY) <= 6 && Math.abs(closeoneY - farY) > 10) {
-            if (distance(closeoneX, closeoneY, closetwoX, closetwoY) < distance(closeoneX, closeoneY, farX, farY)
-                    && distance(closeoneX, closeoneY, closethreeX, closethreeY) < distance(closethreeX, closethreeY, farX, farY)
-                    && distance(closetwoX, closetwoY, closethreeX, closethreeY) < distance(closetwoX, closetwoY, farX, farY)) {
-//                System.out.println(test + " Cluster");
+            if (Math.abs(closeoneY - closetwoY) <= 6 && Math.abs(closeoneY - closethreeY) <= 6
+                    && Math.abs(closetwoY - closethreeY) <= 6 && Math.abs(closeoneY - farY) > 10) {
                 return true;
             }
         }
@@ -1035,7 +1066,7 @@ public class Vision extends WindowAdapter {
     }
 
     public double getGeometricOrientation(ArrayList<Integer> xpoints, ArrayList<Integer> ypoints,
-            int meanX, int meanY, BufferedImage image) throws NoAngleException {
+            int meanX, int meanY, BufferedImage image, boolean isBlue) throws NoAngleException {
         assert (xpoints.size() == ypoints.size()) :
                 "Error: Must be equal number of x and y points!";
         Integer robotMaxX = 0;
@@ -1193,23 +1224,52 @@ public class Vision extends WindowAdapter {
 //                    imageGraphics.setColor(Color.GRAY);
 //                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
                 }
-                /*
-                imageGraphics.setColor(Color.blue);
-                imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
-                imageGraphics.setColor(Color.yellow);
-                imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
-                imageGraphics.setColor(Color.red);
-                imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
-                 */
+
+
+
+
+            }
+            if (isBlue) {
+                if (worldState.getBlueExtrema()) {
+                    imageGraphics.setColor(Color.gray);
+                    imageGraphics.drawOval(robotMaxX - 5, ypoints.get(xpoints.lastIndexOf(robotMaxX)) - 5, 10, 10);
+                    imageGraphics.setColor(Color.red);
+                    imageGraphics.drawOval(robotMinX - 5, ypoints.get(xpoints.lastIndexOf(robotMinX)) - 5, 10, 10);
+                    imageGraphics.setColor(Color.cyan);
+                    imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMinY)) - 5, robotMinY - 5, 10, 10);
+                    imageGraphics.setColor(Color.black);
+                    imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMaxY)) - 5, robotMaxY - 5, 10, 10);
+                }
+                if (worldState.getBlueTriple()) {
+                    imageGraphics.setColor(Color.yellow);
+                    imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
+                    imageGraphics.setColor(Color.yellow);
+                    imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                    imageGraphics.setColor(Color.yellow);
+                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                }
+            } else {
+                if (worldState.getYellowExtrema()) {
+                    imageGraphics.setColor(Color.blue);
+                    imageGraphics.drawOval(robotMaxX - 5, ypoints.get(xpoints.lastIndexOf(robotMaxX)) - 5, 10, 10);
+                    imageGraphics.setColor(Color.gray);
+                    imageGraphics.drawOval(robotMinX - 5, ypoints.get(xpoints.lastIndexOf(robotMinX)) - 5, 10, 10);
+                    imageGraphics.setColor(Color.GREEN);
+                    imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMinY)) - 5, robotMinY - 5, 10, 10);
+                    imageGraphics.setColor(Color.cyan);
+                    imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMaxY)) - 5, robotMaxY - 5, 10, 10);
+                }
+                if (worldState.getYellowTriple()) {
+                    imageGraphics.setColor(Color.blue);
+                    imageGraphics.drawOval(meanX - 5, meanY - 5, 10, 10);
+                    imageGraphics.setColor(Color.blue);
+                    imageGraphics.drawOval(frontPointX - 5, frontPointY - 5, 10, 10);
+                    imageGraphics.setColor(Color.blue);
+                    imageGraphics.drawOval(backPointX - 5, backPointY - 5, 10, 10);
+                }
             }
 
-            imageGraphics.drawOval(robotMaxX - 5, ypoints.get(xpoints.lastIndexOf(robotMaxX)) - 5, 10, 10);
-            imageGraphics.setColor(Color.red);
-            imageGraphics.drawOval(robotMinX - 5, ypoints.get(xpoints.lastIndexOf(robotMinX)) - 5, 10, 10);
-            imageGraphics.setColor(Color.blue);
-            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMinY)) - 5, robotMinY - 5, 10, 10);
-            imageGraphics.setColor(Color.black);
-            imageGraphics.drawOval(xpoints.get(ypoints.lastIndexOf(robotMaxY)) - 5, robotMaxY - 5, 10, 10);
+
 
 
             /*
@@ -1256,7 +1316,18 @@ public class Vision extends WindowAdapter {
                 }
 
                 //FB seems to be the best
-                //System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
+                if (isBlue) {
+                    if (worldState.getBAngle()) {
+                        System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
+                    }
+
+                } else {
+                    if (worldState.getYAngle()) {
+                        System.out.println("Angle 1: " + angleMF + " Angle 2: " + angleFB + " Angle 3: " + angleMB);
+                    }
+                }
+
+
 
 
 //                    if (radianAngleMF == 0) {

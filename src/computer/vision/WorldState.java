@@ -19,17 +19,26 @@ public class WorldState implements computer.simulator.VisionInterface {
     private int greenY;
     private int greenX2;
     private int greenY2;
+    private int greensoloX;
+    private int greensoloY;
     private float blueOrientation;
     private float yellowOrientation;
     private long counter;
-
+    private boolean showBlueExtrema;
+    private boolean showYellowExtrema;
+    private boolean showYAngle;
+    private boolean showBAngle;
+    private boolean showBlueTriple;
+    private boolean showYellowTriple;
+    private boolean detectTwoGreen;
+    private boolean showBounding;
     boolean isDistortionCorrection = false;
     boolean isOrientationCorrected = false;
     
     // Holds the history of the blue/yellow angles respectively.
     ArrayList<Double> blueFiveAngles = new ArrayList<Double>();
     ArrayList<Double> yellowFiveAngles = new ArrayList<Double>();
-    
+
     // Adds an angle to the blue history and keeps size of 5.
     public void addBlueAngle(double angle) {
         while (blueFiveAngles.size() < 6) {
@@ -39,18 +48,18 @@ public class WorldState implements computer.simulator.VisionInterface {
             blueFiveAngles.remove(0);
         }
     }
-    
+
     // Returns the blue history.
     public ArrayList<Double> getBlueAngle() {
         return blueFiveAngles;
     }
-    
+
     // An alternative to getBlueOrientation.
     public double getBlueOrientationFromHistory() {
         AngleHistory angleHistory = new AngleHistory();
         return angleHistory.getMean(blueFiveAngles);
     }
-    
+
     // Adds an angle to the yellow history and keeps size of 5.
     public void addYellowAngle(double angle) {
         while (yellowFiveAngles.size() < 6) {
@@ -60,18 +69,18 @@ public class WorldState implements computer.simulator.VisionInterface {
             yellowFiveAngles.remove(0);
         }
     }
-    
+
     // Returns the yellow history.
     public ArrayList<Double> getYellowAngle() {
         return yellowFiveAngles;
     }
-    
+
     // An alternative to getYellowOrientation.
     public double getYellowOrientationFromHistory() {
         AngleHistory angleHistory = new AngleHistory();
         return angleHistory.getMean(yellowFiveAngles);
     }
-    
+
     public WorldState() {
 
         /* control properties */
@@ -90,9 +99,19 @@ public class WorldState implements computer.simulator.VisionInterface {
         this.greenY = 0;
         this.greenX2 = 0;
         this.greenY2 = 0;
+        this.greensoloX = 0;
+        this.greensoloY = 0;
         this.blueOrientation = 0;
         this.yellowOrientation = 0;
-        
+        this.showBAngle = false;
+        this.showBlueExtrema = false;
+        this.showBlueTriple = false;
+        this.showYAngle = false;
+        this.showYellowExtrema = false;
+        this.showYellowTriple = false;
+        this.detectTwoGreen = true;
+        this.showBounding = false;
+
     }
 
     public int getBlueX() {
@@ -174,6 +193,86 @@ public class WorldState implements computer.simulator.VisionInterface {
     public void setGreenY2(int greenY) {
         this.greenY2 = greenY;
     }
+    
+    public int getGreenSoloX() {
+        return greensoloX;
+    }
+    
+    public void setGreenSoloX(int green) {      
+        this.greensoloX = green;
+    }
+    
+    public int getGreenSoloY() {
+        return greensoloY;
+    }
+    
+    public void setGreenSoloY(int green) {
+        this.greensoloY = green;
+    }
+
+    public void setBlueExtrema(boolean show) {
+        this.showBlueExtrema = show;
+    }
+
+    public boolean getBlueExtrema() {
+        return showBlueExtrema;
+    }
+
+    public void setBlueTriple(boolean show) {
+        this.showBlueTriple = show;
+    }
+
+    public boolean getBlueTriple() {
+        return showBlueTriple;
+    }
+
+    public void setBAngle(boolean show) {
+        this.showBAngle = show;
+    }
+
+    public boolean getBAngle() {
+        return showBAngle;
+    }
+
+    public void setYellowExtrema(boolean show) {
+        this.showYellowExtrema = show;
+    }
+
+    public boolean getYellowExtrema() {
+        return showYellowExtrema;
+    }
+
+    public void setYellowTriple(boolean show) {
+        this.showYellowTriple = show;
+    }
+
+    public boolean getYellowTriple() {
+        return showYellowTriple;
+    }
+
+    public void setYAngle(boolean show) {
+        this.showYAngle = show;
+    }
+
+    public boolean getYAngle() {
+        return showYAngle;
+    }
+    
+    public void setDetectTwo(boolean green) {
+        this.detectTwoGreen = green;
+    }
+    
+    public boolean getDetectTwo() {
+        return detectTwoGreen;
+    }
+    
+    public void setBounding(boolean bounding) {
+        this.showBounding = bounding;
+    }
+    
+    public boolean getBounding() {
+        return showBounding;
+    }
 
     public float getBlueOrientation() {
         //System.out.println("Blue orientation: " + blueOrientation);
@@ -227,7 +326,7 @@ public class WorldState implements computer.simulator.VisionInterface {
     public long getCounter() {
         return this.counter;
     }
-    
+
     // Following methods are for the interface.
     public PixelCoordinates[] getPitchCornerCoordinates() {
 
