@@ -21,10 +21,8 @@ public class PitchConstants {
 	public int ball_g_high;
 	public int ball_b_low;
 	public int ball_b_high;
-	public int ball_hlower_low;
-	public int ball_hlower_high;
-        public int ball_hupper_low;
-        public int ball_hupper_high;
+	public int ball_h_low;
+	public int ball_h_high;
 	public int ball_s_low;
 	public int ball_s_high;
 	public int ball_v_low;
@@ -153,10 +151,8 @@ public class PitchConstants {
 		this.ball_g_high = scanner.nextInt();
 		this.ball_b_low = scanner.nextInt();
 		this.ball_b_high = scanner.nextInt();
-		this.ball_hlower_low = scanner.nextInt();
-		this.ball_hlower_high = scanner.nextInt();
-                this.ball_hupper_low = scanner.nextInt();
-		this.ball_hupper_high = scanner.nextInt();
+		this.ball_h_low = scanner.nextInt();
+		this.ball_h_high = scanner.nextInt();
 		this.ball_s_low = scanner.nextInt();
 		this.ball_s_high = scanner.nextInt();
 		this.ball_v_low = scanner.nextInt();
@@ -239,10 +235,8 @@ public class PitchConstants {
 		this.ball_g_high = 255;
 		this.ball_b_low = 0;
 		this.ball_b_high = 255;
-		this.ball_hlower_low = 0;
-		this.ball_hlower_high = 10;
-                this.ball_hupper_low = 0;
-                this.ball_hupper_high = 10;
+		this.ball_h_low = 0;
+		this.ball_h_high = 10;
 		this.ball_s_low = 0;
 		this.ball_s_high = 10;
 		this.ball_v_low = 0;

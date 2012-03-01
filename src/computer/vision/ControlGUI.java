@@ -68,14 +68,11 @@ public class ControlGUI implements ChangeListener {
     JCheckBox YellowTriple;
     JCheckBox YAngleDisplay;
     JCheckBox BAngleDisplay;
-    JCheckBox TwoGreenDisplay;
-    JCheckBox Bounding;
     /* Ball sliders. */
     private RangeSlider ball_r;
     private RangeSlider ball_g;
     private RangeSlider ball_b;
-    private RangeSlider ball_hlower;
-    private RangeSlider ball_hupper;
+    private RangeSlider ball_h;
     private RangeSlider ball_s;
     private RangeSlider ball_v;
     /* Blue robot sliders. */
@@ -293,10 +290,8 @@ public class ControlGUI implements ChangeListener {
                     writer.write(String.valueOf(ball_g.getUpperValue()) + "\n");
                     writer.write(String.valueOf(ball_b.getValue()) + "\n");
                     writer.write(String.valueOf(ball_b.getUpperValue()) + "\n");
-                    writer.write(String.valueOf(ball_hlower.getValue()) + "\n");
-                    writer.write(String.valueOf(ball_hlower.getUpperValue()) + "\n");
-                    writer.write(String.valueOf(ball_hupper.getValue()) + "\n");
-                    writer.write(String.valueOf(ball_hupper.getUpperValue()) + "\n");
+                    writer.write(String.valueOf(ball_h.getValue()) + "\n");
+                    writer.write(String.valueOf(ball_h.getUpperValue()) + "\n");
                     writer.write(String.valueOf(ball_s.getValue()) + "\n");
                     writer.write(String.valueOf(ball_s.getUpperValue()) + "\n");
                     writer.write(String.valueOf(ball_v.getValue()) + "\n");
@@ -439,21 +434,13 @@ public class ControlGUI implements ChangeListener {
         ball_b_panel.add(ball_b);
         ballPanel.add(ball_b_panel);
 
-        /* Hue lower bound */
-        JPanel ball_hlower_panel = new JPanel();
-        JLabel ball_hlower_label = new JLabel("Hue Lower:");
-        ball_hlower = setUpSlider(0, 255, pitchConstants.ball_hlower_low, pitchConstants.ball_hlower_high, 10, 50);
-        ball_hlower_panel.add(ball_hlower_label);
-        ball_hlower_panel.add(ball_hlower);
-        ballPanel.add(ball_hlower_panel);
-
-        /* Hue upper bound (since it wraps around) */
-        JPanel ball_hupper_panel = new JPanel();
-        JLabel ball_hupper_label = new JLabel("Hue Upper:");
-        ball_hupper = setUpSlider(0, 255, pitchConstants.ball_hupper_low, pitchConstants.ball_hupper_high, 10, 50);
-        ball_hupper_panel.add(ball_hupper_label);
-        ball_hupper_panel.add(ball_hupper);
-        ballPanel.add(ball_hupper_panel);
+        /* Hue. */
+        JPanel ball_h_panel = new JPanel();
+        JLabel ball_h_label = new JLabel("Hue:");
+        ball_h = setUpSlider(0, 255, pitchConstants.ball_h_low, pitchConstants.ball_h_high, 10, 50);
+        ball_h_panel.add(ball_h_label);
+        ball_h_panel.add(ball_h);
+        ballPanel.add(ball_h_panel);
 
         /* Sat. */
         JPanel ball_s_panel = new JPanel();
@@ -474,8 +461,7 @@ public class ControlGUI implements ChangeListener {
         ball_r.addChangeListener(this);
         ball_g.addChangeListener(this);
         ball_b.addChangeListener(this);
-        ball_hlower.addChangeListener(this);
-        ball_hupper.addChangeListener(this);
+        ball_h.addChangeListener(this);
         ball_s.addChangeListener(this);
         ball_v.addChangeListener(this);
 
@@ -744,17 +730,17 @@ public class ControlGUI implements ChangeListener {
         extrema_panel.add(extrema_label);
 
         BlueExtrema = new JCheckBox("Show Blue Extrema", false);
-        YellowExtrema = new JCheckBox("Show Yellow Extrema", false);
-        extrema_panel.add(YellowExtrema);
+	 YellowExtrema = new JCheckBox("Show Yellow Extrema", false);
+	 extrema_panel.add(YellowExtrema);
         extrema_panel.add(BlueExtrema);
 
         BlueExtrema.addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (BlueExtrema.isSelected() == true) {
+                        if(BlueExtrema.isSelected()==true) {
                             worldState.setBlueExtrema(true);
-                        } else {
+                        }
+                        else {
                             worldState.setBlueExtrema(false);
                         }
                     }
@@ -762,31 +748,36 @@ public class ControlGUI implements ChangeListener {
 
         YellowExtrema.addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (YellowExtrema.isSelected() == true) {
+                        if(YellowExtrema.isSelected()==true) {
                             worldState.setYellowExtrema(true);
-                        } else {
+                        }
+                        else {
                             worldState.setYellowExtrema(false);
                         }
                     }
                 });
 
         visionPanel.add(BlueExtrema);
-        visionPanel.add(YellowExtrema);
+	 visionPanel.add(YellowExtrema);
 
         /* Colour choice */
+        JPanel triple_panel = new JPanel();
+        JLabel triple_label = new JLabel("Show front/back/midpoint:");
+        triple_panel.add(triple_label);
 
-        BlueTriple = new JCheckBox("Show Blue", false);
-        YellowTriple = new JCheckBox("Show Yellow", false);
+        BlueTriple= new JCheckBox("Show Blue", false);
+	 YellowTriple = new JCheckBox("Show Yellow", false);
+	 triple_panel.add(YellowTriple);
+        triple_panel.add(BlueTriple);
 
         BlueTriple.addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (BlueTriple.isSelected() == true) {
+                        if(BlueTriple.isSelected()==true) {
                             worldState.setBlueTriple(true);
-                        } else {
+                        }
+                        else {
                             worldState.setBlueTriple(false);
                         }
                     }
@@ -794,85 +785,55 @@ public class ControlGUI implements ChangeListener {
 
         YellowTriple.addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (YellowTriple.isSelected() == true) {
+                        if(YellowTriple.isSelected()==true) {
                             worldState.setYellowTriple(true);
-                        } else {
+                        }
+                        else {
                             worldState.setYellowTriple(false);
                         }
                     }
-                });
+                });        
 
-        visionPanel.add(BlueTriple);
-        visionPanel.add(YellowTriple);
+	  visionPanel.add(BlueTriple);
+	  visionPanel.add(YellowTriple);
 
         /* Direction choice */
         JPanel angle_panel = new JPanel();
         JLabel angle_label = new JLabel("Show angle:");
         angle_panel.add(angle_label);
 
-        BAngleDisplay = new JCheckBox("Show Blue", false);
-        YAngleDisplay = new JCheckBox("Show Yellow", false);
-        angle_panel.add(BAngleDisplay);
+	 BAngleDisplay = new JCheckBox("Show Blue", false);
+	 YAngleDisplay = new JCheckBox("Show Yellow", false);
+	 angle_panel.add(BAngleDisplay);
         angle_panel.add(YAngleDisplay);
 
-        BAngleDisplay.addItemListener(
+        BAngleDisplay .addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (BAngleDisplay.isSelected() == true) {
+                        if(BAngleDisplay.isSelected()==true) {
                             worldState.setBAngle(true);
-                        } else {
+                        }
+                        else {
                             worldState.setBAngle(false);
                         }
                     }
                 });
 
-        YAngleDisplay.addItemListener(
+        YAngleDisplay .addItemListener(
                 new ItemListener() {
-
                     public void itemStateChanged(ItemEvent e) {
-                        if (YAngleDisplay.isSelected() == true) {
+                        if(YAngleDisplay.isSelected()==true) {
                             worldState.setYAngle(true);
-                        } else {
+                        }
+                        else {
                             worldState.setYAngle(false);
                         }
                     }
-                });
+                });        
 
-        visionPanel.add(BAngleDisplay);
-        visionPanel.add(YAngleDisplay);
-
-
-        TwoGreenDisplay = new JCheckBox("Two Green on Pitch", true);
-        TwoGreenDisplay.addItemListener(
-                new ItemListener() {
-
-                    public void itemStateChanged(ItemEvent e) {
-                        if (TwoGreenDisplay.isSelected() == true) {
-                            worldState.setDetectTwo(true);
-                        } else {
-                            worldState.setDetectTwo(false);
-                        }
-                    }
-                });
-        visionPanel.add(TwoGreenDisplay);
-
-        Bounding = new JCheckBox("Show Bounding Box", false);
-        Bounding.addItemListener(
-                new ItemListener() {
-
-                    public void itemStateChanged(ItemEvent e) {
-                        if (Bounding.isSelected() == true) {
-                            worldState.setBounding(true);
-                        } else {
-                            worldState.setBounding(false);
-                        }
-                    }
-                });
-
-        visionPanel.add(Bounding);
+	  visionPanel.add(BAngleDisplay);
+	  visionPanel.add(YAngleDisplay);
 
     }
 
@@ -997,11 +958,8 @@ public class ControlGUI implements ChangeListener {
         thresholdsState.setBall_b_low(ball_b.getValue());
         thresholdsState.setBall_b_high(ball_b.getUpperValue());
 
-        thresholdsState.setBall_hlower_low(ball_hlower.getValue() / 255.0);
-        thresholdsState.setBall_hlower_high(ball_hlower.getUpperValue() / 255.0);
-
-        thresholdsState.setBall_hupper_low(ball_hupper.getValue() / 255.0);
-        thresholdsState.setBall_hupper_high(ball_hupper.getUpperValue() / 255.0);
+        thresholdsState.setBall_h_low(ball_h.getValue() / 255.0);
+        thresholdsState.setBall_h_high(ball_h.getUpperValue() / 255.0);
 
         thresholdsState.setBall_s_low(ball_s.getValue() / 255.0);
         thresholdsState.setBall_s_high(ball_s.getUpperValue() / 255.0);
@@ -1097,8 +1055,7 @@ public class ControlGUI implements ChangeListener {
         setSliderVals(ball_r, pitchConstants.ball_r_low, pitchConstants.ball_r_high);
         setSliderVals(ball_g, pitchConstants.ball_g_low, pitchConstants.ball_g_high);
         setSliderVals(ball_b, pitchConstants.ball_b_low, pitchConstants.ball_b_high);
-        setSliderVals(ball_hlower, pitchConstants.ball_hlower_low, pitchConstants.ball_hlower_high);
-        setSliderVals(ball_hupper, pitchConstants.ball_hupper_low, pitchConstants.ball_hupper_high);
+        setSliderVals(ball_h, pitchConstants.ball_h_low, pitchConstants.ball_h_high);
         setSliderVals(ball_s, pitchConstants.ball_s_low, pitchConstants.ball_s_high);
         setSliderVals(ball_v, pitchConstants.ball_v_low, pitchConstants.ball_v_high);
 
