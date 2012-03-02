@@ -49,15 +49,15 @@ public class Shooter extends AI {
 				self.kick();
 				shotTime = new Date();
 			}
-		} else if (state == SEARCHING) {
+		} else if (state == SEARCHING  && (new Date().getTime() - movementTime.getTime() > 500)) {
 			Line lineToBall = new Line(self.getPosition(), target());
 			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 
-			if (firstRun < 15) {
-//				self.forward(Brick.FAST);
-//				movementState = FORWARD;
-				firstRun++;
-			} else {
+//			if (firstRun < 15) {
+////				self.forward(Brick.FAST);
+////				movementState = FORWARD;
+//				firstRun++;
+//			} else {
 //				double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
 	//			self.setHeading((int)angle);
 //				System.out.println("Heading: " + angle);
@@ -75,18 +75,21 @@ public class Shooter extends AI {
 						movementState = ARCRIGHT;
 						rotatingTime = new Date();
 					}
-                                        
-				} else if (!nearBall()) {
-					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
-//					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
-//					rotatingTime = new Date(0);
-//					movementState = FORWARD;
-					self.stop();
 				} else {
 					self.stop();
-				}
+					movementState = NOTHING;
+				}                     
+//				} else if (!nearBall()) {
+//					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
+////					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
+////					rotatingTime = new Date(0);
+////					movementState = FORWARD;
+//					self.stop();
+//				} else {
+//					self.stop();
+//				}
 				movementTime = new Date();
-			}
+//			}
 		}
 	}
 	
@@ -115,7 +118,7 @@ public class Shooter extends AI {
 	protected boolean facingBall() {
 		Line lineToBall = new Line(self.getPosition(), target());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		if (Math.abs(angle) < Math.PI / 16) {
+		if (Math.abs(angle) < Math.PI / 8) {
 			return true;
 		} else {
 			return false;
