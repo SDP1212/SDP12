@@ -26,6 +26,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 //import Planning.Main2;
@@ -133,12 +134,49 @@ public class ImageProcessor {
 		int ytCentroidCount = 0;
 		Point ytCentroid = new Point(-1, -1);
 		// ray of light processing
+        
+        ArrayList<PixelCoordinates> yellowBlob=new ArrayList<PixelCoordinates>();
+        ArrayList<PixelCoordinates> blueBlob=new ArrayList<PixelCoordinates>();
+//        ArrayList<PixelCoordinates> redBlob=new ArrayList<PixelCoordinates>();
+        
+        for (int x = xlowerlimit; x < xupperlimit; x++) { // for every
+			for (int y = ylowerlimit; y < yupperlimit; y++) {
+                int[] pixelColour = new int[3];
+				data.getPixel(x, y, pixelColour);
+                if(isBlue(pixelColour))blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                else if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+//                else if(isRed(pixelColour))redBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+            }
+        }
+        
+        yellowBlob=BlobDetection.getBlob(yellowBlob);
+        blueBlob=BlobDetection.getBlob(blueBlob);
+//        redBlob=BlobDetection.getBlob(redBlob);
+        
+        // Calculate Centroid of blue Co-ordinates
+        for(PixelCoordinates pixel : blueBlob){
+            // barrel distortion
+            Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
+            if (DEBUG_LEVEL > 1)
+                drawPixel(wraster, out, blue);
+            btCentroidCount++;
+            btCentroid.x += out.x;
+            btCentroid.y += out.y;
+        }
+        
+        // Calculate Centroid of yellow Co-ordinates
+        for(PixelCoordinates pixel : yellowBlob){
+            Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
+            if (DEBUG_LEVEL > 1)
+                drawPixel(wraster, out, yell);
+            ytCentroidCount++;
+            ytCentroid.x += out.x;
+            ytCentroid.y += out.y;
+        }
+        
 		for (int i = xlowerlimit; i < xupperlimit; i = i + 1) { // for every
 			for (int j = ylowerlimit; j < yupperlimit; j = j + 1) {
-				if (((i % 2 == 0) || (j % 2 == 0))
-						&& (i < (ourPos.x - rayOfLight)
-								|| i > (ourPos.x + rayOfLight)
-								|| j < (ourPos.y - rayOfLight) || j > (ourPos.y + rayOfLight)))
+				if (((i % 2 == 0) || (j % 2 == 0)))
 					continue;
 
 				// get RGB values for a pixel
@@ -164,23 +202,6 @@ public class ImageProcessor {
 					ballPos = out;
 				}
 
-				// Calculate Centroid of blue Co-ordinates
-				if (isBlue(pixelColour)) {
-					if (DEBUG_LEVEL > 1)
-						drawPixel(wraster, out, blue);
-					btCentroidCount++;
-					btCentroid.x += out.x;
-					btCentroid.y += out.y;
-				}
-
-				// Calculate Centroid of yellow Co-ordinates
-				if (isYellow(pixelColour)) {
-					if (DEBUG_LEVEL > 1)
-						drawPixel(wraster, out, yell);
-					ytCentroidCount++;
-					ytCentroid.x += out.x;
-					ytCentroid.y += out.y;
-				}
 				if (isBrightGreen(pixelColour)) {
 					if (DEBUG_LEVEL > 1)
 						drawPixel(wraster, convertToBarrelCorrected(new Point(
