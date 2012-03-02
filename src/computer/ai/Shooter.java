@@ -49,28 +49,28 @@ public class Shooter extends AI {
 				self.kick();
 				shotTime = new Date();
 			}
-		} else if (state == SEARCHING && (new Date().getTime() - movementTime.getTime() > 500)) {
+		} else if (state == SEARCHING) {
 			Line lineToBall = new Line(self.getPosition(), target());
 			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 
 			if (firstRun < 15) {
-				self.forward(Brick.FAST);
-				movementState = FORWARD;
+//				self.forward(Brick.FAST);
+//				movementState = FORWARD;
 				firstRun++;
 			} else {
-	//			double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
+//				double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
 	//			self.setHeading((int)angle);
 //				System.out.println("Heading: " + angle);
-				if (!facingBall() && (new Date().getTime() - rotatingTime.getTime() > 1000)) {
+				if (!facingBall()) {
 					//System.out.println("Not facing ball");
 					
 					if (angle < 0 && movementState != ARCLEFT) {
-						self.rotateLeft(Brick.MEDIUM);
+						self.rotateLeft(Brick.SLOW);
 						//self.arcLeft(8);
 						movementState = ARCLEFT;
 						rotatingTime = new Date();
 					} else  if (movementState != ARCRIGHT){
-						self.rotateRight(Brick.MEDIUM);
+						self.rotateRight(Brick.SLOW);
 						//self.arcRight(8);
 						movementState = ARCRIGHT;
 						rotatingTime = new Date();
@@ -78,9 +78,12 @@ public class Shooter extends AI {
                                         
 				} else if (!nearBall()) {
 					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
-					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
-					rotatingTime = new Date(0);
-					movementState = FORWARD;
+//					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
+//					rotatingTime = new Date(0);
+//					movementState = FORWARD;
+					self.stop();
+				} else {
+					self.stop();
 				}
 				movementTime = new Date();
 			}
@@ -112,7 +115,7 @@ public class Shooter extends AI {
 	protected boolean facingBall() {
 		Line lineToBall = new Line(self.getPosition(), target());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		if (Math.abs(angle) < Math.PI / 8) {
+		if (Math.abs(angle) < Math.PI / 16) {
 			return true;
 		} else {
 			return false;

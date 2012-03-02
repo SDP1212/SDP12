@@ -6,6 +6,7 @@ package computer;
 
 import computer.ai.*;
 import computer.simulator.*;
+import computer.vision.Viewer;
 import computer.vision.WorldState;
 
 /**
@@ -19,6 +20,7 @@ public class ApplicationController {
     private Communication communication;
     private static ApplicationController appController;
     private Thread engineThread;
+	private Viewer viewer;
 
     /**
      * Main method. All it does is instantiate a new ApplicationController
@@ -33,7 +35,8 @@ public class ApplicationController {
      */
     public ApplicationController() {
         communication = new Communication();
-        computer.vision.RunVision.main(null);
+//        computer.vision.RunVision.main(null);
+		viewer = Viewer.startVision();
         MainWindow.setup(this);
     }
 
@@ -103,6 +106,6 @@ public class ApplicationController {
     }
     
     public WorldState getWorldState() {
-        return computer.vision.RunVision.getWorldState();
+        return viewer.getWorldState();
     }
 }
