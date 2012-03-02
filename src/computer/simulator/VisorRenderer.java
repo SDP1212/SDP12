@@ -6,6 +6,7 @@ package computer.simulator;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -17,11 +18,13 @@ public class VisorRenderer extends JPanel{
     
     private static final int RENDER_HEIGHT=300,RENDER_WIDTH=600;
     private static Dimension dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
+    public static ArrayList<SimulatableObject> extraDrawables;
     private Shape[] robotinho,nemesis,ball,leftGoal,rightGoal;
     private Pitch pitch;
     private JFrame frame;
     
     public VisorRenderer(Pitch pitch){
+        VisorRenderer.extraDrawables=new ArrayList<SimulatableObject>();
         this.pitch=pitch;
         this.robotinho=pitch.robotinho.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);
         this.nemesis=pitch.nemesis.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);
@@ -93,6 +96,13 @@ public class VisorRenderer extends JPanel{
         g.setColor(Color.RED);
         for(Shape s : ball)
             g.fill(s);
+        
+        g.setColor(Color.BLACK);
+        for(SimulatableObject obj : extraDrawables){
+            g.setTransform(AffineTransform.getTranslateInstance(obj.position.getX()*RENDER_WIDTH/2, (1.0-obj.position.getY())*RENDER_HEIGHT));
+            for(Shape s : obj.getVisualisation(WIDTH, HEIGHT))
+                g.draw(s);
+        }
 
     }
     
