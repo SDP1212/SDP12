@@ -107,11 +107,8 @@ public class BlobDetection {
             mark(x,   y+1);
         if(x>0 && y<yRange-1)
             mark(x-1, y+1);
-        }catch (Exception e){
-            System.err.println("X="+x+" Y="+y);
-            System.err.println(e.getMessage());
-            e.printStackTrace(System.err);
-            System.exit(1);
+        }catch (StackOverflowError e){
+            System.err.println("STACK OVERFLOW!!! FIX THRESHOLDS NOW!!!\n");
         }
     }
     
