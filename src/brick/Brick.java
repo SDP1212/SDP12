@@ -31,9 +31,11 @@ public class Brick {
     public final static int ROTATERIGHT = 0x07;
     public final static int ROTATELEFT = 0x08;
 	
-	public final static int ROTATETO = 0xa;
+	public final static int ROTATETO = 0x09;
 	
-    public final static int ARC = 0x09;
+    public final static int ARCLEFT = 0x0d;
+	public final static int ARCRIGHT = 0x0e;
+	
 	public final static int LOCKHEADING = 0x0b;
 	public final static int UNLOCKHEADING = 0x0c;
     

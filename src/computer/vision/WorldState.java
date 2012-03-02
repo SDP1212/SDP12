@@ -3,131 +3,25 @@ package computer.vision;
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;
 
+/**
+ *
+ * @author Matt Jeffryes <m.j.jeffryes@sms.ed.ac.uk>
+ */
 public class WorldState implements computer.simulator.VisionInterface {
-	
-	private int direction; // 0 = right, 1 = left.
-	private int colour; // 0 = yellow, 1 = blue
-	private int pitch; // 0 = main, 1 = side room
-	private int blueX;
-	private int blueY;
-	private int yellowX;
-	private int yellowY;
-	private int ballX;
-	private int ballY;
-	private float blueOrientation;
-	private float yellowOrientation;
-	private long counter;
-  
-	public WorldState() {
-		
-		/* control properties */
-		this.direction = 0;
-		this.colour = 0;
-		this.pitch = 0;
-		
-		/* object properties */
-		this.blueX = 0;
-		this.blueY = 0;
-		this.yellowX = 0;
-		this.yellowY = 0;
-		this.ballX = 0;
-		this.ballY = 0;
-		this.blueOrientation = 0;
-		this.yellowOrientation = 0;
-	}
-	
-	public int getBlueX() {
-		return blueX;
-	}
-	public void setBlueX(int blueX) {
-		this.blueX = blueX;
-	}
-	public int getBlueY() {
-		return blueY;
-	}
-	public void setBlueY(int blueY) {
-		this.blueY = blueY;
-	}
-	public int getYellowX() {
-		return yellowX;
-	}
-	public void setYellowX(int yellowX) {
-		this.yellowX = yellowX;
-	}
-	public int getYellowY() {
-		return yellowY;
-	}
-	public void setYellowY(int yellowY) {
-		this.yellowY = yellowY;
-	}
-	public int getBallX() {
-		return ballX;
-	}
-	public void setBallX(int ballX) {
-		this.ballX = ballX;
-	}
-	public int getBallY() {
-		return ballY;
-	}
-	public void setBallY(int ballY) {
-		this.ballY = ballY;
-	}
+	private PixelCoordinates[] pitchCornerCoordinates;
+	private PixelCoordinates yellowRobotCoordinates;
+	private Direction yellowRobotOrientation;
+	private PixelCoordinates blueRobotCoordinates;
+	private Direction blueRobotOrientation;
+	private PixelCoordinates[] leftGoalCoordinates;
+	private PixelCoordinates[] rightGoalCoordinates;
+	private PixelCoordinates ballCoordinates;
 
-	public float getBlueOrientation() {
-                //System.out.println("Blue orientation: " + blueOrientation);
-		return blueOrientation;
-	}
-
-	public void setBlueOrientation(float blueOrientation) {
-            //System.out.println("Blue orientation: " + blueOrientation);
-		this.blueOrientation = blueOrientation;
-	}
-
-	public float getYellowOrientation() {
-		return yellowOrientation;
-	}
-
-	public void setYellowOrientation(float yellowOrientation) {
-		this.yellowOrientation = yellowOrientation;
-	}
-
-	public int getDirection() {
-		return direction;
-	}
-
-	public void setDirection(int direction) {
-		this.direction = direction;
-	}
-
-	public int getColour() {
-		return colour;
-	}
-
-	public void setColour(int colour) {
-		this.colour = colour;
-	}
-
-	public int getPitch() {
-		return pitch;
-	}
-
-	public void setPitch(int pitch) {
-		this.pitch = pitch;
-                
-	}
-  
-  public void updateCounter() {
-    this.counter++;
-  }
-  
-  public long getCounter() {
-    return this.counter;
-  }
-
-  // Following methods are for the interface.
-    public PixelCoordinates[] getPitchCornerCoordinates() {
-        
-        PitchConstants pitchConstants = new PitchConstants(pitch);
+	/**
+	 * @return the pitchCornerCoordinates
+	 */
+	public PixelCoordinates[] getPitchCornerCoordinates() {
+		PitchConstants pitchConstants = new PitchConstants(0);
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
@@ -152,30 +46,107 @@ public class WorldState implements computer.simulator.VisionInterface {
         results[3] = bottomLeftCorner;
         
         return results;
-    }
+//        PixelCoordinates[] results; 
+//        
+//        results = new PixelCoordinates [4]; 
+//        results[0] = new PixelCoordinates(0, 0, true, true); 
+//        results[1] = new PixelCoordinates(640, 0, true, true);
+//        results[2] = new PixelCoordinates(0, 480, true, true);
+//        results[3] = new PixelCoordinates(640, 480, true, true);
+//        
+//        return results;
+	}
 
-    public PixelCoordinates getYellowRobotCoordinates() {
-        return new PixelCoordinates(getYellowX(), getYellowY(), false, false);
-    }
+	/**
+	 * @param pitchCornerCoordinates the pitchCornerCoordinates to set
+	 */
+	public void setPitchCornerCoordinates(PixelCoordinates[] pitchCornerCoordinates) {
+		this.pitchCornerCoordinates = pitchCornerCoordinates;
+	}
 
-    public Direction getYellowRobotOrientation() {
-        return new Direction(Math.toRadians(getYellowOrientation()));
-    }
+	/**
+	 * @return the yellowRobotCoordinates
+	 */
+	public PixelCoordinates getYellowRobotCoordinates() {
+		if (yellowRobotCoordinates != null) {
+			return yellowRobotCoordinates;
+		} else {
+			System.err.println("NO YELLOW ROBOT COORDS");
+			return new PixelCoordinates(0, 0, false, false);
+		}
+	}
 
-    public PixelCoordinates getBlueRobotCoordinates() {
-        return new PixelCoordinates(getBlueX(), getBlueY(), false, false);
-    }
+	/**
+	 * @param yellowRobotCoordinates the yellowRobotCoordinates to set
+	 */
+	public void setYellowRobotCoordinates(PixelCoordinates yellowRobotCoordinates) {
+		this.yellowRobotCoordinates = yellowRobotCoordinates;
+	}
 
-    public Direction getBlueRobotOrientation() {
-        //this is in radians
-//        System.out.println("blue or " + getBlueOrientation() );
-        return new Direction(Math.toRadians(getBlueOrientation()));
-    }
+	/**
+	 * @return the yellowRobotOrientation
+	 */
+	public Direction getYellowRobotOrientation() {
+		if (yellowRobotOrientation != null) {
+			return yellowRobotOrientation;
+		} else {
+			System.err.println("NO YELLOW ROBOT ORIENTATION");
+			return new Direction(0);
+		}
+	}
 
-    public PixelCoordinates[] getLeftGoalCoordinates() {
-        // First element is top coordinate, second is bottom.
+	/**
+	 * @param yellowRobotOrientation the yellowRobotOrientation to set
+	 */
+	public void setYellowRobotOrientation(Direction yellowRobotOrientation) {
+		this.yellowRobotOrientation = yellowRobotOrientation;
+	}
+
+	/**
+	 * @return the blueRobotCoordinates
+	 */
+	public PixelCoordinates getBlueRobotCoordinates() {
+		if (blueRobotCoordinates != null) {
+			return blueRobotCoordinates;
+		} else {
+			System.err.println("NO BLUE ROBOT COORDS");
+			return new PixelCoordinates(0, 0, false, false);
+		}
+	}
+
+	/**
+	 * @param blueRobotCoordinates the blueRobotCoordinates to set
+	 */
+	public void setBlueRobotCoordinates(PixelCoordinates blueRobotCoordinates) {
+		this.blueRobotCoordinates = blueRobotCoordinates;
+	}
+
+	/**
+	 * @return the blueRobotOrientation
+	 */
+	public Direction getBlueRobotOrientation() {
+		if (blueRobotOrientation != null) {
+			return blueRobotOrientation;
+		} else {
+			System.err.println("NO BLUE ROBOT ORIENTATION");
+			return new Direction(0);
+		}
+	}
+
+	/**
+	 * @param blueRobotOrientation the blueRobotOrientation to set
+	 */
+	public void setBlueRobotOrientation(Direction blueRobotOrientation) {
+		this.blueRobotOrientation = blueRobotOrientation;
+	}
+
+	/**
+	 * @return the leftGoalCoordinates
+	 */
+	public PixelCoordinates[] getLeftGoalCoordinates() {
+		// First element is top coordinate, second is bottom.
         
-        PitchConstants pitchConstants = new PitchConstants(pitch);
+        PitchConstants pitchConstants = new PitchConstants(1);
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
@@ -202,13 +173,22 @@ public class WorldState implements computer.simulator.VisionInterface {
         leftGoalCoordinates[1] = bottomLeftGoal;
         
         return leftGoalCoordinates;
-        
-    }
+	}
 
-    public PixelCoordinates[] getRightGoalCoordinates() {
-        // First element is top coordinate, second is bottom.
+	/**
+	 * @param leftGoalCoordinates the leftGoalCoordinates to set
+	 */
+	public void setLeftGoalCoordinates(PixelCoordinates[] leftGoalCoordinates) {
+		this.leftGoalCoordinates = leftGoalCoordinates;
+	}
+
+	/**
+	 * @return the rightGoalCoordinates
+	 */
+	public PixelCoordinates[] getRightGoalCoordinates() {
+		// First element is top coordinate, second is bottom.
         
-        PitchConstants pitchConstants = new PitchConstants(pitch);
+        PitchConstants pitchConstants = new PitchConstants(1);
         
         int leftBuffer = pitchConstants.leftBuffer;
         int topBuffer = pitchConstants.topBuffer;
@@ -235,10 +215,32 @@ public class WorldState implements computer.simulator.VisionInterface {
         rightGoalCoordinates[1] = bottomRightGoal;
         
         return rightGoalCoordinates;
-    }
+	}
 
-    public PixelCoordinates getBallCoordinates() {
-        return new PixelCoordinates(getBallX(), getBallY(), false, false);
-    }
-	
+	/**
+	 * @param rightGoalCoordinates the rightGoalCoordinates to set
+	 */
+	public void setRightGoalCoordinates(PixelCoordinates[] rightGoalCoordinates) {
+		this.rightGoalCoordinates = rightGoalCoordinates;
+	}
+
+	/**
+	 * @return the ballCoordinates
+	 */
+	public PixelCoordinates getBallCoordinates() {
+		if (ballCoordinates != null) {
+			return ballCoordinates;
+		} else {
+			System.err.println("NO BALL COORDS");
+			return new PixelCoordinates(0, 0, false, false);
+		}
+	}
+
+	/**
+	 * @param ballCoordinates the ballCoordinates to set
+	 */
+	public void setBallCoordinates(PixelCoordinates ballCoordinates) {
+		this.ballCoordinates = ballCoordinates;
+	}
+
 }

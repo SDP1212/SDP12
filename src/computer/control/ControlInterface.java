@@ -34,7 +34,9 @@ public interface ControlInterface {
 	
 	public void rotateTo(int heading);
 	
-    public void arc(int radius);
+    public void arcLeft(int radius);
+	
+	public void arcRight(int radius);
 	
 	public void setHeading(int heading);
 	

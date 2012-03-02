@@ -53,7 +53,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
             this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(this.pitch,this));
             if(control!=null)control.addAI(this.brain);
         }catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println("Comm error" + e.getMessage());
             e.printStackTrace(System.err);
             throw new Error("FATAL ERROR: Initialization of AI failed. Probably caused by: "+ai.getName()+" is not a valid AI subclass - look at System.err for more details.");
         }
@@ -142,14 +142,19 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         else throw new UnsupportedOperationException("Simulator does not implement rotateTo() method.");
     }	
     
-    @Override
-    public void arc(int radius) {
-        if(this.control!=null && this.isReal())control.arc(radius);
+	@Override
+    public void arcLeft(int radius) {
+        if(this.control!=null && this.isReal())control.arcLeft(radius);
+	}
+	
+	@Override
+    public void arcRight(int radius) {
+        if(this.control!=null && this.isReal())control.arcRight(radius);
         else {
             arcMotionState=radius;
         }
-    }
-
+    }	
+	
     @Override
     public void setHeading(int heading) {
         if(this.control!=null && this.isReal())control.setHeading(heading);

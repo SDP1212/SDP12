@@ -6,6 +6,7 @@ package computer;
 
 import computer.ai.*;
 import computer.simulator.*;
+import computer.vision.Viewer;
 import computer.vision.WorldState;
 
 /**
@@ -19,6 +20,8 @@ public class ApplicationController {
     private Communication communication;
     private static ApplicationController appController;
     private Thread engineThread;
+	private Viewer viewer;
+	private short ourColour = Robot.BLUE_PLATE;
 
     /**
      * Main method. All it does is instantiate a new ApplicationController
@@ -26,6 +29,10 @@ public class ApplicationController {
     public static void main(String[] args) {
         appController = new ApplicationController();
     }
+	
+	public static ApplicationController getAppController() {
+		return appController;
+	}
 
     /**
      * Constructor for the ApplicationController class. 
@@ -33,7 +40,8 @@ public class ApplicationController {
      */
     public ApplicationController() {
         communication = new Communication();
-        computer.vision.RunVision.main(null);
+//        computer.vision.RunVision.main(null);
+		viewer = Viewer.startVision();
         MainWindow.setup(this);
     }
 
@@ -91,7 +99,7 @@ public class ApplicationController {
     }
     
     public void startEngine(Class<AI> ai, short target, short nemesisColour) {
-        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, true, false, target, nemesisColour, ai, DumbAI.class);
+        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, false, false, target, nemesisColour, ai, DumbAI.class);
         engineThread = new Thread(engine);
         engineThread.start();
     }
@@ -103,6 +111,20 @@ public class ApplicationController {
     }
     
     public WorldState getWorldState() {
-        return computer.vision.RunVision.getWorldState();
+        return viewer.getWorldState();
     }
+
+	/**
+	 * @return the ourColour
+	 */
+	public short getOurColour() {
+		return ourColour;
+	}
+
+	/**
+	 * @param ourColour the ourColour to set
+	 */
+	public void setOurColour(short ourColour) {
+		this.ourColour = ourColour;
+	}
 }
