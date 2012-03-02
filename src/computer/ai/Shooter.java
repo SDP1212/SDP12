@@ -32,6 +32,7 @@ public class Shooter extends AI {
 	
 	private int state = SEARCHING;
 	private int firstRun = 0;
+	private boolean stopped = false;
 
 	public Shooter(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -49,47 +50,50 @@ public class Shooter extends AI {
 				self.kick();
 				shotTime = new Date();
 			}
-		} else if (state == SEARCHING  && (new Date().getTime() - movementTime.getTime() > 500)) {
+		} else if (state == SEARCHING  && (new Date().getTime() - movementTime.getTime() > 10)) {
 			Line lineToBall = new Line(self.getPosition(), target());
 			double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 
-//			if (firstRun < 15) {
-////				self.forward(Brick.FAST);
-////				movementState = FORWARD;
-//				firstRun++;
-//			} else {
+			if (firstRun < 15) {
+				self.forward(Brick.SLOW);
+				movementState = FORWARD;
+				firstRun++;
+			} else {
 //				double angle = Math.toDegrees(LineTools.angleBetweenLineAndDirection(lineToBall, new Direction(0))) + 180;
 	//			self.setHeading((int)angle);
 //				System.out.println("Heading: " + angle);
 				if (!facingBall()) {
+					stopped = false;
 					//System.out.println("Not facing ball");
 					
-					if (angle < 0 && movementState != ARCLEFT) {
+					if (angle < 0) {
 						self.rotateLeft(Brick.SLOW);
 						//self.arcLeft(8);
 						movementState = ARCLEFT;
 						rotatingTime = new Date();
-					} else  if (movementState != ARCRIGHT){
+					} else {
 						self.rotateRight(Brick.SLOW);
 						//self.arcRight(8);
 						movementState = ARCRIGHT;
 						rotatingTime = new Date();
+					}                   
+				} else if (!nearBall()) {
+					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
+//					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
+//					rotatingTime = new Date(0);
+					if (!stopped) {
+						self.stop();
+						stopped = true;
+					} else {
+						self.forward(Brick.SLOW);
+						movementState = FORWARD;
+						self.stop();
 					}
 				} else {
 					self.stop();
-					movementState = NOTHING;
-				}                     
-//				} else if (!nearBall()) {
-//					//System.out.println("Speed: " + Math.round(lineToBall.getLength() * Brick.FAST));
-////					self.forward((int)Math.round(lineToBall.getLength() * Brick.FAST * 0.5) + 200);
-////					rotatingTime = new Date(0);
-////					movementState = FORWARD;
-//					self.stop();
-//				} else {
-//					self.stop();
-//				}
+				}
 				movementTime = new Date();
-//			}
+			}
 		}
 	}
 	
@@ -118,7 +122,7 @@ public class Shooter extends AI {
 	protected boolean facingBall() {
 		Line lineToBall = new Line(self.getPosition(), target());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		if (Math.abs(angle) < Math.PI / 16) {
+		if (Math.abs(angle) < Math.PI / 10) {
 			return true;
 		} else {
 			return false;
@@ -127,7 +131,7 @@ public class Shooter extends AI {
 	
 	protected boolean nearBall() {
 		Line lineToBall = new Line(self.getPosition(), target());
-		if (lineToBall.getLength() < 0.2) {
+		if (lineToBall.getLength() < 0.1) {
 			return true;
 		} else {
 			return false;

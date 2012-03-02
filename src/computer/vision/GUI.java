@@ -137,15 +137,12 @@ public class GUI extends javax.swing.JFrame {
         labelDebug.setLabelFor(debugSlider);
         labelDebug.setText("Debug level:");
 
-        sliderContrast.setMaximum(500);
-        sliderContrast.setValue(100);
         sliderContrast.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 contrastSliderChanged(evt);
             }
         });
 
-        sliderSaturation.setValue(100);
         sliderSaturation.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 saturationSliderChanged(evt);
