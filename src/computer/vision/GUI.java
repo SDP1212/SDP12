@@ -12,6 +12,7 @@ public class GUI extends javax.swing.JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	public static String className = null;
+	private Viewer viewer;
 
 	/** Creates new form GUI */
 	public GUI() {
@@ -38,6 +39,12 @@ public class GUI extends javax.swing.JFrame {
         modeLabel = new javax.swing.JLabel();
         modeSlider = new javax.swing.JSlider();
         labelDebug = new javax.swing.JLabel();
+        sliderContrast = new javax.swing.JSlider();
+        sliderSaturation = new javax.swing.JSlider();
+        sliderBrightness = new javax.swing.JSlider();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Vision"); // NOI18N
@@ -130,37 +137,80 @@ public class GUI extends javax.swing.JFrame {
         labelDebug.setLabelFor(debugSlider);
         labelDebug.setText("Debug level:");
 
+        sliderContrast.setMaximum(500);
+        sliderContrast.setValue(100);
+        sliderContrast.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                contrastSliderChanged(evt);
+            }
+        });
+
+        sliderSaturation.setValue(100);
+        sliderSaturation.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                saturationSliderChanged(evt);
+            }
+        });
+
+        sliderBrightness.setMaximum(500);
+        sliderBrightness.setValue(100);
+        sliderBrightness.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                brightnessSliderChanged(evt);
+            }
+        });
+
+        jLabel1.setText("Contrast");
+
+        jLabel2.setText("Saturation");
+
+        jLabel3.setText("Brightness");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBarrelCorrection, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(ballSearchSlider, 0, 0, Short.MAX_VALUE)
-                    .addComponent(yellThreshSlider, 0, 0, Short.MAX_VALUE)
-                    .addComponent(debugSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnPitch1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                        .addComponent(btnPitch2))
-                    .addComponent(blueThreshLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(blueThreshSlider, 0, 0, Short.MAX_VALUE)
-                    .addComponent(labelDebug, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(yellThreshLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(ballSearchLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(modeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addComponent(modeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
+                        .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(btnBarrelCorrection, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(ballSearchSlider, 0, 0, Short.MAX_VALUE)
+                            .addComponent(yellThreshSlider, 0, 0, Short.MAX_VALUE)
+                            .addComponent(debugSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnPitch1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                                .addComponent(btnPitch2))
+                            .addComponent(blueThreshLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(blueThreshSlider, 0, 0, Short.MAX_VALUE)
+                            .addComponent(labelDebug, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(yellThreshLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(ballSearchLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(modeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                            .addComponent(modeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(sliderContrast, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(652, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(sliderSaturation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(652, Short.MAX_VALUE)
+                        .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
+                        .addContainerGap()
                         .addComponent(labelDebug, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(debugSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -185,13 +235,36 @@ public class GUI extends javax.swing.JFrame {
                         .addGap(1, 1, 1)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnPitch1)
-                            .addComponent(btnPitch2)))
-                    .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(47, Short.MAX_VALUE))
+                            .addComponent(btnPitch2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sliderContrast, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sliderSaturation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void saturationSliderChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_saturationSliderChanged
+		viewer.setSaturation(sliderSaturation.getValue());
+	}//GEN-LAST:event_saturationSliderChanged
+
+	private void brightnessSliderChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightnessSliderChanged
+		viewer.setBrightness(sliderBrightness.getValue());
+	}//GEN-LAST:event_brightnessSliderChanged
+
+	private void contrastSliderChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_contrastSliderChanged
+		viewer.setContrast(sliderContrast.getValue());
+	}//GEN-LAST:event_contrastSliderChanged
 
 	private void btnBarrelCorrectionActionPerformed(
 			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnBarrelCorrectionActionPerformed
@@ -278,12 +351,18 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btnPitch1;
     private javax.swing.JButton btnPitch2;
     private javax.swing.JSlider debugSlider;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel labelDebug;
     private javax.swing.JLabel modeLabel;
     private javax.swing.JSlider modeSlider;
     private javax.swing.JLabel onScreenImage;
     private javax.swing.ButtonGroup radioOurGoal;
     private javax.swing.ButtonGroup radioOurTeam;
+    private javax.swing.JSlider sliderBrightness;
+    private javax.swing.JSlider sliderContrast;
+    private javax.swing.JSlider sliderSaturation;
     private javax.swing.JLabel yellThreshLabel;
     private javax.swing.JSlider yellThreshSlider;
     // End of variables declaration//GEN-END:variables
@@ -308,5 +387,19 @@ public class GUI extends javax.swing.JFrame {
 		if (text != null) {
 			// debugOutputYell.setText(text);
 		}
+	}
+
+	/**
+	 * @return the viewer
+	 */
+	public Viewer getViewer() {
+		return viewer;
+	}
+
+	/**
+	 * @param viewer the viewer to set
+	 */
+	public void setViewer(Viewer viewer) {
+		this.viewer = viewer;
 	}
 }

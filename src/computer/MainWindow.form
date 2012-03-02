@@ -214,7 +214,7 @@
                                   <Component id="comboRobot" alignment="0" max="32767" attributes="1"/>
                                   <Component id="comboTarget" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="161" max="32767" attributes="0"/>
+                              <EmptySpace pref="156" max="32767" attributes="0"/>
                               <Component id="buttonDribble" min="-2" pref="95" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -290,7 +290,7 @@
                                   <Component id="comboAI" min="-2" pref="212" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="194" max="32767" attributes="0"/>
+                          <EmptySpace pref="193" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -351,6 +351,9 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboRobotActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -390,7 +393,7 @@
                                   <Component id="spinnerRadius" max="32767" attributes="1"/>
                                   <Component id="spinnerRotate" alignment="0" pref="62" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="90" max="32767" attributes="0"/>
+                              <EmptySpace pref="87" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="radioMedium" alignment="0" max="32767" attributes="1"/>
                                   <Component id="radioSlow" alignment="0" min="-2" max="-2" attributes="0"/>
