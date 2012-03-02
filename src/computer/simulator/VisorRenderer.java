@@ -18,13 +18,13 @@ public class VisorRenderer extends JPanel{
     
     private static final int RENDER_HEIGHT=300,RENDER_WIDTH=600;
     private static Dimension dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
-    public static ArrayList<SimulatableObject> extraDrawables;
+    public static ArrayList<SimulatableObject> extraDrawables = new ArrayList<SimulatableObject>();
     private Shape[] robotinho,nemesis,ball,leftGoal,rightGoal;
     private Pitch pitch;
     private JFrame frame;
     
     public VisorRenderer(Pitch pitch){
-        VisorRenderer.extraDrawables=new ArrayList<SimulatableObject>();
+        //VisorRenderer.extraDrawables=new ArrayList<SimulatableObject>();
         this.pitch=pitch;
         this.robotinho=pitch.robotinho.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);
         this.nemesis=pitch.nemesis.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);
@@ -37,7 +37,7 @@ public class VisorRenderer extends JPanel{
                                                   (int)(RENDER_HEIGHT-pitch.getRightGoal().getUpperPostCoordinates().getY()*RENDER_HEIGHT),
                                                   RENDER_WIDTH/50,
                                                   (int)((pitch.getRightGoal().getUpperPostCoordinates().getY()-pitch.getRightGoal().getLowerPostCoordinates().getY())*RENDER_HEIGHT))};
-        super.setMinimumSize(dimension);
+		super.setMinimumSize(dimension);
         init();
     }
     
