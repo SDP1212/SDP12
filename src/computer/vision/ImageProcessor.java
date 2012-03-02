@@ -11,8 +11,10 @@
 
 package computer.vision;
 
+import computer.ApplicationController;
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;
+import computer.simulator.Robot;
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -99,13 +101,11 @@ public class ImageProcessor {
 	 */
 	public BufferedImage process(BufferedImage image) {
 
-		// if (intercept.weAreBlueTeam)
-		// TODO ImageProcessor team selection
-//		if (Main2.weAreBlueTeam)
+		if (ApplicationController.getAppController().getOurColour() == Robot.BLUE_PLATE)
 			ourPos = btPos;
-//		else
-//			ourPos = ytPos;
-		// create raster from given image
+		else
+			ourPos = ytPos;
+//		 create raster from given image
 		Raster data = null;
 		try {
 			data = image.getData();

@@ -12,11 +12,12 @@ public abstract class Vision extends Thread {
 	protected FrameGrabber frameGrabber;
 	protected Thread captureThread;
 	private static final int SATURATION = 100;
-	private static final int BRIGHTNESS = 200;
-	private static final int CONTRAST = 100;
+	private static final int BRIGHTNESS = 170;
+	private static final int CONTRAST = 170;
 	private static final int HUE = 0;
 	public static final int FULL_LUMA_RANGE = 1;
 	public static final int UV_RATIO = 49;
+	private List<Control> controls;	
 
 	public Vision() {
 		super();
@@ -36,7 +37,7 @@ public abstract class Vision extends Thread {
 			int std, int channel, int qty) throws V4L4JException {
 			    videoDevice = new VideoDevice(dev);
 //			    try {
-					List<Control> controls =  videoDevice.getControlList().getList();
+					controls =  videoDevice.getControlList().getList();
 					for(Control c: controls) { 
 						if(c.getName().equals("Saturation"))
 							if(c.getName().equals("Contrast"))
@@ -52,14 +53,53 @@ public abstract class Vision extends Thread {
 							if(c.getName().equals("uv ratio"))
 								c.setValue(UV_RATIO);
 							}
-					videoDevice.releaseControlList();
 //			    }
 //			    catch(V4L4JException e3) { 
 //			    	System.out.println("Cannot set video device settings!"); 
 //			    }
-				videoDevice.releaseControlList();
 			    frameGrabber = videoDevice.getJPEGFrameGrabber(w, h, channel, std, qty);
 			    frameGrabber.startCapture();
 			    System.out.println("Starting capture at "+frameGrabber.getWidth()+"x"+frameGrabber.getHeight());            
 			}
+	public void setContrast(int contrast) {
+		if (controls != null) {
+			for(Control c: controls) { 
+				if (c.getName().equals("Contrast")) {
+				try{
+					c.setValue(Math.min(contrast, 500));
+				} catch(V4L4JException e3) { 
+						System.err.println("Cannot set video device settings!"); 
+			    }
+				}
+			}
+		}
+	}
+	
+	public void setSaturation(int saturation) {
+		if (controls != null) {
+			for (Control c : controls) {
+				if (c.getName().equals("Saturation")) {
+					try {
+						c.setValue(Math.min(saturation, 100));
+					} catch (V4L4JException e3) {
+						System.err.println("Cannot set video device settings!");
+					}
+				}
+			}
+		}
+	}
+	
+	public void setBrightness(int brightness) {
+		if (controls != null) {
+			for (Control c : controls) {
+				if (c.getName().equals("Brightness")) {
+					try {
+						c.setValue(Math.min(brightness, 500));
+					} catch (V4L4JException e3) {
+						System.err.println("Cannot set video device settings!");
+					}
+				}
+			}
+		}
+	}
 }

@@ -21,6 +21,7 @@ public class ApplicationController {
     private static ApplicationController appController;
     private Thread engineThread;
 	private Viewer viewer;
+	private short ourColour = Robot.BLUE_PLATE;
 
     /**
      * Main method. All it does is instantiate a new ApplicationController
@@ -28,6 +29,10 @@ public class ApplicationController {
     public static void main(String[] args) {
         appController = new ApplicationController();
     }
+	
+	public static ApplicationController getAppController() {
+		return appController;
+	}
 
     /**
      * Constructor for the ApplicationController class. 
@@ -108,4 +113,18 @@ public class ApplicationController {
     public WorldState getWorldState() {
         return viewer.getWorldState();
     }
+
+	/**
+	 * @return the ourColour
+	 */
+	public short getOurColour() {
+		return ourColour;
+	}
+
+	/**
+	 * @param ourColour the ourColour to set
+	 */
+	public void setOurColour(short ourColour) {
+		this.ourColour = ourColour;
+	}
 }

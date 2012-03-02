@@ -50,6 +50,7 @@ public class Viewer extends Vision implements Runnable {
 		}
 		imageProcessor = new ImageProcessor();
 		gui = new GUI();
+		gui.setViewer(this);
 		gui.setVisible(true);
 		stopCapturingVideo = false;
 		captureThread = new Thread(this, "Capture Thread");
