@@ -118,7 +118,7 @@ public class Shooter extends AI {
 	protected boolean facingBall() {
 		Line lineToBall = new Line(self.getPosition(), target());
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		if (Math.abs(angle) < Math.PI / 8) {
+		if (Math.abs(angle) < Math.PI / 16) {
 			return true;
 		} else {
 			return false;
