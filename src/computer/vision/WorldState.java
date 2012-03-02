@@ -71,7 +71,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 		if (yellowRobotCoordinates != null) {
 			return yellowRobotCoordinates;
 		} else {
-			System.err.println("NO YELLOW ROBOT COORDS");
+//			System.err.println("NO YELLOW ROBOT COORDS");
 			return new PixelCoordinates(0, 0, false, false);
 		}
 	}
@@ -90,7 +90,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 		if (yellowRobotOrientation != null) {
 			return yellowRobotOrientation;
 		} else {
-			System.err.println("NO YELLOW ROBOT ORIENTATION");
+//			System.err.println("NO YELLOW ROBOT ORIENTATION");
 			return new Direction(0);
 		}
 	}
@@ -109,7 +109,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 		if (blueRobotCoordinates != null) {
 			return blueRobotCoordinates;
 		} else {
-			System.err.println("NO BLUE ROBOT COORDS");
+//			System.err.println("NO BLUE ROBOT COORDS");
 			return new PixelCoordinates(0, 0, false, false);
 		}
 	}
@@ -128,7 +128,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 		if (blueRobotOrientation != null) {
 			return blueRobotOrientation;
 		} else {
-			System.err.println("NO BLUE ROBOT ORIENTATION");
+//			System.err.println("NO BLUE ROBOT ORIENTATION");
 			return new Direction(0);
 		}
 	}

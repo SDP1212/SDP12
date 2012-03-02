@@ -20,7 +20,7 @@ public abstract class SimulatableObject {
     protected Velocity v;
     protected Acceleration a;
 
-    protected void setPosition(double x, double y) {
+    public void setPosition(double x, double y) {
         if(this.position==null)
             this.oldPosition=this.position=new Coordinates(x,y);
         else{

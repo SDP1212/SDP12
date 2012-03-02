@@ -33,11 +33,17 @@ public class Shooter extends AI {
 	private int state = SEARCHING;
 	private int firstRun = 0;
 	private boolean stopped = false;
+	private TargetBall targetShape = new TargetBall();
+	private SimulateLine simLine = new SimulateLine();
 
 	public Shooter(Pitch pitch, Robot self) {
 		super(pitch, self);
 		this.pitch = pitch;
 		this.self = self;
+		targetShape.setPosition(0, 0);
+		simLine.setPosition(1, 1);
+		VisorRenderer.extraDrawables.add(targetShape);
+		VisorRenderer.extraDrawables.add(simLine);
 	}
 
 	
@@ -107,7 +113,7 @@ public class Shooter extends AI {
 			case DRIBBLING :
 				if (!nearBall()) {
 					state = SEARCHING;
-				} else if (new Date().getTime() - shotTime.getTime() < 1500) {
+				} else if (new Date().getTime() - shotTime.getTime() < 1000) {
 					state = SHOT;
 				}
 				break;
@@ -120,8 +126,19 @@ public class Shooter extends AI {
 	}
 	
 	protected boolean facingBall() {
-		Line lineToBall = new Line(self.getPosition(), target());
+		Coordinates targetPoint;
+		if (onTarget()) {
+			System.out.println("On target");
+			targetPoint = pitch.ball.getPosition();
+		} else {
+			targetPoint = target();
+		}
+		Line lineToBall = new Line(self.getPosition(), targetPoint);
+//		simLine.setP1(self.getPosition());
+//		simLine.setP2(targetPoint);
+		
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
+//		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 		if (Math.abs(angle) < Math.PI / 10) {
 			return true;
 		} else {
@@ -130,12 +147,18 @@ public class Shooter extends AI {
 	}
 	
 	protected boolean nearBall() {
-		Line lineToBall = new Line(self.getPosition(), target());
-		if (lineToBall.getLength() < 0.1) {
+		Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+		if (lineToBall.getLength() < 0.15) {
+			System.out.println("Near ball");
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	protected boolean onTarget (){
+		Line lineToTarget = new Line (self.getPosition(), target());
+		return lineToTarget.getLength() < 0.1;
 	}
 	
 	protected boolean unobstructedShot() {
@@ -166,7 +189,10 @@ public class Shooter extends AI {
 	
 	protected Coordinates target() {
 		double x = (pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX()) * 0.1 + pitch.ball.getPosition().getX();
-		return new Coordinates(x, pitch.ball.getPosition().getY());
+		double y = (pitch.ball.getPosition().getY() - 0.5) * 0.3 + pitch.ball.getPosition().getY();
+		targetShape.setPosition(x, y);
+		//System.out.println("Target: X = " + x + " Y = " + y);
+		return new Coordinates(x,y);
 	}
 
 	@Override
