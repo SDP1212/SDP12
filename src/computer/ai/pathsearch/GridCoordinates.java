@@ -55,4 +55,5 @@ public class GridCoordinates extends Point{
 	public int getTotalCost() {
 		return totalCost;
 	}
+
 }
