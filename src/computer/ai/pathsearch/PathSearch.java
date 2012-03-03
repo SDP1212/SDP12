@@ -125,29 +125,31 @@ public class PathSearch {
 
 		ArrayList<Coordinates> waypoints = translateGridsToCoordinates(path);
 
-		return waypoints.get(1);
+                return waypoints.get(1);
 	}
 
 	private static ArrayList<GridCoordinates> optimisePath(ArrayList<GridCoordinates> path) {
 
-		ArrayList<GridCoordinates> newPath = path;
-		for (int i = 0; i < newPath.size() - 1; i++) {
-			// remove points that are too close to each other
-			if (newPath.get(i).distance(newPath.get(i + 1)) < 3) {
-				newPath.remove(i + 1);
-			}
-		}
+	    ArrayList<GridCoordinates> newPath = new ArrayList<GridCoordinates>();
+            newPath.add(path.get(0));
+            for (int i = 1; i < path.size(); i++) {
 
-		// optimise angles repeatedly 3 times
-		for (int j = 0; j < 3; j++) {
-			for (int i = 0; i < newPath.size() - 2; i++) {
-				// remove points that hardly change in gradient
-				if (Math.abs((getAngle(newPath.get(i), newPath.get(i + 1))) - (getAngle(newPath.get(i + 1), newPath.get(i + 2)))) < Math.PI/6)
-					newPath.remove(i + 2);
-			}
-		}
+                if (newPath.get(newPath.size() - 1).distance(path.get(i)) > 3) {
+                    newPath.add(path.get(i));
+                }
+            }
 
-		return newPath;
+            // optimise angles repeatedly 3 times
+            for (int j = 0; j < 3; j++) {
+                for (int i = 0; i < newPath.size() - 2; i++) {
+                    // remove points that hardly change in gradient
+                    if (Math.abs((getAngle(newPath.get(i), newPath.get(i + 1))) - (getAngle(newPath.get(i + 1), newPath.get(i + 2)))) < Math.PI / 6) {
+                        newPath.remove(i + 2);
+                    }
+                }
+            }
+
+            return newPath;
 	}
 
 	private static void search(GridCoordinates currentPoint, GridCoordinates endPoint) {
