@@ -130,27 +130,29 @@ public class PathSearch {
 	}
 
 	private static ArrayList<GridCoordinates> optimisePath(ArrayList<GridCoordinates> path) {
+		if (path.size()>2) {
+			ArrayList<GridCoordinates> newPath = new ArrayList<GridCoordinates>();
+				newPath.add(path.get(0));
+				for (int i = 1; i < path.size(); i++) {
 
-	    ArrayList<GridCoordinates> newPath = new ArrayList<GridCoordinates>();
-            newPath.add(path.get(0));
-            for (int i = 1; i < path.size(); i++) {
+					if (newPath.get(newPath.size() - 1).distance(path.get(i)) > 8) {
+						newPath.add(path.get(i));
+					}
+				}
 
-                if (newPath.get(newPath.size() - 1).distance(path.get(i)) > 3) {
-                    newPath.add(path.get(i));
-                }
-            }
+				// optimise angles repeatedly 3 times
+				for (int j = 0; j < 3; j++) {
+					for (int i = 0; i < newPath.size() - 2; i++) {
+						// remove points that hardly change in gradient
+						if (Math.abs((getAngle(newPath.get(i), newPath.get(i + 1))) - (getAngle(newPath.get(i + 1), newPath.get(i + 2)))) < Math.PI / 6) {
+							newPath.remove(i + 2);
+						}
+					}
+				}
 
-            // optimise angles repeatedly 3 times
-            for (int j = 0; j < 3; j++) {
-                for (int i = 0; i < newPath.size() - 2; i++) {
-                    // remove points that hardly change in gradient
-                    if (Math.abs((getAngle(newPath.get(i), newPath.get(i + 1))) - (getAngle(newPath.get(i + 1), newPath.get(i + 2)))) < Math.PI / 6) {
-                        newPath.remove(i + 2);
-                    }
-                }
-            }
-
-            return newPath;
+				return newPath;
+		}
+		return path;
 
 	}
 
@@ -203,7 +205,7 @@ public class PathSearch {
 	}
 
 	private static int calcMovementCost(GridCoordinates currentPoint,GridCoordinates newPoint) {
-		if (oppGridPosition.distance(newPoint) < 3) {
+		if (oppGridPosition.distance(newPoint) < 5) {
 			// discourage it heavily, to not crash into opponent
 			return 500;
 		}

@@ -26,15 +26,20 @@ public class PathSearchAI extends AI {
 	protected static final int SHOT = 2;
 	protected static int state = SEARCHING;
 	private Date shotTime = new Date(0);
-	private Date movementDate = new Date (0);
-	private TargetBall targetShape = new TargetBall();
+	private Date movementDate = new Date(0);
+	private TargetBall nextWayShape = new TargetBall();
+	private TargetBall ballShape = new TargetBall();
 	private boolean firstRun = true;
 	private Coordinates nextWayPoint = new Coordinates(1, 0.5);
+	private int runs = 0;
+	private Date dribbleStart = new Date(0);
 
 	public PathSearchAI(Pitch pitch, Robot self) {
 		super(pitch, self);
-		targetShape.setPosition(0, 0);
-		VisorRenderer.extraDrawables.add(targetShape);
+		nextWayShape.setPosition(0, 0);
+		ballShape.setPosition(0, 0);
+		VisorRenderer.extraDrawables.add(nextWayShape);
+		VisorRenderer.extraDrawables.add(ballShape);
 	}
 
 	@Override
@@ -44,60 +49,83 @@ public class PathSearchAI extends AI {
 			firstRun = false;
 		}
 		updateState();
-		if (state == SEARCHING  && (new Date().getTime() - movementDate.getTime() > 10)) {
+		if (state == SEARCHING && (new Date().getTime() - movementDate.getTime() > 10)) {
 			if (!facingWayPoint()) {
 				Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 				double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
 				if (angle < 0) {
-					self.rotateLeft(Brick.SLOW);
+					self.rotateLeft(Brick.SLOW/2);
 				} else {
-					self.rotateRight(Brick.SLOW);
+					self.rotateRight(Brick.SLOW/2);
 				}
 			} else if (!onWayPoint()) {
-				self.forward(Brick.SLOW);
+				self.forward(Brick.SLOW/2);
 			} else {
 //				self.stop();
 				getNextWayPoint();
 			}
 		} else if (state == DRIBBLING) {
-			self.kick();
-			self.stop();
+//			self.stop();
+//
+//			while (runs<5) {
+//				self.forward(Brick.SLOW/2);
+//			}
+//			self.stop();
+			self.forward(Brick.SLOW);
 		} else if (state == SHOT) {
-			self.stop();
+			self.kick();
+			shotTime = new Date();
 		}
-		movementDate = new Date ();
+		movementDate = new Date();
 	}
 
-	private void getNextWayPoint () {
-		nextWayPoint = PathSearch.getNextWaypoint(0, pitch.ball.getPosition(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
-		targetShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
+	protected Coordinates target() {
+		double x = (pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX()) * 0.3 + pitch.ball.getPosition().getX();
+		double y = (pitch.ball.getPosition().getY() - 0.5) * 0.5 + pitch.ball.getPosition().getY();
+		ballShape.setPosition(x, y);
+		//System.out.println("Target: X = " + x + " Y = " + y);
+		return new Coordinates(x, y);
 	}
-	
+
+	private void getNextWayPoint() {
+		nextWayPoint = PathSearch.getNextWaypoint(0, target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
+		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
+	}
+
 	private void updateState() {
 		switch (state) {
 			case SEARCHING:
-				if (facingBall() && nearBall()) {
+				if (facingBall() && onTarget() && nearBall()) {
 					state = DRIBBLING;
+					dribbleStart = new Date();
 				}
 				break;
 			case DRIBBLING:
+				Date now = new Date();
 				if (!nearBall()) {
 					state = SEARCHING;
-				} else if (new Date().getTime() - shotTime.getTime() < 1000) {
+				} else if (now.getTime() - shotTime.getTime() > 1000 && now.getTime() - dribbleStart.getTime() >= 1500) {
 					state = SHOT;
 				}
 				break;
 			case SHOT:
-				if (new Date().getTime() - shotTime.getTime() >= 1500) {
+				if (new Date().getTime() - shotTime.getTime() >= 1000 ) {
 					state = SEARCHING;
 				}
 				break;
 		}
 	}
-
-	protected boolean facingBall() {
+	
+	protected boolean onTarget (){
+		Line lineToTarget = new Line (self.getPosition(), target());
+		return lineToTarget.getLength() < 0.1;
+	}
+	
+	
+	protected boolean facingTarget() {
 		Coordinates targetPoint;
-		targetPoint = pitch.ball.getPosition();
+		targetPoint = target();
+
 		Line lineToBall = new Line(self.getPosition(), targetPoint);
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 		if (Math.abs(angle) < Math.PI / 10) {
@@ -106,14 +134,18 @@ public class PathSearchAI extends AI {
 			return false;
 		}
 	}
+	
+	protected boolean facingBall() {
+		Coordinates targetPoint;
+		targetPoint = pitch.ball.getPosition();
+		Line lineToBall = new Line(self.getPosition(), targetPoint);
+		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
+		return (Math.abs(angle) < Math.PI / 16);
+	}
 
 	private boolean nearBall() {
 		Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
-		if (state == SEARCHING) {
-			return lineToBall.getLength() < 0.15;
-		} else {
-			return lineToBall.getLength() < 0.3;
-		}
+		return lineToBall.getLength() < 0.3;
 	}
 
 	private boolean facingWayPoint() {
@@ -124,7 +156,7 @@ public class PathSearchAI extends AI {
 
 	private boolean onWayPoint() {
 		Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
-		return lineToWayPoint.getLength() < 0.2;
+		return lineToWayPoint.getLength() < 0.1;
 	}
 
 	@Override
