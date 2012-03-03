@@ -41,7 +41,7 @@ public class Shooter extends AI {
 		this.pitch = pitch;
 		this.self = self;
 		targetShape.setPosition(0, 0);
-		simLine.setPosition(1, 1);
+		simLine.setPosition(0, 0);
 		VisorRenderer.extraDrawables.add(targetShape);
 		VisorRenderer.extraDrawables.add(simLine);
 	}
@@ -134,8 +134,10 @@ public class Shooter extends AI {
 			targetPoint = target();
 		}
 		Line lineToBall = new Line(self.getPosition(), targetPoint);
-//		simLine.setP1(self.getPosition());
-//		simLine.setP2(targetPoint);
+		simLine.setPosition(self.getPosition().getX(), self.getPosition().getY());
+		//simLine.setPosition((self.getPosition().getX()+ targetPoint.getX())/2, (self.getPosition().getY()+ targetPoint.getY())/2);
+		simLine.setP1(self.getPosition());
+		simLine.setP2(targetPoint);
 		
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 //		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());

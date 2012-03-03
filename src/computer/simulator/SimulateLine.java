@@ -24,7 +24,12 @@ public class SimulateLine extends SimulatableObject {
 	protected Shape[] getVisualisation(int width, int height) {
 		Shape [] shapeArray = new Shape[1];
 		Shape circle = new Ellipse2D.Double(-10, -10, 20, 20);
-		Shape shape = new Line2D.Double(p1.getX() * 240/2, p1.getY() * 320/2, p2.getX() * 240/2, p2.getY() * 320/2);
+		double centerX=(Coordinates.distanceFromCentimetres(2))*width/2;
+        double centerY=Coordinates.distanceFromCentimetres(2)*height;
+		
+//		-centerX, -centerY, 2*centerX, 2*centerY
+		//Shape shape = new Line2D.Double(p1.getX() * (-centerX), p1.getY() * (-centerY), p2.getX() * 2*centerX, p2.getY() * 2*centerY);
+		Shape shape = new Line2D.Double(p1.getX() *(centerX), p1.getY() *(centerY), -2*p2.getX()*centerX, -2*p2.getY()*centerY);
 		shapeArray[0] = shape;
 		//shapeArray[1] = circle;
 		return shapeArray;

@@ -101,7 +101,7 @@ public class VisorRenderer extends JPanel{
         g.setColor(Color.BLACK);
         for(SimulatableObject obj : extraDrawables){
             g.setTransform(AffineTransform.getTranslateInstance(obj.position.getX()*RENDER_WIDTH/2, (1.0-obj.position.getY())*RENDER_HEIGHT));
-            for(Shape s : obj.getVisualisation(WIDTH, HEIGHT))
+            for(Shape s : obj.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT))
                 g.draw(s);
         }
 
