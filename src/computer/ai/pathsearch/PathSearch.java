@@ -133,7 +133,7 @@ public class PathSearch {
 		ArrayList<GridCoordinates> newPath = path;
 		for (int i = 0; i < newPath.size() - 1; i++) {
 			// remove points that are too close to each other
-			if (newPath.get(i).distance(newPath.get(i + 1)) < 3) {
+			if (newPath.get(i).distance(newPath.get(i + 1)) < 8) {
 				newPath.remove(i + 1);
 			}
 		}
