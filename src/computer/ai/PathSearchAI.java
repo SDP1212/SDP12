@@ -95,6 +95,9 @@ public class PathSearchAI extends AI {
 	}
 
 	private void getNextWayPoint() {
+		System.out.println("Getting waypoint");
+		System.out.println("Our position: " + self.getPosition());
+		System.out.println("Nemesis position: " + pitch.nemesis.getPosition());
 		nextWayPoint = PathSearch.getNextWaypoint(0, pitch.ball.getPosition(),target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
 		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 	}
