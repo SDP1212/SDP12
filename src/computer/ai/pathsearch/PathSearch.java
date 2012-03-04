@@ -96,7 +96,7 @@ public class PathSearch {
             return waypoints;
 	}
 
-	public static Coordinates getNextWaypoint(int shootingLeft, Coordinates _ballPosition, Coordinates _ourPosition, double _ourAngle, Coordinates _oppPosition) {
+	public static Coordinates getNextWaypoint(int shootingLeft, Coordinates _ballPosition, Coordinates _aimPosition, Coordinates _ourPosition, double _ourAngle, Coordinates _oppPosition) {
 		if (shootingLeft == LEFT)
 			ourSide = RIGHT;
 		else
@@ -108,7 +108,7 @@ public class PathSearch {
 		oppGridPosition = translateCoordinatesToGrid(_oppPosition);
 		ourGridPosition = translateCoordinatesToGrid(_ourPosition);
 		ballGridPosition = translateCoordinatesToGrid(_ballPosition);
-		endCoorPoint = _ballPosition;
+		endCoorPoint = _aimPosition;
 		ourAngle = _ourAngle;
 
 		path = new ArrayList<GridCoordinates>();
@@ -116,7 +116,7 @@ public class PathSearch {
 		invalidGrids = new ArrayList<GridCoordinates>();
 
 		startGridPoint = translateCoordinatesToGrid(_ourPosition);
-		endGridPoint = translateCoordinatesToGrid(_ballPosition);
+		endGridPoint = translateCoordinatesToGrid(_aimPosition);
 
 		validGrids.add(startGridPoint);
 		search(startGridPoint, endGridPoint);
@@ -130,7 +130,7 @@ public class PathSearch {
 	}
 
 	private static ArrayList<GridCoordinates> optimisePath(ArrayList<GridCoordinates> path) {
-		if (path.size()>2) {
+		if (path.size()>3) {
 			ArrayList<GridCoordinates> newPath = new ArrayList<GridCoordinates>();
 				newPath.add(path.get(0));
 				for (int i = 1; i < path.size(); i++) {
@@ -209,7 +209,10 @@ public class PathSearch {
 			// discourage it heavily, to not crash into opponent
 			return 500;
 		}
-
+		
+		if(ballGridPosition.distance(newPoint) < 9){
+			return 500;
+		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x >= ballGridPosition.x)
 				return 65;
