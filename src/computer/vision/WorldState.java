@@ -80,7 +80,23 @@ public class WorldState implements computer.simulator.VisionInterface {
 	 * @param yellowRobotCoordinates the yellowRobotCoordinates to set
 	 */
 	public void setYellowRobotCoordinates(PixelCoordinates yellowRobotCoordinates) {
-		this.yellowRobotCoordinates = yellowRobotCoordinates;
+     //     PixelCoordinates  oldYellowRobotCoordinates = yellowRobotCoordinates;
+//            System.out.print("x value " + oldYellowRobotCoordinates.getX() + " y value " + oldYellowRobotCoordinates.getY());
+            int yellowX =yellowRobotCoordinates.getX(); 
+            int yellowY = yellowRobotCoordinates.getY(); 
+            boolean barrel = yellowRobotCoordinates.isBarrelCorrected();
+            boolean orientation = yellowRobotCoordinates.isOrientationCorrected();
+
+
+
+            double z = 250; 
+
+            yellowX = (int) ((yellowX - 320)* ((z-20)/z)) + 320;
+            yellowY = (int) ((yellowY - 240)* ((z-20)/z)) + 240;
+            yellowRobotCoordinates.set(yellowX, yellowY,barrel, orientation);
+            //System.err.println("(" + yellowRobotCoordinates.getX() + "," + yellowRobotCoordinates.getY()+")");
+
+            this.yellowRobotCoordinates = yellowRobotCoordinates;
 	}
 
 	/**
@@ -118,7 +134,20 @@ public class WorldState implements computer.simulator.VisionInterface {
 	 * @param blueRobotCoordinates the blueRobotCoordinates to set
 	 */
 	public void setBlueRobotCoordinates(PixelCoordinates blueRobotCoordinates) {
-		this.blueRobotCoordinates = blueRobotCoordinates;
+            int blueX =blueRobotCoordinates.getX(); 
+            int blueY = blueRobotCoordinates.getY(); 
+            boolean barrel = blueRobotCoordinates.isBarrelCorrected();
+            boolean orientation = blueRobotCoordinates.isOrientationCorrected();
+
+
+
+            double z = 250; 
+
+            blueX = (int) ((blueX - 320)* ((z-20)/z)) + 320;
+            blueY = (int) ((blueY - 240)* ((z-20)/z)) + 240;
+            blueRobotCoordinates.set(blueX, blueY,barrel, orientation);
+            this.blueRobotCoordinates = blueRobotCoordinates;
+                
 	}
 
 	/**
