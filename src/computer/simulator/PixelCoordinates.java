@@ -67,4 +67,9 @@ public final class PixelCoordinates {
         return orientationCorrected;
     }
     
+    @Override
+    public String toString(){
+        return "("+x+","+y+")";
+    }
+    
 }

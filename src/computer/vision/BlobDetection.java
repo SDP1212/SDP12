@@ -77,16 +77,14 @@ public class BlobDetection {
 //        System.out.println("#Blobs = " + massArray.size() + ".   Mass = " + massArray.get(largestBlob));
 
         ArrayList<PixelCoordinates> out=new ArrayList<PixelCoordinates>();
-        if(largestBlob >= 1)
-            for(PixelCoordinates pixel : points)
-                if(labels[pixel.getX()-xMin][pixel.getY()-yMin] == largestBlob)
-                    out.add(pixel);
+        for(PixelCoordinates pixel : points)
+            if(labels[pixel.getX()-xMin][pixel.getY()-yMin] == largestBlob)
+                out.add(pixel);
         return out;
     }
     
     private static void mark(int x, int y) {
-        try{
-        if (pointMap[x][y] != 1) 
+        if (pointMap[x][y] != 1 || mass.get(currentLabel)>Math.pow(ImageProcessor.rayOfLight, 2)) 
             return;
         pointMap[x][y]=0;
         labels[x][y]=currentLabel;
@@ -107,9 +105,6 @@ public class BlobDetection {
             mark(x,   y+1);
         if(x>0 && y<yRange-1)
             mark(x-1, y+1);
-        }catch (StackOverflowError e){
-            System.err.println("STACK OVERFLOW!!! FIX THRESHOLDS NOW!!!\n");
-        }
     }
     
     public static ArrayList<PixelCoordinates> getBlobOld(ArrayList<PixelCoordinates> points) {

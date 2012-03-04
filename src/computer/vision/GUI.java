@@ -3,7 +3,9 @@ package computer.vision;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Cursor;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import javax.swing.border.BevelBorder;
 
 /**
  * The GUI of the system.
@@ -16,7 +18,10 @@ public class GUI extends javax.swing.JFrame {
 	private static final long serialVersionUID = 1L;
 	public static String className = null;
 	private Viewer viewer;
-	private Integer[] refColorPointer=null;
+    public Color blueRefColor=new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2]);
+    public Color yellowRefColor=new Color(ImageProcessor.yellRef[0],ImageProcessor.yellRef[1],ImageProcessor.yellRef[2]);
+    public Color redRefColor=new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]);
+	private int[] refColorPointer=null;
 
 	/** Creates new form GUI */
 	public GUI() {
@@ -45,10 +50,12 @@ public class GUI extends javax.swing.JFrame {
         bluePanel = new javax.swing.JPanel();
         blueThreshSlider = new javax.swing.JSlider();
         blueRefChanger = new javax.swing.JPanel();
-        bluePanel1 = new javax.swing.JPanel();
+        blueRefThreshSlider = new javax.swing.JSlider();
+        yellowPanel = new javax.swing.JPanel();
         yellowRefChanger = new javax.swing.JPanel();
         yellThreshSlider = new javax.swing.JSlider();
-        bluePanel2 = new javax.swing.JPanel();
+        yellowRefThreshSlider = new javax.swing.JSlider();
+        ballPanel = new javax.swing.JPanel();
         redRefChanger = new javax.swing.JPanel();
         ballSearchSlider = new javax.swing.JSlider();
 
@@ -154,16 +161,17 @@ public class GUI extends javax.swing.JFrame {
 
         bluePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Blue Detection"));
 
-        blueThreshSlider.setMaximum(765);
-        blueThreshSlider.setValue(ImageProcessor.blueThreshold);
+        blueThreshSlider.setMaximum(17500);
+        blueThreshSlider.setToolTipText("Blue Detection Threshold");
+        blueThreshSlider.setValue((int)(ImageProcessor.blueThreshold*100));
         blueThreshSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 blueThreshSliderStateChanged(evt);
             }
         });
 
-        blueRefChanger.setBackground(new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2]));
-        blueRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        blueRefChanger.setBackground(blueRefColor);
+        blueRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         blueRefChanger.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 blueRefChangerMouseClicked(evt);
@@ -181,28 +189,42 @@ public class GUI extends javax.swing.JFrame {
         );
         blueRefChangerLayout.setVerticalGroup(
             blueRefChangerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 34, Short.MAX_VALUE)
         );
+
+        blueRefThreshSlider.setMaximum(2500);
+        blueRefThreshSlider.setToolTipText("Blue Reference Auto-Update Threshold");
+        blueRefThreshSlider.setValue((int)(ImageProcessor.blueRefThresh*100));
+        blueRefThreshSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                blueRefThreshSliderStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout bluePanelLayout = new javax.swing.GroupLayout(bluePanel);
         bluePanel.setLayout(bluePanelLayout);
         bluePanelLayout.setHorizontalGroup(
             bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bluePanelLayout.createSequentialGroup()
+            .addGroup(bluePanelLayout.createSequentialGroup()
                 .addComponent(blueRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(blueThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(blueRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(blueThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
         bluePanelLayout.setVerticalGroup(
             bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(blueThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(blueRefChanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(bluePanelLayout.createSequentialGroup()
+                .addComponent(blueThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(blueRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE))
         );
 
-        bluePanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Yellow Detection"));
+        yellowPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Yellow Detection"));
 
-        yellowRefChanger.setBackground(new Color(ImageProcessor.yellowRef[0],ImageProcessor.yellowRef[1],ImageProcessor.yellowRef[2]));
-        yellowRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        yellowRefChanger.setBackground(yellowRefColor);
+        yellowRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         yellowRefChanger.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 yellowRefChangerMouseClicked(evt);
@@ -220,38 +242,51 @@ public class GUI extends javax.swing.JFrame {
         );
         yellowRefChangerLayout.setVerticalGroup(
             yellowRefChangerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 34, Short.MAX_VALUE)
         );
 
-        yellThreshSlider.setMaximum(765);
-        yellThreshSlider.setValue(ImageProcessor.yellThreshold);
+        yellThreshSlider.setMaximum(17500);
+        yellThreshSlider.setToolTipText("Yellow Detection Threshold");
+        yellThreshSlider.setValue((int)(ImageProcessor.yellThreshold*100));
         yellThreshSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 yellThreshSliderStateChanged(evt);
             }
         });
 
-        javax.swing.GroupLayout bluePanel1Layout = new javax.swing.GroupLayout(bluePanel1);
-        bluePanel1.setLayout(bluePanel1Layout);
-        bluePanel1Layout.setHorizontalGroup(
-            bluePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bluePanel1Layout.createSequentialGroup()
+        yellowRefThreshSlider.setMaximum(2500);
+        yellowRefThreshSlider.setToolTipText("Yellow Reference Auto-Update Threshold");
+        yellowRefThreshSlider.setValue((int)(ImageProcessor.yellRefThresh*100));
+        yellowRefThreshSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                yellowRefThreshSliderStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout yellowPanelLayout = new javax.swing.GroupLayout(yellowPanel);
+        yellowPanel.setLayout(yellowPanelLayout);
+        yellowPanelLayout.setHorizontalGroup(
+            yellowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, yellowPanelLayout.createSequentialGroup()
                 .addComponent(yellowRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(yellThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(yellowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(yellowRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(yellThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
-        bluePanel1Layout.setVerticalGroup(
-            bluePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        yellowPanelLayout.setVerticalGroup(
+            yellowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(yellowRefChanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(bluePanel1Layout.createSequentialGroup()
-                .addComponent(yellThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(yellowPanelLayout.createSequentialGroup()
+                .addComponent(yellThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(yellowRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        bluePanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Ball Detection"));
+        ballPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Ball Detection"));
 
-        redRefChanger.setBackground(new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]));
-        redRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        redRefChanger.setBackground(redRefColor);
+        redRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         redRefChanger.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 redRefChangerMouseClicked(evt);
@@ -272,10 +307,11 @@ public class GUI extends javax.swing.JFrame {
         );
         redRefChangerLayout.setVerticalGroup(
             redRefChangerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 12, Short.MAX_VALUE)
         );
 
         ballSearchSlider.setMaximum(765);
+        ballSearchSlider.setToolTipText("Ball Search Distance - actually defines\nhow far away we look for the ball.");
         ballSearchSlider.setValue(ImageProcessor.searchdistance);
         ballSearchSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -283,22 +319,19 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout bluePanel2Layout = new javax.swing.GroupLayout(bluePanel2);
-        bluePanel2.setLayout(bluePanel2Layout);
-        bluePanel2Layout.setHorizontalGroup(
-            bluePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bluePanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout ballPanelLayout = new javax.swing.GroupLayout(ballPanel);
+        ballPanel.setLayout(ballPanelLayout);
+        ballPanelLayout.setHorizontalGroup(
+            ballPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ballPanelLayout.createSequentialGroup()
                 .addComponent(redRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ballSearchSlider, 0, 0, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(ballSearchSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
         );
-        bluePanel2Layout.setVerticalGroup(
-            bluePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        ballPanelLayout.setVerticalGroup(
+            ballPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(redRefChanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(bluePanel2Layout.createSequentialGroup()
-                .addComponent(ballSearchSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(ballSearchSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -309,24 +342,24 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ballPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(yellowPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(debugSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(labelDebug, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(modeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelDebug, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                    .addComponent(bluePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(modeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                     .addComponent(modeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(sliderSaturation, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(barrelCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(barrelCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 197, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pitchMainRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                        .addComponent(pitchMainRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 99, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pitchSideRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
+                        .addComponent(pitchSideRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE))
                     .addComponent(sliderContrast, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(bluePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bluePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bluePanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                    .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -342,9 +375,9 @@ public class GUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bluePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bluePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(yellowPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bluePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ballPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(modeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -367,7 +400,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(97, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         pack();
@@ -394,11 +427,11 @@ public class GUI extends javax.swing.JFrame {
 	}//GEN-LAST:event_debugSliderStateChanged
 
 	private void blueThreshSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_blueThreshSliderStateChanged
-		ImageProcessor.blueThreshold = blueThreshSlider.getValue();
+		ImageProcessor.blueThreshold = blueThreshSlider.getValue()/100.0;
 	}//GEN-LAST:event_blueThreshSliderStateChanged
 
 	private void yellThreshSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_yellThreshSliderStateChanged
-		ImageProcessor.yellThreshold = yellThreshSlider.getValue();
+		ImageProcessor.yellThreshold = yellThreshSlider.getValue()/100.0;
 	}//GEN-LAST:event_yellThreshSliderStateChanged
 
 	private void ballSearchSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_ballSearchSliderStateChanged
@@ -454,35 +487,71 @@ public class GUI extends javax.swing.JFrame {
 	}//GEN-LAST:event_refChangerMouseExited
 
 	private void blueRefChangerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_blueRefChangerMouseClicked
-		onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		refColorPointer=ImageProcessor.blueRef;
+        if(refColorPointer==null){
+            onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            blueRefChanger.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            refColorPointer=ImageProcessor.blueRef;
+        }
+        else{
+            onScreenImage.setCursor(Cursor.getDefaultCursor());
+            blueRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+            refColorPointer=null;
+        }
 	}//GEN-LAST:event_blueRefChangerMouseClicked
 
 	private void yellowRefChangerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yellowRefChangerMouseClicked
-		onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		refColorPointer=ImageProcessor.yellowRef;
+        if(refColorPointer==null){
+            onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            yellowRefChanger.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            refColorPointer=ImageProcessor.yellRef;
+        }
+        else{
+            onScreenImage.setCursor(Cursor.getDefaultCursor());
+            yellowRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+            refColorPointer=null;
+        }
 	}//GEN-LAST:event_yellowRefChangerMouseClicked
 
 	private void redRefChangerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_redRefChangerMouseClicked
-		onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		refColorPointer=ImageProcessor.redRef;
+        if(refColorPointer==null){
+            onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            redRefChanger.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            refColorPointer=ImageProcessor.redRef;
+        }
+        else{
+            onScreenImage.setCursor(Cursor.getDefaultCursor());
+            redRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+            refColorPointer=null;
+        }
 	}//GEN-LAST:event_redRefChangerMouseClicked
 
 	private void onScreenImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onScreenImageMouseClicked
 		if(refColorPointer==null)
 			return;
-		viewer.setNewReference(refColorPointer, evt.getX(), evt.getY());
-		onScreenImage.setCursor(Cursor.getDefaultCursor());
-		refColorPointer=null;
+        if(evt.getButton()==MouseEvent.BUTTON1)
+            viewer.setNewReference(refColorPointer, evt.getX(), evt.getY());
+        blueRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+        yellowRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+        redRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+        onScreenImage.setCursor(Cursor.getDefaultCursor());
+        refColorPointer=null;
 	}//GEN-LAST:event_onScreenImageMouseClicked
 
+    private void blueRefThreshSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_blueRefThreshSliderStateChanged
+        ImageProcessor.blueRefThresh=blueRefThreshSlider.getValue()/100.0;
+    }//GEN-LAST:event_blueRefThreshSliderStateChanged
+
+    private void yellowRefThreshSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_yellowRefThreshSliderStateChanged
+        ImageProcessor.yellRefThresh=yellowRefThreshSlider.getValue()/100.0;
+    }//GEN-LAST:event_yellowRefThreshSliderStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel ballPanel;
     private javax.swing.JSlider ballSearchSlider;
     private javax.swing.JCheckBox barrelCheckbox;
     private javax.swing.JPanel bluePanel;
-    private javax.swing.JPanel bluePanel1;
-    private javax.swing.JPanel bluePanel2;
     private javax.swing.JPanel blueRefChanger;
+    private javax.swing.JSlider blueRefThreshSlider;
     private javax.swing.JSlider blueThreshSlider;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JSlider debugSlider;
@@ -500,7 +569,9 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JSlider sliderContrast;
     private javax.swing.JSlider sliderSaturation;
     private javax.swing.JSlider yellThreshSlider;
+    private javax.swing.JPanel yellowPanel;
     private javax.swing.JPanel yellowRefChanger;
+    private javax.swing.JSlider yellowRefThreshSlider;
     // End of variables declaration//GEN-END:variables
 
 	public void setImage(BufferedImage image) {
@@ -509,13 +580,10 @@ public class GUI extends javax.swing.JFrame {
 					image.getWidth(), image.getHeight(), null);
 	}
 
-	public void setRefChanger(Integer[] reference){
-		if(reference==ImageProcessor.blueRef)
-			blueRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
-		else if(reference==ImageProcessor.yellowRef)
-			yellowRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
-		else if(reference==ImageProcessor.redRef)
-			redRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
+	public void setRefChangers(){
+			blueRefChanger.setBackground(blueRefColor);
+			yellowRefChanger.setBackground(yellowRefColor);
+			redRefChanger.setBackground(redRefColor);
 	}
 
 	public javax.swing.JLabel getImage() {

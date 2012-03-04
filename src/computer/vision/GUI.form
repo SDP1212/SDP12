@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -35,25 +35,25 @@
               <Component id="onScreenImage" min="-2" pref="640" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="ballPanel" alignment="1" max="32767" attributes="0"/>
+                  <Component id="yellowPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="debugSlider" alignment="0" pref="0" max="32767" attributes="1"/>
-                  <Component id="labelDebug" alignment="1" max="32767" attributes="0"/>
-                  <Component id="modeLabel" alignment="1" max="32767" attributes="0"/>
+                  <Component id="labelDebug" alignment="1" pref="197" max="32767" attributes="0"/>
+                  <Component id="bluePanel" alignment="0" max="32767" attributes="0"/>
+                  <Component id="modeLabel" alignment="1" pref="197" max="32767" attributes="0"/>
                   <Component id="modeSlider" alignment="1" pref="0" max="32767" attributes="0"/>
                   <Component id="sliderSaturation" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="barrelCheckbox" alignment="0" max="32767" attributes="0"/>
+                  <Component id="barrelCheckbox" alignment="0" pref="197" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="pitchMainRadio" pref="96" max="32767" attributes="0"/>
+                      <Component id="pitchMainRadio" pref="99" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="pitchSideRadio" pref="95" max="32767" attributes="0"/>
+                      <Component id="pitchSideRadio" pref="98" max="32767" attributes="0"/>
                   </Group>
                   <Component id="sliderContrast" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jLabel2" max="32767" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
-                  <Component id="sliderBrightness" pref="0" max="32767" attributes="0"/>
-                  <Component id="bluePanel" alignment="0" max="32767" attributes="0"/>
-                  <Component id="bluePanel1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="bluePanel2" alignment="1" max="32767" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" pref="197" max="32767" attributes="0"/>
+                  <Component id="jLabel2" alignment="0" pref="197" max="32767" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" pref="197" max="32767" attributes="0"/>
+                  <Component id="sliderBrightness" alignment="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -72,9 +72,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="bluePanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="bluePanel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="yellowPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="bluePanel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="ballPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="modeLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -100,7 +100,7 @@
                       <Component id="sliderBrightness" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="97" max="32767" attributes="0"/>
+              <EmptySpace pref="81" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -249,26 +249,34 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <Component id="blueRefChanger" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="blueThreshSlider" pref="0" max="32767" attributes="1"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="blueRefThreshSlider" pref="155" max="32767" attributes="2"/>
+                      <Component id="blueThreshSlider" alignment="0" pref="0" max="32767" attributes="2"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="blueThreshSlider" max="32767" attributes="0"/>
               <Component id="blueRefChanger" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="blueThreshSlider" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="blueRefThreshSlider" pref="16" max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JSlider" name="blueThreshSlider">
           <Properties>
-            <Property name="maximum" type="int" value="765"/>
+            <Property name="maximum" type="int" value="17500"/>
+            <Property name="toolTipText" type="java.lang.String" value="Blue Detection Threshold"/>
             <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="ImageProcessor.blueThreshold" type="code"/>
+              <Connection code="(int)(ImageProcessor.blueThreshold*100)" type="code"/>
             </Property>
           </Properties>
           <Events>
@@ -278,7 +286,7 @@
         <Container class="javax.swing.JPanel" name="blueRefChanger">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2])" type="code"/>
+              <Connection code="blueRefColor" type="code"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -299,14 +307,26 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
         </Container>
+        <Component class="javax.swing.JSlider" name="blueRefThreshSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="2500"/>
+            <Property name="toolTipText" type="java.lang.String" value="Blue Reference Auto-Update Threshold"/>
+            <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="(int)(ImageProcessor.blueRefThresh*100)" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="blueRefThreshSliderStateChanged"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="bluePanel1">
+    <Container class="javax.swing.JPanel" name="yellowPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -324,8 +344,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Component id="yellowRefChanger" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="yellThreshSlider" pref="0" max="32767" attributes="1"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="yellowRefThreshSlider" pref="155" max="32767" attributes="2"/>
+                      <Component id="yellThreshSlider" alignment="0" pref="0" max="32767" attributes="2"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -333,8 +356,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="yellowRefChanger" max="32767" attributes="0"/>
               <Group type="102" attributes="0">
-                  <Component id="yellThreshSlider" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="yellThreshSlider" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="yellowRefThreshSlider" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -343,7 +367,7 @@
         <Container class="javax.swing.JPanel" name="yellowRefChanger">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new Color(ImageProcessor.yellowRef[0],ImageProcessor.yellowRef[1],ImageProcessor.yellowRef[2])" type="code"/>
+              <Connection code="yellowRefColor" type="code"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -364,25 +388,38 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
         </Container>
         <Component class="javax.swing.JSlider" name="yellThreshSlider">
           <Properties>
-            <Property name="maximum" type="int" value="765"/>
+            <Property name="maximum" type="int" value="17500"/>
+            <Property name="toolTipText" type="java.lang.String" value="Yellow Detection Threshold"/>
             <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="ImageProcessor.yellThreshold" type="code"/>
+              <Connection code="(int)(ImageProcessor.yellThreshold*100)" type="code"/>
             </Property>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="yellThreshSliderStateChanged"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JSlider" name="yellowRefThreshSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="2500"/>
+            <Property name="toolTipText" type="java.lang.String" value="Yellow Reference Auto-Update Threshold"/>
+            <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="(int)(ImageProcessor.yellRefThresh*100)" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="yellowRefThreshSliderStateChanged"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="bluePanel2">
+    <Container class="javax.swing.JPanel" name="ballPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -398,21 +435,17 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <Component id="redRefChanger" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ballSearchSlider" min="0" pref="0" max="32767" attributes="1"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="ballSearchSlider" pref="155" max="32767" attributes="2"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="redRefChanger" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
-                  <Component id="ballSearchSlider" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-              </Group>
+              <Component id="ballSearchSlider" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -420,7 +453,7 @@
         <Container class="javax.swing.JPanel" name="redRefChanger">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2])" type="code"/>
+              <Connection code="redRefColor" type="code"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -442,7 +475,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -450,6 +483,7 @@
         <Component class="javax.swing.JSlider" name="ballSearchSlider">
           <Properties>
             <Property name="maximum" type="int" value="765"/>
+            <Property name="toolTipText" type="java.lang.String" value="Ball Search Distance - actually defines&#xa;how far away we look for the ball."/>
             <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="ImageProcessor.searchdistance" type="code"/>
             </Property>

@@ -3,6 +3,7 @@ package computer.vision;
 import au.edu.jcu.v4l4j.V4L4JConstants;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
@@ -20,7 +21,7 @@ public class Viewer extends Vision implements Runnable {
 	int imgwidth;
 	int imgheight;
 	public static ImageProcessor imageProcessor;
-	private Integer[] refColorPointer=null;
+	private int[] refColorPointer=null;
 	private Point refNewPixel=null;
 	private static WorldState worldState;
 
@@ -62,11 +63,11 @@ public class Viewer extends Vision implements Runnable {
 	private void calculateFPS() {
 		int forwsec = (int) System.currentTimeMillis() / 1000;
 		if (prevsec != forwsec) {
-//			if (framesThisSecond > 24)
-//				System.out.println("FPS:" + framesThisSecond
-//						+ "!!! WOOHOO im super fast!");
-//			else
-//				System.out.println("FPS:" + framesThisSecond);
+			if (framesThisSecond > 24)
+				System.out.println("FPS:" + framesThisSecond
+						+ "!!! WOOHOO im super fast!");
+			else
+				System.out.println("FPS:" + framesThisSecond);
 			framesThisSecond = 0;
 			prevsec = Integer.valueOf(forwsec);
 		} else {
@@ -100,21 +101,36 @@ public class Viewer extends Vision implements Runnable {
 				try {
 					BufferedImage image=frame.getBufferedImage();
 					if(refColorPointer!=null && refNewPixel!=null){
-//						int[] sample=new int[9];
-//                        image.getRGB(refNewPixel.x-1, refNewPixel.y-1, 3, 3, sample, 0, 1);
-						int newRef=image.getRGB(refNewPixel.x, refNewPixel.y);
-//						for(int s : sample)
-//							newRef+=s;
-//						newRef/=9;
-						refColorPointer[0]=(newRef>>>16)&0xFF;
-						refColorPointer[1]=(newRef>>>8)&0xFF;
-						refColorPointer[2]=newRef&0xFF;
-						gui.setRefChanger(refColorPointer);
+						/*int[] samples=new int[9];
+                        image.getRGB(refNewPixel.x-1, refNewPixel.y-1, 3, 3, samples, 0, 1);
+						int[] sample=new int[]{0,0,0};*/
+                        int sample=image.getRGB(refNewPixel.x, refNewPixel.y);
+						/*for(int s : samples){
+							sample[0]+=(s>>>16)&0xFF;
+                            sample[1]+=(s>>>8)&0xFF;
+                            sample[2]+=s&0xFF;
+                        }
+						for(int i=0;i<sample.length;i++)
+                            sample[i]/=samples.length;
+						refColorPointer[0]=sample[0];
+						refColorPointer[1]=sample[1];
+						refColorPointer[2]=sample[2];*/
+                        refColorPointer[0]=(sample>>>16)&0xFF;
+						refColorPointer[1]=(sample>>>8)&0xFF;
+						refColorPointer[2]=sample&0xFF;
+                        if(refColorPointer==ImageProcessor.blueRef)
+                            ImageProcessor.btPos=refNewPixel;
+                        if(refColorPointer==ImageProcessor.yellRef)
+                            ImageProcessor.ytPos=refNewPixel;
 						refColorPointer=null;
 						refNewPixel=null;
 					}
 					BufferedImage iq = imageProcessor.process(frame
 							.getBufferedImage());
+                    gui.blueRefColor=new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2]);
+                    gui.yellowRefColor=new Color(ImageProcessor.yellRef[0],ImageProcessor.yellRef[1],ImageProcessor.yellRef[2]);
+                    gui.redRefColor=new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]);
+                    gui.setRefChangers();
 					gui.setImage(iq);
 					ImageProcessor.displX = gui.getLocationOnScreen().x;
 					ImageProcessor.displY = gui.getLocationOnScreen().y - 25;
@@ -178,7 +194,7 @@ public class Viewer extends Vision implements Runnable {
 		return new Viewer(dev, w, h, std, channel, qty);
 	}
 	
-	public void setNewReference(Integer[] reference, int x, int y){
+	public void setNewReference(int[] reference, int x, int y){
 		this.refColorPointer=reference;
 		this.refNewPixel=new Point(x, y);
 	}

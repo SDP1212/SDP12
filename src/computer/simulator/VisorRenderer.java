@@ -26,7 +26,7 @@ public class VisorRenderer extends JPanel{
     private JFrame frame;
     
     public VisorRenderer(Pitch pitch){
-
+        this.dimension=new Dimension(RENDER_WIDTH, RENDER_HEIGHT);
         this.pitch=pitch;
         this.robotinho=pitch.robotinho.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);
         this.nemesis=pitch.nemesis.getVisualisation(RENDER_WIDTH, RENDER_HEIGHT);

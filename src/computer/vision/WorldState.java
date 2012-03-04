@@ -21,16 +21,14 @@ public class WorldState implements computer.simulator.VisionInterface {
 	 * @return the pitchCornerCoordinates
 	 */
 	public PixelCoordinates[] getPitchCornerCoordinates() {
-		PitchConstants pitchConstants = new PitchConstants(0);
         
-        int leftBuffer = pitchConstants.leftBuffer;
-        int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = 640-pitchConstants.rightBuffer;
-        int bottomBuffer = 480-pitchConstants.bottomBuffer;
+        int leftBuffer = ImageProcessor.xlowerlimit;
+        int topBuffer = ImageProcessor.ylowerlimit;
+        int rightBuffer = ImageProcessor.xupperlimit;
+        int bottomBuffer = ImageProcessor.yupperlimit;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false;
-        System.out.println("DEBUG: Corners: "+leftBuffer+", "+rightBuffer+", "+topBuffer+", "+bottomBuffer);
 
         PixelCoordinates topLeftCorner = new PixelCoordinates(leftBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected);
         PixelCoordinates topRightCorner = new PixelCoordinates(rightBuffer,topBuffer,isThereBarrelCorrection,isOrientationCorrected); 
@@ -45,6 +43,7 @@ public class WorldState implements computer.simulator.VisionInterface {
         results[2] = bottomRightCorner;
         results[3] = bottomLeftCorner;
         
+        System.out.println("DEBUG: Corners: "+results[0]+", "+results[1]+", "+results[2]+", "+results[3]);
         return results;
 //        PixelCoordinates[] results; 
 //        
@@ -146,12 +145,10 @@ public class WorldState implements computer.simulator.VisionInterface {
 	public PixelCoordinates[] getLeftGoalCoordinates() {
 		// First element is top coordinate, second is bottom.
         
-        PitchConstants pitchConstants = new PitchConstants(1);
-        
-        int leftBuffer = pitchConstants.leftBuffer;
-        int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = 640-pitchConstants.rightBuffer;
-        int bottomBuffer = 480-pitchConstants.bottomBuffer;
+        int leftBuffer = ImageProcessor.xlowerlimit;
+        int topBuffer = ImageProcessor.ylowerlimit;
+        int rightBuffer = ImageProcessor.xupperlimit;
+        int bottomBuffer = ImageProcessor.yupperlimit;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
@@ -188,12 +185,10 @@ public class WorldState implements computer.simulator.VisionInterface {
 	public PixelCoordinates[] getRightGoalCoordinates() {
 		// First element is top coordinate, second is bottom.
         
-        PitchConstants pitchConstants = new PitchConstants(1);
-        
-        int leftBuffer = pitchConstants.leftBuffer;
-        int topBuffer = pitchConstants.topBuffer;
-        int rightBuffer = 640-pitchConstants.rightBuffer;
-        int bottomBuffer = 480-pitchConstants.bottomBuffer;
+        int leftBuffer = ImageProcessor.xlowerlimit;
+        int topBuffer = ImageProcessor.ylowerlimit;
+        int rightBuffer = ImageProcessor.xupperlimit;
+        int bottomBuffer = ImageProcessor.yupperlimit;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.

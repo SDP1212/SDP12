@@ -11,10 +11,8 @@
 
 package computer.vision;
 
-import computer.ApplicationController;
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;
-import computer.simulator.Robot;
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -30,7 +28,7 @@ import java.util.LinkedList;
 
 public class ImageProcessor {
 
-	public static int DEBUG_LEVEL = 0;
+	public static int DEBUG_LEVEL = 1;
 
 	// ---Mouse mode constants.
 	public static int displX = 0;
@@ -43,9 +41,9 @@ public class ImageProcessor {
 	public static int BLUE = 2;
 
 	// ---Reference Colours
-	public static Integer[] redRef = new Integer[] {255,0,0};
-	public static Integer[] yellowRef = new Integer[] {255,255,0};
-	public static Integer[] blueRef = new Integer[] {0,0,255};
+	public static int[] redRef = new int[] {255,0,0};
+	public static int[] yellRef = new int[] {255,255,0};
+	public static int[] blueRef = new int[] {0,0,255};
 
 	protected static int height = 480;
 	protected static int width = 640;
@@ -64,18 +62,19 @@ public class ImageProcessor {
 	public static int ylowerlimit = 85;
 	public static int yupperlimit = 410;
 
-	protected static int blueThreshold = 350;
-	protected static int yellThreshold = 150;
+	protected static double blueThreshold=87.5;
+    protected static double blueRefThresh=12.5;
+	protected static double yellThreshold=87.5;
+    protected static double yellRefThresh=12.5;
 
 	protected static int searchdistance = 200;
 	public static int rayOfLight = 35;
 
-	Point lastBallPos = new Point(-1, -1);
+	Point lastBallPos = new Point(-1,-1);
 
 	// this will store ball coordinates
-	Point btPos = new Point(-1, -1);
-	Point ytPos = new Point(-1, -1);
-	Point ourPos = new Point(-1, -1);
+	public static Point btPos = new Point(-1,-1);
+	public static Point ytPos = new Point(-1,-1);
 
 	LinkedList<Point> lines = new LinkedList<Point>();
 	LinkedList<Integer> lineColor = new LinkedList<Integer>();
@@ -98,11 +97,8 @@ public class ImageProcessor {
 	 */
 	public BufferedImage process(BufferedImage image) {
 
-		if (ApplicationController.getAppController().getOurColour() == Robot.BLUE_PLATE)
-			ourPos = btPos;
-		else
-			ourPos = ytPos;
-//		 create raster from given image
+//        System.err.print(blueThreshold+"\n"+blueRefThresh+"\n"+yellThreshold+"\n"+yellRefThresh+"\n");
+        //		 create raster from given image
 		Raster data;
 		try {
 			data = image.getData();
@@ -120,7 +116,7 @@ public class ImageProcessor {
 		WritableRaster wraster = data.createCompatibleWritableRaster();
 
 		// this will be used to find red pixel (one!)
-		int closestRedFound = 255 * 3;
+		double closestRedFound = Double.POSITIVE_INFINITY;
 
 		// this will be used to find blue robot centroid
 		int btCentroidCount = 0;
@@ -135,15 +131,28 @@ public class ImageProcessor {
         ArrayList<PixelCoordinates> blueBlob=new ArrayList<PixelCoordinates>();
 //        ArrayList<PixelCoordinates> redBlob=new ArrayList<PixelCoordinates>();
         
-        for (int x = xlowerlimit; x < xupperlimit; x++) { // for every
-			for (int y = ylowerlimit; y < yupperlimit; y++) {
+        for(int x=Math.max(btPos.x-rayOfLight,xlowerlimit);x<Math.min(btPos.x+rayOfLight,xupperlimit);x++)
+            for(int y=Math.max(btPos.y-rayOfLight,ylowerlimit);y<Math.min(btPos.y+rayOfLight,yupperlimit);y++){
                 int[] pixelColour = new int[3];
-				data.getPixel(x, y, pixelColour);
-                if(isBlue(pixelColour))blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
-                if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                data.getPixel(x, y, pixelColour);
+                if(isBlue(pixelColour)){
+                    blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                    if (DEBUG_LEVEL > 1)
+                        drawPixel(wraster,convertToBarrelCorrected(new Point(x, y)),new int[] {0,0,127});
+                }
+            }
+
+        for(int x=Math.max(ytPos.x-rayOfLight,xlowerlimit);x<Math.min(ytPos.x+rayOfLight,xupperlimit);x++)
+            for(int y=Math.max(ytPos.y-rayOfLight,ylowerlimit);y<Math.min(ytPos.y+rayOfLight,yupperlimit);y++){
+                int[] pixelColour = new int[3];
+                data.getPixel(x, y, pixelColour);
+                if(isYellow(pixelColour)){
+                    yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                    if (DEBUG_LEVEL > 1)
+                        drawPixel(wraster,convertToBarrelCorrected(new Point(x, y)),new int[] {127,127,0});
+                }
 //                else if(isRed(pixelColour))redBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
             }
-        }
         
         yellowBlob=BlobDetection.getBlob(yellowBlob);
         blueBlob=BlobDetection.getBlob(blueBlob);
@@ -180,7 +189,7 @@ public class ImageProcessor {
 				data.getPixel(i, j, pixelColour);
 
 				// finds how red is a pixel
-				int ballDifference = getColourDifference(redRef, intArrayConvert(pixelColour));
+				double ballDifference = getColourDifference(redRef, pixelColour);
 
 				// barrel distortion
 				Point out = convertToBarrelCorrected(new Point(i, j));
@@ -221,7 +230,7 @@ public class ImageProcessor {
 		if (ytCentroidCount > 5) {
 			ytPos = new Point(ytCentroid.x / ytCentroidCount, ytCentroid.y
 					/ ytCentroidCount);
-			int ytAngle = findAngle(data, wraster, ytPos, yellowRef);
+			int ytAngle = findAngle(data, wraster, ytPos, yellRef);
 			if (ytPos.x >= 0 && ytPos.y >=0) {
 				Viewer.getWorldState().setYellowRobotCoordinates(new PixelCoordinates(ytPos.x, ytPos.y, useBarrelDistortion, false));
 			}
@@ -256,6 +265,28 @@ public class ImageProcessor {
 					//
 				}
 			}
+        
+        if(DEBUG_LEVEL>0){
+            drawCross(wraster, btPos, blueRef);
+            drawCross(wraster, ytPos, yellRef);
+        }
+        
+        if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
+            int[] temp=new int[3];
+            data.getPixel(btPos.x,btPos.y,temp);
+            if(isRef(temp,blueRef,blueRefThresh)){
+                blueRef[0]=temp[0];
+                blueRef[1]=temp[1];
+                blueRef[2]=temp[2];
+            }
+            temp=new int[3];
+            data.getPixel(ytPos.x,ytPos.y,yellRef);
+            if(isRef(temp,yellRef,yellRefThresh)){
+                yellRef[0]=temp[0];
+                yellRef[1]=temp[1];
+                yellRef[2]=temp[2];
+            }
+        }
 
 		BufferedImage img = new BufferedImage(cm, wraster, false, null);
 		return img;
@@ -310,7 +341,7 @@ public class ImageProcessor {
 	 * @return angle in degrees
 	 */
 	private int findAngle(Raster image, WritableRaster raster, Point p1,
-			Integer[] colour) {
+			int[] colour) {
 		// x and y values of the centre of the robot
 		int x = p1.x;
 		int y = p1.y;
@@ -396,7 +427,7 @@ public class ImageProcessor {
 		if (Arrays.equals(colour, blueRef) && method == 1) {
 			blueAngles = Tools.push(blueAngles, bestangle);
 			bestangle = Tools.goodAvg(blueAngles);
-		} else if (Arrays.equals(colour, yellowRef) && method == 1) {
+		} else if (Arrays.equals(colour, yellRef) && method == 1) {
 			yellAngles = Tools.push(yellAngles, bestangle);
 			bestangle = Tools.goodAvg(yellAngles);
 		} else if (Arrays.equals(colour, blueRef) && method == 2) {
@@ -408,7 +439,7 @@ public class ImageProcessor {
 			} else {
 				bestangle = lastBluePos;
 			}
-		} else if (Arrays.equals(colour, yellowRef) && method == 2) {
+		} else if (Arrays.equals(colour, yellRef) && method == 2) {
 			if (lastYellPos == -1) {
 				lastYellPos = bestangle;
 			} else if (lastYellPos + ignoreStep < bestangle
@@ -419,7 +450,7 @@ public class ImageProcessor {
 			}
 		}
 		if (DEBUG_LEVEL > 3) {
-			if (Arrays.equals(colour, yellowRef)) {
+			if (Arrays.equals(colour, yellRef)) {
 				GUI.setDebugOutputYell("Yell robot at x:" + x + ", y:" + y
 						+ " Angle:" + bestangle);
 				// System.out.println("Yellow robot at "+x+":"+y+" Angle:"+bestangle);
@@ -527,14 +558,16 @@ public class ImageProcessor {
 	}
 
 	boolean isYellow(int[] colour) {
-		int ytDifference = getColourDifference(yellowRef, intArrayConvert(colour));
-		return (ytDifference < yellThreshold && colour[RED] > 150 && colour[GREEN] > 170);
+		return (getColourDifference(yellRef, colour)<yellThreshold);
 	}
 
 	boolean isBlue(int[] colour) {
-		int btDifference = getColourDifference(blueRef, intArrayConvert(colour));
-		return (btDifference < blueThreshold && colour[BLUE] > 130);
+		return (getColourDifference(blueRef, colour)<blueThreshold);
 	}
+    
+    boolean isRef(int[] c1, int[] c2, double thresh){
+        return (getColourDifference(c1, c2)<thresh);
+    }
 
 	/**
 	 * Barrel Distortion Correction 'straightens' the distorted image.
@@ -590,14 +623,15 @@ public class ImageProcessor {
 	/**
 	 * Calculate difference between two colours
 	 * 
-	 * @param colour1
-	 * @param colour2
-	 * @return absolute difference
+	 * @param c1
+	 * @param c2
+	 * @return distance
 	 */
-	public int getColourDifference(Integer[] colour1, Integer[] colour2) {
-		return Math.abs(colour1[RED] - colour2[RED])
-				+ Math.abs(colour1[GREEN] - colour2[GREEN])
-				+ Math.abs(colour1[BLUE] - colour2[BLUE]);
+	public double getColourDifference(int[] c1, int[] c2) {
+		return Math.sqrt(
+                Math.pow(c1[RED]-c2[RED],2)+
+                Math.pow(c1[GREEN]-c2[GREEN],2)+
+                Math.pow(c1[BLUE]-c2[BLUE],2));
 	}
 
 	/**
@@ -688,13 +722,6 @@ public class ImageProcessor {
 		drawPixel(raster, new Point(p.x - 1, p.y), colour);
 		drawPixel(raster, new Point(p.x, p.y + 1), colour);
 		drawPixel(raster, new Point(p.x, p.y - 1), colour);
-	}
-
-	private Integer[] intArrayConvert(int[] a){
-		Integer[] out=new Integer[a.length];
-		for(int i=0;i<out.length;i++)
-			out[i]=a[i];
-		return out;
 	}
 	
 	public ImageProcessor() {	}
