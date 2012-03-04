@@ -135,8 +135,8 @@ public class PathSearch {
 				newPath.add(path.get(0));
 				for (int i = 1; i < path.size(); i++) {
 
-					if ((oppGridPosition.distance(path.get(i)) > 8 && newPath.get(newPath.size() - 1).distance(path.get(i)) > 8) ||
-						newPath.get(newPath.size() - 1).distance(path.get(i)) > 4) {
+					if (//(oppGridPosition.distance(path.get(i)) > 8 && newPath.get(newPath.size() - 1).distance(path.get(i)) > 8) ||
+						newPath.get(newPath.size() - 1).distance(path.get(i)) > 5) {
 						newPath.add(path.get(i));
 					}
 				}
@@ -211,7 +211,7 @@ public class PathSearch {
 			return 500;
 		}
 		
-		if(ballGridPosition.distance(newPoint) < 9){
+		if(ballGridPosition.distance(newPoint) < 7){
 			return 500;
 		}
 		if (ourSide == LEFT) {
