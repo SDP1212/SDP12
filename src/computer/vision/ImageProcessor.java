@@ -140,7 +140,7 @@ public class ImageProcessor {
                 int[] pixelColour = new int[3];
 				data.getPixel(x, y, pixelColour);
                 if(isBlue(pixelColour))blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
-                else if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
 //                else if(isRed(pixelColour))redBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
             }
         }

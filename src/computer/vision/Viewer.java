@@ -100,11 +100,12 @@ public class Viewer extends Vision implements Runnable {
 				try {
 					BufferedImage image=frame.getBufferedImage();
 					if(refColorPointer!=null && refNewPixel!=null){
-						int[] sample=image.getRGB(refNewPixel.x-1, refNewPixel.y-1, 3, 3, null, 0, 1);
-						int newRef=0;
-						for(int s : sample)
-							newRef+=s;
-						newRef/=9;
+//						int[] sample=new int[9];
+//                        image.getRGB(refNewPixel.x-1, refNewPixel.y-1, 3, 3, sample, 0, 1);
+						int newRef=image.getRGB(refNewPixel.x, refNewPixel.y);
+//						for(int s : sample)
+//							newRef+=s;
+//						newRef/=9;
 						refColorPointer[0]=(newRef>>>16)&0xFF;
 						refColorPointer[1]=(newRef>>>8)&0xFF;
 						refColorPointer[2]=newRef&0xFF;
