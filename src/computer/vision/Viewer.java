@@ -1,11 +1,10 @@
 package computer.vision;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-
 import au.edu.jcu.v4l4j.V4L4JConstants;
 import au.edu.jcu.v4l4j.VideoFrame;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 
 public class Viewer extends Vision implements Runnable {
@@ -21,6 +20,8 @@ public class Viewer extends Vision implements Runnable {
 	int imgwidth;
 	int imgheight;
 	public static ImageProcessor imageProcessor;
+	private Integer[] refColorPointer=null;
+	private Point refNewPixel=null;
 	private static WorldState worldState;
 
 	/**
@@ -77,6 +78,7 @@ public class Viewer extends Vision implements Runnable {
 	 * Implements the capture thread: get a frame from the FrameGrabber, and
 	 * display it
 	 */
+	@Override
 	public void run() {
 
 		prevsec = (int) System.currentTimeMillis() / 1000;
@@ -96,6 +98,21 @@ public class Viewer extends Vision implements Runnable {
 			while (!stopCapturingVideo) {
 				frame = frameGrabber.getVideoFrame();
 				try {
+					BufferedImage image=frame.getBufferedImage();
+					if(refColorPointer!=null && refNewPixel!=null){
+//						int[] sample=new int[9];
+//                        image.getRGB(refNewPixel.x-1, refNewPixel.y-1, 3, 3, sample, 0, 1);
+						int newRef=image.getRGB(refNewPixel.x, refNewPixel.y);
+//						for(int s : sample)
+//							newRef+=s;
+//						newRef/=9;
+						refColorPointer[0]=(newRef>>>16)&0xFF;
+						refColorPointer[1]=(newRef>>>8)&0xFF;
+						refColorPointer[2]=newRef&0xFF;
+						gui.setRefChanger(refColorPointer);
+						refColorPointer=null;
+						refNewPixel=null;
+					}
 					BufferedImage iq = imageProcessor.process(frame
 							.getBufferedImage());
 					gui.setImage(iq);
@@ -161,6 +178,11 @@ public class Viewer extends Vision implements Runnable {
 		return new Viewer(dev, w, h, std, channel, qty);
 	}
 	
+	public void setNewReference(Integer[] reference, int x, int y){
+		this.refColorPointer=reference;
+		this.refNewPixel=new Point(x, y);
+	}
+
 	public static WorldState getWorldState() {
 		return worldState;
 	}

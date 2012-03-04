@@ -20,13 +20,9 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 //import Planning.Main2;
@@ -46,10 +42,10 @@ public class ImageProcessor {
 	public static int GREEN = 1;
 	public static int BLUE = 2;
 
-	// ---Perfect Colours
-	private int[] red = new int[] { 255, 0, 0 };
-	private int[] yell = new int[] { 255, 255, 0 };
-	private int[] blue = new int[] { 0, 0, 255 };
+	// ---Reference Colours
+	public static Integer[] redRef = new Integer[] {255,0,0};
+	public static Integer[] yellowRef = new Integer[] {255,255,0};
+	public static Integer[] blueRef = new Integer[] {0,0,255};
 
 	protected static int height = 480;
 	protected static int width = 640;
@@ -107,7 +103,7 @@ public class ImageProcessor {
 		else
 			ourPos = ytPos;
 //		 create raster from given image
-		Raster data = null;
+		Raster data;
 		try {
 			data = image.getData();
 		} catch (NullPointerException e) {
@@ -144,7 +140,7 @@ public class ImageProcessor {
                 int[] pixelColour = new int[3];
 				data.getPixel(x, y, pixelColour);
                 if(isBlue(pixelColour))blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
-                else if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
+                if(isYellow(pixelColour))yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
 //                else if(isRed(pixelColour))redBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
             }
         }
@@ -158,7 +154,7 @@ public class ImageProcessor {
             // barrel distortion
             Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
             if (DEBUG_LEVEL > 1)
-                drawPixel(wraster, out, blue);
+                drawPixel(wraster, out, new int[] {0,0,255});
             btCentroidCount++;
             btCentroid.x += out.x;
             btCentroid.y += out.y;
@@ -168,7 +164,7 @@ public class ImageProcessor {
         for(PixelCoordinates pixel : yellowBlob){
             Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
             if (DEBUG_LEVEL > 1)
-                drawPixel(wraster, out, yell);
+                drawPixel(wraster, out, new int[] {255,255,0});
             ytCentroidCount++;
             ytCentroid.x += out.x;
             ytCentroid.y += out.y;
@@ -184,7 +180,7 @@ public class ImageProcessor {
 				data.getPixel(i, j, pixelColour);
 
 				// finds how red is a pixel
-				int ballDifference = getColourDifference(red, pixelColour);
+				int ballDifference = getColourDifference(redRef, intArrayConvert(pixelColour));
 
 				// barrel distortion
 				Point out = convertToBarrelCorrected(new Point(i, j));
@@ -214,7 +210,7 @@ public class ImageProcessor {
 		if (btCentroidCount > 5) {
 			btPos = new Point(btCentroid.x / btCentroidCount, btCentroid.y
 					/ btCentroidCount);
-			int btAngle = findAngle(data, wraster, btPos, blue);
+			int btAngle = findAngle(data, wraster, btPos, blueRef);
 //			System.out.println("Blue: (" + btPos.x + ", " + btPos.y +")");
 			if (btPos.x >= 0 && btPos.y >=0) {
 				Viewer.getWorldState().setBlueRobotCoordinates(new PixelCoordinates(btPos.x, btPos.y, useBarrelDistortion, false));
@@ -225,7 +221,7 @@ public class ImageProcessor {
 		if (ytCentroidCount > 5) {
 			ytPos = new Point(ytCentroid.x / ytCentroidCount, ytCentroid.y
 					/ ytCentroidCount);
-			int ytAngle = findAngle(data, wraster, ytPos, yell);
+			int ytAngle = findAngle(data, wraster, ytPos, yellowRef);
 			if (ytPos.x >= 0 && ytPos.y >=0) {
 				Viewer.getWorldState().setYellowRobotCoordinates(new PixelCoordinates(ytPos.x, ytPos.y, useBarrelDistortion, false));
 			}
@@ -234,7 +230,7 @@ public class ImageProcessor {
 		if (useMouse) {
 			Point mouse = MouseInfo.getPointerInfo().getLocation();
 			ballPos = new Point(mouse.x - 5 - displX, mouse.y - 50 - displY);
-			drawCross(wraster, ballPos, red);
+			drawCross(wraster, ballPos, new int[] {255,0,0});
 		} else {
 			findBall(wraster, ballPos);
 		}
@@ -286,14 +282,14 @@ public class ImageProcessor {
 				ballPos = lastBallPos;
 			}
 			if (DEBUG_LEVEL > 0)
-				drawCross(raster, ballPos, red);
+				drawCross(raster, ballPos, new int[] {255,0,0});
 		} else {
 			// if we can't see the ball
 			if (lastBallPos.x != -1) {
 				// try last values
 				ballPos = lastBallPos;
 				if (DEBUG_LEVEL > 0)
-					drawCross(raster, ballPos, red);
+					drawCross(raster, ballPos, new int[] {255,0,0});
 			}
 			// and if we can't see the ball AND there are no previous values, do
 			// nothing.
@@ -314,7 +310,7 @@ public class ImageProcessor {
 	 * @return angle in degrees
 	 */
 	private int findAngle(Raster image, WritableRaster raster, Point p1,
-			int[] colour) {
+			Integer[] colour) {
 		// x and y values of the centre of the robot
 		int x = p1.x;
 		int y = p1.y;
@@ -361,7 +357,7 @@ public class ImageProcessor {
 				// see which type of pixel should it be
 				switch (Ts[i]) {
 				case 0: // T sign: blue/yell
-					if (colour.equals(blue)) {
+					if (Arrays.equals(colour, blueRef)) {
 						if (isBlue(pointcolour)) {
 							score += 2;
 						}
@@ -397,13 +393,13 @@ public class ImageProcessor {
 		}
 
 		int ignoreStep = 8;
-		if (colour.equals(blue) && method == 1) {
+		if (Arrays.equals(colour, blueRef) && method == 1) {
 			blueAngles = Tools.push(blueAngles, bestangle);
 			bestangle = Tools.goodAvg(blueAngles);
-		} else if (colour.equals(yell) && method == 1) {
+		} else if (Arrays.equals(colour, yellowRef) && method == 1) {
 			yellAngles = Tools.push(yellAngles, bestangle);
 			bestangle = Tools.goodAvg(yellAngles);
-		} else if (colour.equals(blue) && method == 2) {
+		} else if (Arrays.equals(colour, blueRef) && method == 2) {
 			if (lastBluePos == -1) {
 				lastBluePos = bestangle;
 			} else if (lastBluePos + ignoreStep < bestangle
@@ -412,7 +408,7 @@ public class ImageProcessor {
 			} else {
 				bestangle = lastBluePos;
 			}
-		} else if (colour.equals(yell) && method == 2) {
+		} else if (Arrays.equals(colour, yellowRef) && method == 2) {
 			if (lastYellPos == -1) {
 				lastYellPos = bestangle;
 			} else if (lastYellPos + ignoreStep < bestangle
@@ -423,7 +419,7 @@ public class ImageProcessor {
 			}
 		}
 		if (DEBUG_LEVEL > 3) {
-			if (colour.equals(yell)) {
+			if (Arrays.equals(colour, yellowRef)) {
 				GUI.setDebugOutputYell("Yell robot at x:" + x + ", y:" + y
 						+ " Angle:" + bestangle);
 				// System.out.println("Yellow robot at "+x+":"+y+" Angle:"+bestangle);
@@ -439,7 +435,7 @@ public class ImageProcessor {
 			for (int i = 0; i < len; i++) {
 				Point tmp = Tools.rotatePoint(new Point(x, y), new Point(Xs[i],
 						Ys[i]), bestangle);
-				drawLittleCross(raster, convertToBarrelCorrected(tmp), red);
+				drawLittleCross(raster, convertToBarrelCorrected(tmp), new int[] {255,0,0});
 			}
 		}
 		if (DEBUG_LEVEL > 0) {
@@ -453,10 +449,10 @@ public class ImageProcessor {
 			Point corner4 = Tools.rotatePoint(new Point(x, y), new Point(
 					Xs[17], Ys[17]), bestangle);
 
-			drawLine(raster, corner1, corner2, red);
-			drawLine(raster, corner2, corner4, red);
-			drawLine(raster, corner4, corner3, red);
-			drawLine(raster, corner3, corner1, red);
+			drawLine(raster, corner1, corner2, new int[] {255,0,0});
+			drawLine(raster, corner2, corner4, new int[] {255,0,0});
+			drawLine(raster, corner4, corner3, new int[] {255,0,0});
+			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 
 			corner1 = Tools.rotatePoint(new Point(x + 1, y + 1), new Point(
 					Xs[14], Ys[14] - 6), bestangle);
@@ -467,10 +463,10 @@ public class ImageProcessor {
 			corner4 = Tools.rotatePoint(new Point(x + 1, y + 1), new Point(
 					Xs[17], Ys[17]), bestangle);
 
-			drawLine(raster, corner1, corner2, red);
-			drawLine(raster, corner2, corner4, red);
-			drawLine(raster, corner4, corner3, red);
-			drawLine(raster, corner3, corner1, red);
+			drawLine(raster, corner1, corner2, new int[] {255,0,0});
+			drawLine(raster, corner2, corner4, new int[] {255,0,0});
+			drawLine(raster, corner4, corner3, new int[] {255,0,0});
+			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 
 			corner1 = Tools.rotatePoint(new Point(x - 1, y - 1), new Point(
 					Xs[14], Ys[14] - 6), bestangle);
@@ -481,10 +477,10 @@ public class ImageProcessor {
 			corner4 = Tools.rotatePoint(new Point(x - 1, y - 1), new Point(
 					Xs[17], Ys[17]), bestangle);
 
-			drawLine(raster, corner1, corner2, red);
-			drawLine(raster, corner2, corner4, red);
-			drawLine(raster, corner4, corner3, red);
-			drawLine(raster, corner3, corner1, red);
+			drawLine(raster, corner1, corner2, new int[] {255,0,0});
+			drawLine(raster, corner2, corner4, new int[] {255,0,0});
+			drawLine(raster, corner4, corner3, new int[] {255,0,0});
+			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 
 			corner1 = Tools.rotatePoint(new Point(x + 1, y - 1), new Point(
 					Xs[14], Ys[14] - 6), bestangle);
@@ -495,10 +491,10 @@ public class ImageProcessor {
 			corner4 = Tools.rotatePoint(new Point(x + 1, y - 1), new Point(
 					Xs[17], Ys[17]), bestangle);
 
-			drawLine(raster, corner1, corner2, red);
-			drawLine(raster, corner2, corner4, red);
-			drawLine(raster, corner4, corner3, red);
-			drawLine(raster, corner3, corner1, red);
+			drawLine(raster, corner1, corner2, new int[] {255,0,0});
+			drawLine(raster, corner2, corner4, new int[] {255,0,0});
+			drawLine(raster, corner4, corner3, new int[] {255,0,0});
+			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 
 			corner1 = Tools.rotatePoint(new Point(x - 1, y + 1), new Point(
 					Xs[14], Ys[14] - 6), bestangle);
@@ -509,10 +505,10 @@ public class ImageProcessor {
 			corner4 = Tools.rotatePoint(new Point(x - 1, y + 1), new Point(
 					Xs[17], Ys[17]), bestangle);
 
-			drawLine(raster, corner1, corner2, red);
-			drawLine(raster, corner2, corner4, red);
-			drawLine(raster, corner4, corner3, red);
-			drawLine(raster, corner3, corner1, red);
+			drawLine(raster, corner1, corner2, new int[] {255,0,0});
+			drawLine(raster, corner2, corner4, new int[] {255,0,0});
+			drawLine(raster, corner4, corner3, new int[] {255,0,0});
+			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 		}
 
 		return (360 + 270 - bestangle) % 360;
@@ -531,12 +527,12 @@ public class ImageProcessor {
 	}
 
 	boolean isYellow(int[] colour) {
-		int ytDifference = getColourDifference(yell, colour);
+		int ytDifference = getColourDifference(yellowRef, intArrayConvert(colour));
 		return (ytDifference < yellThreshold && colour[RED] > 150 && colour[GREEN] > 170);
 	}
 
 	boolean isBlue(int[] colour) {
-		int btDifference = getColourDifference(blue, colour);
+		int btDifference = getColourDifference(blueRef, intArrayConvert(colour));
 		return (btDifference < blueThreshold && colour[BLUE] > 130);
 	}
 
@@ -598,7 +594,7 @@ public class ImageProcessor {
 	 * @param colour2
 	 * @return absolute difference
 	 */
-	public int getColourDifference(int[] colour1, int[] colour2) {
+	public int getColourDifference(Integer[] colour1, Integer[] colour2) {
 		return Math.abs(colour1[RED] - colour2[RED])
 				+ Math.abs(colour1[GREEN] - colour2[GREEN])
 				+ Math.abs(colour1[BLUE] - colour2[BLUE]);
@@ -694,6 +690,13 @@ public class ImageProcessor {
 		drawPixel(raster, new Point(p.x, p.y - 1), colour);
 	}
 
+	private Integer[] intArrayConvert(int[] a){
+		Integer[] out=new Integer[a.length];
+		for(int i=0;i<out.length;i++)
+			out[i]=a[i];
+		return out;
+	}
+	
 	public ImageProcessor() {	}
 
 }
