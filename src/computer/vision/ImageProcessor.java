@@ -87,6 +87,9 @@ public class ImageProcessor {
 	private int lastBluePos = -1; // method 2
 	static int method = 1; // method 1 for normalisation of 10 numbers, method 2
 	// for last position checking.
+        
+        private static WorldState worldState;
+
 
 	// ~~~~~OUTPUT FOR OTHER TEAMS~~~~~~//
 //	ObjectInfo_Editable objectInfos = new ObjectInfo_Editable();
@@ -126,7 +129,13 @@ public class ImageProcessor {
 		int ytCentroidCount = 0;
 		Point ytCentroid = new Point(-1, -1);
 		// ray of light processing
-        
+//               try {
+//               System.err.print("x value " + worldState.getYellowRobotCoordinates().getX() + " y value " + worldState.getYellowRobotCoordinates().getY());
+//
+//               } 
+//               catch (Exception e) {
+               
+//               }
         ArrayList<PixelCoordinates> yellowBlob=new ArrayList<PixelCoordinates>();
         ArrayList<PixelCoordinates> blueBlob=new ArrayList<PixelCoordinates>();
 //        ArrayList<PixelCoordinates> redBlob=new ArrayList<PixelCoordinates>();

@@ -6,7 +6,7 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-
+import computer.vision.WorldState;
 
 public class Viewer extends Vision implements Runnable {
 
@@ -148,6 +148,7 @@ public class Viewer extends Vision implements Runnable {
 			e.printStackTrace();
 			System.out.println("Failed to capture image");
 		}
+                
 	}
 
 	/**

@@ -5,6 +5,7 @@ import au.edu.jcu.v4l4j.Control;
 import au.edu.jcu.v4l4j.FrameGrabber;
 import au.edu.jcu.v4l4j.VideoDevice;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+import computer.vision.WorldState;
 
 public abstract class Vision extends Thread {
 	// Video capture variables
@@ -57,6 +58,8 @@ public abstract class Vision extends Thread {
 //			    catch(V4L4JException e3) { 
 //			    	System.out.println("Cannot set video device settings!"); 
 //			    }
+
+                              
 			    frameGrabber = videoDevice.getJPEGFrameGrabber(w, h, channel, std, qty);
 			    frameGrabber.startCapture();
 			    System.out.println("Starting capture at "+frameGrabber.getWidth()+"x"+frameGrabber.getHeight());            

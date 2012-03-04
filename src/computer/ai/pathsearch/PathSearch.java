@@ -124,7 +124,7 @@ public class PathSearch {
 		path = optimisePath(path);
 
 		ArrayList<Coordinates> waypoints = translateGridsToCoordinates(path);
-
+		System.out.println("Waypoint: " + waypoints.get(1));
 		return waypoints.get(1);
 
 	}
@@ -135,7 +135,8 @@ public class PathSearch {
 				newPath.add(path.get(0));
 				for (int i = 1; i < path.size(); i++) {
 
-					if (newPath.get(newPath.size() - 1).distance(path.get(i)) > 8) {
+					if (//(oppGridPosition.distance(path.get(i)) > 8 && newPath.get(newPath.size() - 1).distance(path.get(i)) > 8) ||
+						newPath.get(newPath.size() - 1).distance(path.get(i)) > 5) {
 						newPath.add(path.get(i));
 					}
 				}
@@ -205,12 +206,12 @@ public class PathSearch {
 	}
 
 	private static int calcMovementCost(GridCoordinates currentPoint,GridCoordinates newPoint) {
-		if (oppGridPosition.distance(newPoint) < 5) {
+		if (oppGridPosition.distance(newPoint) < 6) {
 			// discourage it heavily, to not crash into opponent
 			return 500;
 		}
 		
-		if(ballGridPosition.distance(newPoint) < 9){
+		if(ballGridPosition.distance(newPoint) < 7){
 			return 500;
 		}
 		if (ourSide == LEFT) {
