@@ -108,6 +108,7 @@ public class Viewer extends Vision implements Runnable {
 						refColorPointer[0]=(newRef>>>16)&0xFF;
 						refColorPointer[1]=(newRef>>>8)&0xFF;
 						refColorPointer[2]=newRef&0xFF;
+						gui.setRefChanger(refColorPointer);
 						refColorPointer=null;
 						refNewPixel=null;
 					}

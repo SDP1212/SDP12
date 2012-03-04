@@ -509,6 +509,15 @@ public class GUI extends javax.swing.JFrame {
 					image.getWidth(), image.getHeight(), null);
 	}
 
+	public void setRefChanger(Integer[] reference){
+		if(reference==ImageProcessor.blueRef)
+			blueRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
+		else if(reference==ImageProcessor.yellowRef)
+			yellowRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
+		else if(reference==ImageProcessor.redRef)
+			redRefChanger.setBackground(new Color(reference[0],reference[1],reference[2]));
+	}
+
 	public javax.swing.JLabel getImage() {
 		return onScreenImage;
 	}
