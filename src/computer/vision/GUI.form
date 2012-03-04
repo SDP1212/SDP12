@@ -1,10 +1,11 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="radioOurTeam">
-    </Component>
-    <Component class="javax.swing.ButtonGroup" name="radioOurGoal">
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup2.add(pitchMainRadio);&#xa;buttonGroup2.add(pitchSideRadio);"/>
+      </AuxValues>
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -31,43 +32,28 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
+              <Component id="onScreenImage" min="-2" pref="640" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="onScreenImage" min="-2" pref="640" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnBarrelCorrection" alignment="0" pref="204" max="32767" attributes="0"/>
-                          <Component id="ballSearchSlider" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="yellThreshSlider" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="debugSlider" alignment="0" max="32767" attributes="1"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="btnPitch1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="86" max="32767" attributes="0"/>
-                              <Component id="btnPitch2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="blueThreshLabel" alignment="1" pref="204" max="32767" attributes="0"/>
-                          <Component id="blueThreshSlider" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="labelDebug" alignment="1" pref="204" max="32767" attributes="0"/>
-                          <Component id="yellThreshLabel" alignment="1" pref="204" max="32767" attributes="0"/>
-                          <Component id="ballSearchLabel" alignment="1" pref="204" max="32767" attributes="0"/>
-                          <Component id="modeLabel" alignment="1" pref="204" max="32767" attributes="0"/>
-                          <Component id="modeSlider" alignment="1" max="32767" attributes="0"/>
-                          <Component id="sliderContrast" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Component id="debugSlider" alignment="0" pref="0" max="32767" attributes="1"/>
+                  <Component id="labelDebug" alignment="1" max="32767" attributes="0"/>
+                  <Component id="modeLabel" alignment="1" max="32767" attributes="0"/>
+                  <Component id="modeSlider" alignment="1" pref="0" max="32767" attributes="0"/>
+                  <Component id="sliderSaturation" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="barrelCheckbox" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="pitchMainRadio" pref="96" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="pitchSideRadio" pref="95" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="652" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="sliderSaturation" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="652" max="32767" attributes="0"/>
-                      <Component id="sliderBrightness" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="sliderContrast" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jLabel2" max="32767" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" max="32767" attributes="0"/>
+                  <Component id="sliderBrightness" pref="0" max="32767" attributes="0"/>
+                  <Component id="bluePanel" alignment="0" max="32767" attributes="0"/>
+                  <Component id="bluePanel1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="bluePanel2" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -78,49 +64,43 @@
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="onScreenImage" min="-2" pref="480" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="labelDebug" min="-2" pref="17" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="debugSlider" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="blueThreshLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="bluePanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="blueThreshSlider" min="-2" max="-2" attributes="0"/>
+                      <Component id="bluePanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="yellThreshLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                      <Component id="yellThreshSlider" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ballSearchLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ballSearchSlider" min="-2" max="-2" attributes="0"/>
+                      <Component id="bluePanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="modeLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="modeSlider" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnBarrelCorrection" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="barrelCheckbox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btnPitch1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnPitch2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pitchMainRadio" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pitchSideRadio" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="sliderContrast" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="sliderSaturation" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="sliderBrightness" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="sliderSaturation" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="sliderBrightness" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="97" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -130,13 +110,8 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Image goes here"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnBarrelCorrection">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Toggle Barrel Correction"/>
-      </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBarrelCorrectionActionPerformed"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JSlider" name="debugSlider">
@@ -144,81 +119,13 @@
         <Property name="maximum" type="int" value="5"/>
         <Property name="paintLabels" type="boolean" value="true"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
-        <Property name="value" type="int" value="3"/>
+        <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="ImageProcessor.DEBUG_LEVEL" type="code"/>
+        </Property>
         <Property name="name" type="java.lang.String" value="Debug" noResource="true"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="debugSliderStateChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JSlider" name="blueThreshSlider">
-      <Properties>
-        <Property name="maximum" type="int" value="765"/>
-        <Property name="value" type="int" value="350"/>
-      </Properties>
-      <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="blueThreshSliderStateChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JSlider" name="yellThreshSlider">
-      <Properties>
-        <Property name="maximum" type="int" value="765"/>
-        <Property name="value" type="int" value="150"/>
-      </Properties>
-      <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="yellThreshSliderStateChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JSlider" name="ballSearchSlider">
-      <Properties>
-        <Property name="maximum" type="int" value="1000"/>
-        <Property name="value" type="int" value="700"/>
-      </Properties>
-      <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="ballSearchSliderStateChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="blueThreshLabel">
-      <Properties>
-        <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="blueThreshSlider"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Blue threshold:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="yellThreshLabel">
-      <Properties>
-        <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="yellThreshSlider"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Yellow threshold:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="ballSearchLabel">
-      <Properties>
-        <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="ballSearchSlider"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="Ball search distance:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnPitch1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Pitch 1"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPitch1ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnPitch2">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Pitch 2"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPitch2ActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="modeLabel">
@@ -234,7 +141,9 @@
       <Properties>
         <Property name="maximum" type="int" value="24"/>
         <Property name="minimum" type="int" value="1"/>
-        <Property name="value" type="int" value="10"/>
+        <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="ImageProcessor.mode" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="modeSliderStateChanged"/>
@@ -250,11 +159,18 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JSlider" name="sliderContrast">
+      <Properties>
+        <Property name="maximum" type="int" value="500"/>
+        <Property name="value" type="int" value="170"/>
+      </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="contrastSliderChanged"/>
       </Events>
     </Component>
     <Component class="javax.swing.JSlider" name="sliderSaturation">
+      <Properties>
+        <Property name="value" type="int" value="100"/>
+      </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="saturationSliderChanged"/>
       </Events>
@@ -262,7 +178,7 @@
     <Component class="javax.swing.JSlider" name="sliderBrightness">
       <Properties>
         <Property name="maximum" type="int" value="500"/>
-        <Property name="value" type="int" value="100"/>
+        <Property name="value" type="int" value="170"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="brightnessSliderChanged"/>
@@ -270,18 +186,279 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Contrast"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="Contrast:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Saturation"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="Saturation:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Brightness"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="Brightness:"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.JCheckBox" name="barrelCheckbox">
+      <Properties>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="ImageProcessor.useBarrelDistortion" type="code"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Enable Barrel Correction"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barrelCheckboxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="pitchMainRadio">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Main Pitch"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pitchMainRadioActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="pitchSideRadio">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Side Pitch"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pitchSideRadioActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JPanel" name="bluePanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Blue Detection">
+              <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </TitledBorder>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Component id="blueRefChanger" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="blueThreshSlider" pref="0" max="32767" attributes="1"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="blueThreshSlider" max="32767" attributes="0"/>
+              <Component id="blueRefChanger" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JSlider" name="blueThreshSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="765"/>
+            <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="ImageProcessor.blueThreshold" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="blueThreshSliderStateChanged"/>
+          </Events>
+        </Component>
+        <Container class="javax.swing.JPanel" name="blueRefChanger">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2])" type="code"/>
+            </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                <BevelBorder/>
+              </Border>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="blueRefChangerMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="refChangerMouseEntered"/>
+          </Events>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="bluePanel1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Yellow Detection">
+              <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </TitledBorder>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Component id="yellowRefChanger" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="yellThreshSlider" pref="0" max="32767" attributes="1"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="yellowRefChanger" max="32767" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Component id="yellThreshSlider" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="yellowRefChanger">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new Color(ImageProcessor.yellowRef[0],ImageProcessor.yellowRef[1],ImageProcessor.yellowRef[2])" type="code"/>
+            </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                <BevelBorder/>
+              </Border>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="yellowRefChangerMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="refChangerMouseEntered"/>
+          </Events>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+        <Component class="javax.swing.JSlider" name="yellThreshSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="765"/>
+            <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="ImageProcessor.yellThreshold" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="yellThreshSliderStateChanged"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="bluePanel2">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Ball Detection">
+              <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </TitledBorder>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Component id="redRefChanger" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="ballSearchSlider" min="0" pref="0" max="32767" attributes="1"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="redRefChanger" max="32767" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Component id="ballSearchSlider" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="redRefChanger">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2])" type="code"/>
+            </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                <BevelBorder/>
+              </Border>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="redRefChangerMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="refChangerMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="refChangerMouseExited"/>
+          </Events>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="20" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
+        <Component class="javax.swing.JSlider" name="ballSearchSlider">
+          <Properties>
+            <Property name="maximum" type="int" value="765"/>
+            <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="ImageProcessor.searchdistance" type="code"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="ballSearchSliderStateChanged"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
   </SubComponents>
 </Form>
