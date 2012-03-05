@@ -14,7 +14,6 @@ package computer.vision;
 import computer.simulator.Direction;
 import computer.simulator.PixelCoordinates;
 import java.awt.Color;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -30,11 +29,6 @@ import java.util.Queue;
 public class ImageProcessor {
 
 	public static int DEBUG_LEVEL = 1;
-
-	// ---Mouse mode constants.
-	public static int displX = 0;
-	public static int displY = 0;
-	public static boolean useMouse = false;
 
 	// ---Constants for Colour Accessing
 	public static int RED = 0;
@@ -71,11 +65,11 @@ public class ImageProcessor {
 	protected static int searchdistance = 200;
 	public static int rayOfLight = 35;
 
-	Point lastBallPos = new Point(-1,-1);
 
-	// this will store ball coordinates
+	// this will store object coordinates
 	public static Point btPos = new Point(-1,-1);
 	public static Point ytPos = new Point(-1,-1);
+	public static Point lastBallPos = new Point(-1,-1);
 
 	LinkedList<Point> lines = new LinkedList<Point>();
 	LinkedList<Integer> lineColor = new LinkedList<Integer>();
@@ -93,7 +87,8 @@ public class ImageProcessor {
 	static int method = 1; // method 1 for normalisation of 10 numbers, method 2
 	// for last position checking.
         
-        private static WorldState worldState;
+    private static WorldState worldState;
+    public static boolean ENABLE_NOISE_REDUCTION_FILTER=!true;
 
 
 	// ~~~~~OUTPUT FOR OTHER TEAMS~~~~~~//
@@ -141,6 +136,42 @@ public class ImageProcessor {
 //               catch (Exception e) {
                
 //               }
+        
+		for (int i = xlowerlimit; i < xupperlimit; i = i + 1) { // for every
+			for (int j = ylowerlimit; j < yupperlimit; j = j + 1) {
+				if (((i % 2 == 0) || (j % 2 == 0)))
+					continue;
+
+				// get RGB values for a pixel
+				int[] pixelColour = new int[3];
+				getPixel(data, i, j, pixelColour);
+
+				// finds how red is a pixel
+				double ballDifference = getColourDifference(redRef, pixelColour);
+
+				// barrel distortion
+				Point out = convertToBarrelCorrected(new Point(i, j));
+
+				// if converted pixel is still within pict then set it on the
+				// new raster
+				if (DEBUG_LEVEL < 4)
+					drawPixel(wraster, out, pixelColour);
+
+				// this will try to find the "reddest" point. this works better
+				// for the ball than centroid
+				if (ballDifference < closestRedFound) {
+					closestRedFound = ballDifference;
+					ballPos = out;
+				}
+
+				if (isBrightGreen(pixelColour)) {
+					if (DEBUG_LEVEL > 1)
+						drawPixel(wraster, convertToBarrelCorrected(new Point(
+								i, j)), new int[] { 0, 255, 0 });
+				}
+			}
+		}
+        
         ArrayList<PixelCoordinates> yellowBlob=new ArrayList<PixelCoordinates>();
         ArrayList<PixelCoordinates> blueBlob=new ArrayList<PixelCoordinates>();
 //        ArrayList<PixelCoordinates> redBlob=new ArrayList<PixelCoordinates>();
@@ -148,7 +179,7 @@ public class ImageProcessor {
         for(int x=Math.max(btPos.x-rayOfLight,xlowerlimit);x<Math.min(btPos.x+rayOfLight,xupperlimit);x++)
             for(int y=Math.max(btPos.y-rayOfLight,ylowerlimit);y<Math.min(btPos.y+rayOfLight,yupperlimit);y++){
                 int[] pixelColour = new int[3];
-                data.getPixel(x, y, pixelColour);
+                getPixel(data, x, y, pixelColour);
                 if(isBlue(pixelColour)){
                     blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
                     if (DEBUG_LEVEL > 1)
@@ -159,7 +190,7 @@ public class ImageProcessor {
         for(int x=Math.max(ytPos.x-rayOfLight,xlowerlimit);x<Math.min(ytPos.x+rayOfLight,xupperlimit);x++)
             for(int y=Math.max(ytPos.y-rayOfLight,ylowerlimit);y<Math.min(ytPos.y+rayOfLight,yupperlimit);y++){
                 int[] pixelColour = new int[3];
-                data.getPixel(x, y, pixelColour);
+                getPixel(data, x, y, pixelColour);
                 if(isYellow(pixelColour)){
                     yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
                     if (DEBUG_LEVEL > 1)
@@ -185,8 +216,6 @@ public class ImageProcessor {
 
         }
         
-
-        
         // Calculate Centroid of yellow Co-ordinates
         for(PixelCoordinates pixel : yellowBlob){
             Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
@@ -196,42 +225,6 @@ public class ImageProcessor {
             ytCentroid.x += out.x;
             ytCentroid.y += out.y;
         }
-        
-		for (int i = xlowerlimit; i < xupperlimit; i = i + 1) { // for every
-			for (int j = ylowerlimit; j < yupperlimit; j = j + 1) {
-				if (((i % 2 == 0) || (j % 2 == 0)))
-					continue;
-
-				// get RGB values for a pixel
-				int[] pixelColour = new int[3];
-				data.getPixel(i, j, pixelColour);
-
-				// finds how red is a pixel
-				double ballDifference = getColourDifference(redRef, pixelColour);
-
-				// barrel distortion
-				Point out = convertToBarrelCorrected(new Point(i, j));
-
-				// if converted pixel is still within pict then set it on the
-				// new raster
-				if (DEBUG_LEVEL < 4)
-					drawPixel(wraster, out, pixelColour);
-
-				// this will try to find the "reddest" point. this works better
-				// for the ball than centroid
-				if (ballDifference < closestRedFound && pixelColour[RED] > 150
-						&& pixelColour[GREEN] < 50) {
-					closestRedFound = ballDifference;
-					ballPos = out;
-				}
-
-				if (isBrightGreen(pixelColour)) {
-					if (DEBUG_LEVEL > 1)
-						drawPixel(wraster, convertToBarrelCorrected(new Point(
-								i, j)), new int[] { 0, 255, 0 });
-				}
-			}
-		}
 
 		// where 5 is just some minimal number of pixels found
             if (btCentroidCount > 5) {
@@ -269,13 +262,7 @@ public class ImageProcessor {
 
             }
 		         
-            if (useMouse) {
-                Point mouse = MouseInfo.getPointerInfo().getLocation();
-                ballPos = new Point(mouse.x - 5 - displX, mouse.y - 50 - displY);
-                drawCross(wraster, ballPos, new int[]{255, 0, 0});
-            } else {
-                findBall(wraster, ballPos);
-            }
+            findBall(wraster, ballPos);
             
             if (ballPos.x >= 0 && ballPos.y >= 0) {
                 Viewer.getWorldState().setBallCoordinates(new PixelCoordinates(ballPos.x, ballPos.y, useBarrelDistortion, false));
@@ -307,14 +294,14 @@ public class ImageProcessor {
         
         if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
             int[] temp=new int[3];
-            data.getPixel(btPos.x,btPos.y,temp);
+            getPixel(data, btPos.x,btPos.y,temp);
             if(isRef(temp,blueRef,blueRefThresh)){
                 blueRef[0]=temp[0];
                 blueRef[1]=temp[1];
                 blueRef[2]=temp[2];
             }
             temp=new int[3];
-            data.getPixel(ytPos.x,ytPos.y,yellRef);
+            getPixel(data, ytPos.x,ytPos.y,yellRef);
             if(isRef(temp,yellRef,yellRefThresh)){
                 yellRef[0]=temp[0];
                 yellRef[1]=temp[1];
@@ -415,7 +402,7 @@ public class ImageProcessor {
 				// try to read the colour of the pixel under our rotated
 				// checkpoint
 				try {
-					image.getPixel(tmp.x, tmp.y, pointcolour);
+					getPixel(image, tmp.x, tmp.y, pointcolour);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					continue; // just go to next
 				}
@@ -481,17 +468,6 @@ public class ImageProcessor {
 				lastYellPos = bestangle;
 			} else {
 				bestangle = lastYellPos;
-			}
-		}
-		if (DEBUG_LEVEL > 3) {
-			if (Arrays.equals(colour, yellRef)) {
-				GUI.setDebugOutputYell("Yell robot at x:" + x + ", y:" + y
-						+ " Angle:" + bestangle);
-				// System.out.println("Yellow robot at "+x+":"+y+" Angle:"+bestangle);
-			} else {
-				GUI.setDebugOutputBlue("Blue robot at x:" + x + ", y:" + y
-						+ " Angle:" + bestangle);
-				// System.out.println("Blue robot at "+x+":"+y+" Angle:"+bestangle);
 			}
 		}
 
@@ -853,6 +829,36 @@ public class ImageProcessor {
             }
             
         return average;
+    }
+    
+    private void getPixel(Raster data, int pixelX, int pixelY, int[] destination){
+        if(destination.length<3)
+            return;
+        else if(!ENABLE_NOISE_REDUCTION_FILTER){
+            data.getPixel(pixelX, pixelY, destination);
+            return;
+        }
+        int[][] kernel=new int[][] {{ 2, 4, 5, 4, 2},
+                                    { 4, 9,12, 9, 4},
+                                    { 5,12,15,12, 5},
+                                    { 4, 9,12, 9, 4},
+                                    { 2, 4, 5, 4, 2}};
+        for(int i=0;i<destination.length;i++)
+            destination[i]=0;
+        int normalizer=0;
+        int[] sample=new int[3];
+        for(int x=Math.max(xlowerlimit,pixelX-kernel.length/2);x<=(pixelX+(kernel.length/2)) && x<xupperlimit;x++)
+            for(int y=Math.max(ylowerlimit,pixelY-kernel[0].length/2);y<=(pixelY+(kernel[0].length/2)) && y<yupperlimit;y++){
+                data.getPixel(x, y, sample);
+                destination[RED]+=sample[RED]*kernel[x-(pixelX-kernel.length/2)][y-(pixelY-kernel[0].length/2)];
+                destination[GREEN]+=sample[GREEN]*kernel[x-(pixelX-kernel.length/2)][y-(pixelY-kernel[0].length/2)];
+                destination[BLUE]+=sample[BLUE]*kernel[x-(pixelX-kernel.length/2)][y-(pixelY-kernel[0].length/2)];
+                normalizer+=kernel[x-(pixelX-kernel.length/2)][y-(pixelY-kernel[0].length/2)];
+            }
+        if(normalizer>0)
+            for(int i=0;i<3;i++)
+                destination[i]/=normalizer;
+        
     }
 
 	public ImageProcessor() {	}

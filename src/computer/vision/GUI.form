@@ -11,7 +11,6 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="name" type="java.lang.String" value="Vision" noResource="true"/>
-    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -31,29 +30,35 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <Component id="onScreenImage" min="-2" pref="640" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="saveButton" pref="99" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="loadButton" pref="99" max="32767" attributes="0"/>
+                  </Group>
                   <Component id="ballPanel" alignment="1" max="32767" attributes="0"/>
                   <Component id="yellowPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="debugSlider" alignment="0" pref="0" max="32767" attributes="1"/>
-                  <Component id="labelDebug" alignment="1" pref="203" max="32767" attributes="0"/>
+                  <Component id="labelDebug" alignment="1" pref="204" max="32767" attributes="0"/>
                   <Component id="bluePanel" alignment="0" max="32767" attributes="0"/>
-                  <Component id="modeLabel" alignment="1" pref="203" max="32767" attributes="0"/>
+                  <Component id="modeLabel" alignment="1" pref="204" max="32767" attributes="0"/>
                   <Component id="modeSlider" alignment="1" pref="0" max="32767" attributes="0"/>
+                  <Component id="barrelCheckbox" alignment="1" max="32767" attributes="0"/>
+                  <Component id="noiseCheckbox" alignment="1" pref="204" max="32767" attributes="0"/>
                   <Component id="sliderSaturation" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="barrelCheckbox" alignment="0" pref="203" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="pitchMainRadio" pref="99" max="32767" attributes="0"/>
+                      <Component id="pitchMainRadio" pref="103" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="pitchSideRadio" pref="98" max="32767" attributes="0"/>
+                      <Component id="pitchSideRadio" pref="101" max="32767" attributes="0"/>
                   </Group>
                   <Component id="sliderContrast" alignment="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="jLabel1" alignment="0" pref="203" max="32767" attributes="0"/>
-                  <Component id="jLabel2" alignment="0" pref="203" max="32767" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" pref="203" max="32767" attributes="0"/>
-                  <Component id="sliderBrightness" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" pref="204" max="32767" attributes="0"/>
+                  <Component id="jLabel2" alignment="0" pref="204" max="32767" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" pref="204" max="32767" attributes="0"/>
+                  <Component id="sliderBrightness" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -64,7 +69,7 @@
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="onScreenImage" min="-2" pref="480" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="labelDebug" min="-2" pref="17" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -81,7 +86,9 @@
                       <Component id="modeSlider" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="barrelCheckbox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="noiseCheckbox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="pitchMainRadio" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="pitchSideRadio" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -96,11 +103,16 @@
                       <Component id="sliderSaturation" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="sliderBrightness" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="loadButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="saveButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="81" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -111,7 +123,11 @@
         <Property name="text" type="java.lang.String" value="Image goes here"/>
       </Properties>
       <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMousePressed"/>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMouseReleased"/>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMouseClicked"/>
+        <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMouseMoved"/>
+        <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="onScreenImageMouseDragged"/>
       </Events>
     </Component>
     <Component class="javax.swing.JSlider" name="debugSlider">
@@ -160,8 +176,10 @@
     </Component>
     <Component class="javax.swing.JSlider" name="sliderContrast">
       <Properties>
-        <Property name="maximum" type="int" value="500"/>
-        <Property name="value" type="int" value="170"/>
+        <Property name="maximum" type="int" value="127"/>
+        <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="viewer.CONTRAST" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="contrastSliderChanged"/>
@@ -169,7 +187,10 @@
     </Component>
     <Component class="javax.swing.JSlider" name="sliderSaturation">
       <Properties>
-        <Property name="value" type="int" value="100"/>
+        <Property name="maximum" type="int" value="127"/>
+        <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="viewer.SATURATION" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="saturationSliderChanged"/>
@@ -177,8 +198,10 @@
     </Component>
     <Component class="javax.swing.JSlider" name="sliderBrightness">
       <Properties>
-        <Property name="maximum" type="int" value="500"/>
-        <Property name="value" type="int" value="170"/>
+        <Property name="maximum" type="int" value="255"/>
+        <Property name="value" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="viewer.BRIGHTNESS" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="brightnessSliderChanged"/>
@@ -208,7 +231,6 @@
           <Connection code="ImageProcessor.useBarrelDistortion" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Enable Barrel Correction"/>
-        <Property name="horizontalAlignment" type="int" value="0"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barrelCheckboxActionPerformed"/>
@@ -253,7 +275,7 @@
                   <Component id="blueRefChanger" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="blueRefThreshSlider" pref="161" max="32767" attributes="2"/>
+                      <Component id="blueRefThreshSlider" pref="162" max="32767" attributes="2"/>
                       <Component id="blueThreshSlider" alignment="0" pref="0" max="32767" attributes="2"/>
                   </Group>
               </Group>
@@ -265,7 +287,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="blueThreshSlider" max="32767" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="blueRefThreshSlider" pref="16" max="32767" attributes="0"/>
+                  <Component id="blueRefThreshSlider" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -307,7 +329,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="62" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -346,7 +368,7 @@
                   <Component id="yellowRefChanger" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="yellowRefThreshSlider" pref="161" max="32767" attributes="2"/>
+                      <Component id="yellowRefThreshSlider" pref="162" max="32767" attributes="2"/>
                       <Component id="yellThreshSlider" alignment="0" pref="0" max="32767" attributes="2"/>
                   </Group>
               </Group>
@@ -388,7 +410,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="90" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="34" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -438,7 +460,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="redRefChanger" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ballSearchSlider" pref="161" max="32767" attributes="2"/>
+                  <Component id="ballSearchSlider" pref="162" max="32767" attributes="2"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -475,7 +497,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="40" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -494,5 +516,32 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JCheckBox" name="noiseCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Enable Noise Reduction"/>
+        <Property name="toolTipText" type="java.lang.String" value="Gaussian blur"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noiseCheckboxActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="saveButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Save"/>
+        <Property name="toolTipText" type="java.lang.String" value="Store settings to a file of you choosing!"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="loadButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Load"/>
+        <Property name="toolTipText" type="java.lang.String" value="Load settings from a file of your choosing!"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadButtonActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

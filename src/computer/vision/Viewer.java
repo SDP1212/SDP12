@@ -122,6 +122,8 @@ public class Viewer extends Vision implements Runnable {
                             ImageProcessor.btPos=refNewPixel;
                         if(refColorPointer==ImageProcessor.yellRef)
                             ImageProcessor.ytPos=refNewPixel;
+                        if(refColorPointer==ImageProcessor.redRef)
+                            ImageProcessor.lastBallPos=refNewPixel;
 						refColorPointer=null;
 						refNewPixel=null;
 					}
@@ -132,8 +134,6 @@ public class Viewer extends Vision implements Runnable {
                     gui.redRefColor=new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]);
                     gui.setRefChangers();
 					gui.setImage(iq);
-					ImageProcessor.displX = gui.getLocationOnScreen().x;
-					ImageProcessor.displY = gui.getLocationOnScreen().y - 25;
 				} catch (NullPointerException e) {
 					e.printStackTrace();
 					System.out.println("Shutting down...");
