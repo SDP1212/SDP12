@@ -22,6 +22,7 @@ import java.awt.image.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Queue;
 
 //import Planning.Main2;
 //import Shared.ObjectInfo_Editable;
@@ -78,6 +79,10 @@ public class ImageProcessor {
 
 	LinkedList<Point> lines = new LinkedList<Point>();
 	LinkedList<Integer> lineColor = new LinkedList<Integer>();
+        Queue<Direction> bAngleChecker =new LinkedList<Direction>();
+        Queue<Direction> yAngleChecker = new LinkedList<Direction>();
+
+
 
 	BufferedImage image;
 	protected static int mode = 5;
@@ -176,7 +181,11 @@ public class ImageProcessor {
             btCentroidCount++;
             btCentroid.x += out.x;
             btCentroid.y += out.y;
+            
+
         }
+        
+
         
         // Calculate Centroid of yellow Co-ordinates
         for(PixelCoordinates pixel : yellowBlob){
@@ -225,36 +234,52 @@ public class ImageProcessor {
 		}
 
 		// where 5 is just some minimal number of pixels found
-		if (btCentroidCount > 5) {
-			btPos = new Point(btCentroid.x / btCentroidCount, btCentroid.y
-					/ btCentroidCount);
-			int btAngle = findAngle(data, wraster, btPos, blueRef);
+            if (btCentroidCount > 5) {
+                btPos = new Point(btCentroid.x / btCentroidCount, btCentroid.y
+                        / btCentroidCount);
+                int btAngle = findAngle(data, wraster, btPos, blueRef);
 //			System.out.println("Blue: (" + btPos.x + ", " + btPos.y +")");
-			if (btPos.x >= 0 && btPos.y >=0) {
-				Viewer.getWorldState().setBlueRobotCoordinates(new PixelCoordinates(btPos.x, btPos.y, useBarrelDistortion, false));
-			}
-			Viewer.getWorldState().setBlueRobotOrientation(new Direction(Math.toRadians(btAngle)));
-		}
+                if (btPos.x >= 0 && btPos.y >= 0) {
+                    Viewer.getWorldState().setBlueRobotCoordinates(new PixelCoordinates(btPos.x, btPos.y, useBarrelDistortion, false));
+                }
 
-		if (ytCentroidCount > 5) {
-			ytPos = new Point(ytCentroid.x / ytCentroidCount, ytCentroid.y
-					/ ytCentroidCount);
-			int ytAngle = findAngle(data, wraster, ytPos, yellRef);
-			if (ytPos.x >= 0 && ytPos.y >=0) {
-				Viewer.getWorldState().setYellowRobotCoordinates(new PixelCoordinates(ytPos.x, ytPos.y, useBarrelDistortion, false));
-			}
-			Viewer.getWorldState().setYellowRobotOrientation(new Direction(Math.toRadians(ytAngle)));
-		}
-		if (useMouse) {
-			Point mouse = MouseInfo.getPointerInfo().getLocation();
-			ballPos = new Point(mouse.x - 5 - displX, mouse.y - 50 - displY);
-			drawCross(wraster, ballPos, new int[] {255,0,0});
-		} else {
-			findBall(wraster, ballPos);
-		}
-		if (ballPos.x >= 0 && ballPos.y >= 0) {
-			Viewer.getWorldState().setBallCoordinates(new PixelCoordinates(ballPos.x, ballPos.y, useBarrelDistortion, false));
-		}
+                if (bAngleChecker.size() < 7) {
+                    Viewer.getWorldState().setBlueRobotOrientation(new Direction(Math.toRadians(btAngle)));
+                    bAngleChecker.add(new Direction(Math.toRadians(btAngle)));
+                } else {
+                    Viewer.getWorldState().setBlueRobotOrientation(new Direction(angleChecker(bAngleChecker, btAngle)));
+                }
+
+            }
+
+            if (ytCentroidCount > 5) {
+                ytPos = new Point(ytCentroid.x / ytCentroidCount, ytCentroid.y
+                        / ytCentroidCount);
+                int ytAngle = findAngle(data, wraster, ytPos, yellRef);
+                if (ytPos.x >= 0 && ytPos.y >= 0) {
+                    Viewer.getWorldState().setYellowRobotCoordinates(new PixelCoordinates(ytPos.x, ytPos.y, useBarrelDistortion, false));
+                }
+                
+                if (yAngleChecker.size() < 7) {
+                    Viewer.getWorldState().setYellowRobotOrientation(new Direction(Math.toRadians(ytAngle)));
+                    yAngleChecker.add(new Direction(Math.toRadians(ytAngle)));
+                } else {
+                    Viewer.getWorldState().setYellowRobotOrientation(new Direction(angleChecker(yAngleChecker, ytAngle)));
+                }
+
+            }
+		         
+            if (useMouse) {
+                Point mouse = MouseInfo.getPointerInfo().getLocation();
+                ballPos = new Point(mouse.x - 5 - displX, mouse.y - 50 - displY);
+                drawCross(wraster, ballPos, new int[]{255, 0, 0});
+            } else {
+                findBall(wraster, ballPos);
+            }
+            
+            if (ballPos.x >= 0 && ballPos.y >= 0) {
+                Viewer.getWorldState().setBallCoordinates(new PixelCoordinates(ballPos.x, ballPos.y, useBarrelDistortion, false));
+            }
 			
 		int lineColors = 0;
 		if (DEBUG_LEVEL > 0)
@@ -550,7 +575,7 @@ public class ImageProcessor {
 			drawLine(raster, corner4, corner3, new int[] {255,0,0});
 			drawLine(raster, corner3, corner1, new int[] {255,0,0});
 		}
-
+		
 		return (360 + 270 - bestangle) % 360;
 
 	}
@@ -732,7 +757,104 @@ public class ImageProcessor {
 		drawPixel(raster, new Point(p.x, p.y + 1), colour);
 		drawPixel(raster, new Point(p.x, p.y - 1), colour);
 	}
-	
+    
+        /*
+         * Function for eliminating statistically unliking angles
+         * Uses Chauvinets Criterium for detecting outliers
+         * And the previous seven angles, stored in a Queue.
+         * This method also takes into account the circularity of degrees
+         * 
+         *  @param angleChecker
+         *              queue of previous seven angles
+         * 
+         *  @param angle
+         *              the latest angle from vision
+         */
+    private double angleChecker(Queue<Direction> angleChecker, double angle) {
+        
+            angleChecker.poll();
+            angleChecker.add(new Direction(Math.toRadians(angle)));
+           
+            boolean trigcheckone = false;
+            boolean trigchecktwo = false;
+            double sintotal = 0;
+            double costotal = 0;
+            for (Direction c : angleChecker) {
+                //Check if we need to use sin/cos to figure out the standard deviation
+                if (c.getDirectionDegrees() > 0 && c.getDirectionDegrees() < 90) {
+                    trigcheckone = true;
+                }
+                if (c.getDirectionDegrees() < 360 && c.getDirectionDegrees() > 270) {
+                    trigchecktwo = true;
+                }
+                sintotal += Math.sin(c.getDirectionRadians());
+                costotal += Math.cos(c.getDirectionRadians());
+            }
+
+            sintotal /= angleChecker.size();
+            costotal /= angleChecker.size();
+            double average = Math.atan2(sintotal, costotal);
+            if (average < 0) {
+                average += 2 * Math.PI;
+            }
+
+            //Calculate the standard deviation one of two ways
+            double stdevsin = 0;
+            double stdevcos = 0;
+            double stdev = 0;
+
+            if (trigcheckone && trigchecktwo) {
+                for (Direction c : angleChecker) {
+                    //Calculate the standard deviation with sins and cosines
+                    stdevsin += Math.pow(Math.sin(c.getDirectionRadians() - (average)), 2);
+                    stdevcos += Math.pow(Math.cos(c.getDirectionRadians() - (average)), 2);
+                }
+                stdevsin /= (angleChecker.size() - 1);
+                stdevcos /= (angleChecker.size() - 1);
+                stdev = Math.toDegrees(Math.atan2(Math.sqrt(stdevsin), Math.sqrt(stdevcos)));
+            } else {
+                for (Direction c : angleChecker) {
+                    //Calculate the standard deviation the normal way
+                    stdev += Math.pow(c.getDirectionDegrees() - Math.toDegrees(average), 2);
+                }
+                stdev /= (angleChecker.size() - 1);
+                stdev = Math.sqrt(stdev);
+            }
+
+
+            double probability = 0;
+            double total = 0;
+            sintotal = 0;
+            costotal = 0;
+
+            for (Direction c : angleChecker) {
+                //Use Chauvenet's criterion
+                if (Math.abs(c.getDirectionDegrees() - Math.toDegrees(average)) / stdev > 3) {
+                    probability = 1 - .997;
+                } else if (Math.abs(c.getDirectionDegrees() - Math.toDegrees(average)) / stdev > 2) {
+                    probability = 1 - .95;
+                } else if (Math.abs(c.getDirectionDegrees() - Math.toDegrees(average)) / stdev > 1) {
+                    probability = 1 - .68;
+                } else {
+                    probability = .5;
+                }
+                if (probability * angleChecker.size() > .5) {
+                    sintotal += Math.sin(c.getDirectionRadians());
+                    costotal += Math.cos(c.getDirectionRadians());
+                    total++;
+                }
+            }
+
+            sintotal /= angleChecker.size();
+            costotal /= angleChecker.size();
+            average = Math.atan2(sintotal, costotal);
+            if (average < 0) {
+                average += 2 * Math.PI;
+            }
+            
+        return average;
+    }
+
 	public ImageProcessor() {	}
 
 }

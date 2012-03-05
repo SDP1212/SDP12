@@ -528,7 +528,7 @@ public class GUI extends javax.swing.JFrame {
 	private void onScreenImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onScreenImageMouseClicked
 		if(refColorPointer==null)
 			return;
-        if(evt.getButton()==MouseEvent.BUTTON1)
+        if(evt.getButton()==MouseEvent.BUTTON1) 
             viewer.setNewReference(refColorPointer, evt.getX(), evt.getY());
         blueRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
         yellowRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
