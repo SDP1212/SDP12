@@ -206,40 +206,38 @@ public class PathSearch {
 	}
 
 	private static int calcMovementCost(GridCoordinates currentPoint,GridCoordinates newPoint) {
+		int value = 0;
 		if (oppGridPosition.distance(newPoint) < 6) {
 			// discourage it heavily, to not crash into opponent
-			return 500;
+			value+= 500;
 		}
 		
 		if(ballGridPosition.distance(newPoint) < 7){
-			return 500;
+			value+= 500;
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x >= ballGridPosition.x)
-				return 65;
+				value+= 65;
 		}
 		if (ourSide == RIGHT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x <= ballGridPosition.x)
-				return 65;
+				value+= 65;
 		}
-		if (oppGridPosition.distance(newPoint) < 5) {
-			// discourage points that are quite close to the opponent
-			return 30;
-		}
+
 		if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
-			return 18;
+			value+= 18;
 		}
 		// horizontal and vertical movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 1) {
-			return 10;
+			value+= 10;
 		}
 
 		// diagonal movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 2) {
-			return 14;
+			value+= 14;
 		}
 
-		return 0;
+		return value;
 	}
 
 	// Diagonal shortcut or Manhattan distance
