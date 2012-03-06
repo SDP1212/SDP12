@@ -83,11 +83,20 @@ public class PathSearchAI extends AI {
 	}
 
 	protected Coordinates target() {
-		double deltaX = pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX();
-		double x = (deltaX)*0.3 + pitch.ball.getPosition().getX();//deltaX * 0.3 + pitch.ball.getPosition().getX();
-		double y = (pitch.ball.getPosition().getY() - 0.5)/(pitch.ball.getPosition().getX()) *deltaX*0.3 + pitch.ball.getPosition().getY();
+		double ballX = pitch.ball.getPosition().getX();
+		double ballY = pitch.ball.getPosition().getY();
+		double goalX =  pitch.getTargetGoal().getUpperPostCoordinates().getX();
+		
+		double hackedLambda = 0;
+		if (pitch.getTargetGoal() == pitch.leftGoal) hackedLambda =0.3;
+		else hackedLambda = 0.1;
+		double deltaX = (pitch.getCentreSpot().getX() -goalX) * hackedLambda;
+		double x = deltaX + ballX;
+		
+		double y = (ballY - 0.5)/(ballX - goalX) *deltaX + ballY;
+
 		ballShape.setPosition(x, y);
-		//System.out.println("Target: X = " + x + " Y = " + y);
+
 		return new Coordinates(x, y);
 	}
 
@@ -95,7 +104,10 @@ public class PathSearchAI extends AI {
 		System.out.println("Getting waypoint");
 		System.out.println("Our position: " + self.getPosition());
 		System.out.println("Nemesis position: " + pitch.nemesis.getPosition());
-		nextWayPoint = PathSearch.getNextWaypoint(0, pitch.ball.getPosition(),target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
+		//int goal = Pitch.TARGET_RIGHT_GOAL;
+		//if (pitch.getTargetGoal().getLowerPostCoordinates().getX() == 0) goal = Pitch.TARGET_LEFT_GOAL;
+		
+		nextWayPoint = PathSearch.getNextWaypoint(1, pitch.ball.getPosition(),target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
 		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 	}
 
