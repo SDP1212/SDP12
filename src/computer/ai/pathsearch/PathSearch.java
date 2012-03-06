@@ -209,11 +209,11 @@ public class PathSearch {
 		int value = 0;
 		if (oppGridPosition.distance(newPoint) < 6) {
 			// discourage it heavily, to not crash into opponent
-			value+= 500;
+			value+= 300;
 		}
 		
 		if(ballGridPosition.distance(newPoint) < 7){
-			value+= 500;
+			value+= 300;
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x >= ballGridPosition.x)
@@ -224,9 +224,9 @@ public class PathSearch {
 				value+= 65;
 		}
 
-		if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
-			value+= 18;
-		}
+		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
+		//	value+= 18;
+		//}
 		// horizontal and vertical movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 1) {
 			value+= 10;

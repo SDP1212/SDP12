@@ -72,8 +72,8 @@ public class PathSearchAI extends AI {
 				}
 			} 
 		} else if (state == SHOT) {
-			if (new Date().getTime() - shotTime.getTime() < 1500) {
-				self.forward(Brick.SLOW);
+			if (new Date().getTime() - shotTime.getTime() < 1000) {
+				self.forward(Brick.MEDIUM);
 			} else {
 				self.kick();
 			}
@@ -147,7 +147,7 @@ public class PathSearchAI extends AI {
 		targetPoint = pitch.ball.getPosition();
 		Line lineToBall = new Line(self.getPosition(), targetPoint);
 		double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-		return (Math.abs(angle) < Math.PI / 16);
+		return (Math.abs(angle) < Math.PI / 18);
 	}
 
 	private boolean nearBall() {
