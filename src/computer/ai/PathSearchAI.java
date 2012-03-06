@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package computer.ai;
 
 import brick.Brick;
@@ -87,8 +83,9 @@ public class PathSearchAI extends AI {
 	}
 
 	protected Coordinates target() {
-		double x = (pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX()) * 0.3 + pitch.ball.getPosition().getX();
-		double y = (pitch.ball.getPosition().getY() - 0.5) * 0.5 + pitch.ball.getPosition().getY();
+		double deltaX = pitch.getCentreSpot().getX() - pitch.getTargetGoal().getUpperPostCoordinates().getX();
+		double x = (deltaX)*0.3 + pitch.ball.getPosition().getX();//deltaX * 0.3 + pitch.ball.getPosition().getX();
+		double y = (pitch.ball.getPosition().getY() - 0.5)/(pitch.ball.getPosition().getX()) *deltaX*0.3 + pitch.ball.getPosition().getY();
 		ballShape.setPosition(x, y);
 		//System.out.println("Target: X = " + x + " Y = " + y);
 		return new Coordinates(x, y);
