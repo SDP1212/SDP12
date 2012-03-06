@@ -29,7 +29,8 @@ public class PathSearchAI extends AI {
 	private Coordinates nextWayPoint = new Coordinates(1, 0.5);
 	private int runs = 0;
 	private Date dribbleStart = new Date(0);
-	private Date pauseBeforeShoot = new Date (0);
+	private Date pauseBeforeShoot = new Date(0);
+//	private boolean kickImmediately = false;
 
 	public PathSearchAI(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -70,7 +71,7 @@ public class PathSearchAI extends AI {
 				} else {
 					self.rotateRight(Brick.SLOW / 3);
 				}
-			} 
+			}
 		} else if (state == SHOT) {
 			if (new Date().getTime() - shotTime.getTime() < 1000) {
 				self.forward(Brick.MEDIUM);
@@ -85,18 +86,24 @@ public class PathSearchAI extends AI {
 	protected Coordinates target() {
 		double ballX = pitch.ball.getPosition().getX();
 		double ballY = pitch.ball.getPosition().getY();
-		double goalX =  pitch.getTargetGoal().getUpperPostCoordinates().getX();
-		
+		double goalX = pitch.getTargetGoal().getUpperPostCoordinates().getX();
+
 		double hackedLambda = 0;
-		if (pitch.getTargetGoal() == pitch.leftGoal) hackedLambda =0.3;
-		else hackedLambda = 0.1;
-		double deltaX = (pitch.getCentreSpot().getX() -goalX) * hackedLambda;
+		if (pitch.getTargetGoal() == pitch.leftGoal) {
+			hackedLambda = 0.3;
+		} else {
+			hackedLambda = 0.1;
+		}
+		double deltaX = (pitch.getCentreSpot().getX() - goalX) * hackedLambda;
+
 		double x = deltaX + ballX;
-		
-		double y = (ballY - 0.5)/(ballX - goalX) *deltaX + ballY;
-
+		double y = (ballY - 0.5) / (ballX - goalX) * deltaX + ballY;
+//		kickImmediately = false;
+//		if (ballY < 0.15 || ballY > 0.85) {
+//			kickImmediately = true;
+//			y = 2 * (ballY - y) + y;
+//		}
 		ballShape.setPosition(x, y);
-
 		return new Coordinates(x, y);
 	}
 
@@ -106,8 +113,8 @@ public class PathSearchAI extends AI {
 		System.out.println("Nemesis position: " + pitch.nemesis.getPosition());
 		//int goal = Pitch.TARGET_RIGHT_GOAL;
 		//if (pitch.getTargetGoal().getLowerPostCoordinates().getX() == 0) goal = Pitch.TARGET_LEFT_GOAL;
-		
-		nextWayPoint = PathSearch.getNextWaypoint(1, pitch.ball.getPosition(),target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
+
+		nextWayPoint = PathSearch.getNextWaypoint(1, pitch.ball.getPosition(), target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
 		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 	}
 
@@ -180,6 +187,7 @@ public class PathSearchAI extends AI {
 
 	@Override
 	public void robotCollided() {
+		getNextWayPoint();
 		System.out.println("Collision");
 	}
 }

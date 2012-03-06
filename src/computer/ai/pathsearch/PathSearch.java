@@ -209,7 +209,7 @@ public class PathSearch {
 		int value = 0;
 		if (oppGridPosition.distance(newPoint) < 6) {
 			// discourage it heavily, to not crash into opponent
-			value+= 300;
+			value+= 400;
 		}
 		
 		if(ballGridPosition.distance(newPoint) < 7){
@@ -222,6 +222,9 @@ public class PathSearch {
 		if (ourSide == RIGHT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x <= ballGridPosition.x)
 				value+= 65;
+		}
+		if(ourGridPosition.y < 4 || ourGridPosition.y > 20){
+			value+=500;
 		}
 
 		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
