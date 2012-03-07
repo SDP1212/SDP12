@@ -231,8 +231,8 @@ public class ImageProcessor {
 
 		// where 5 is just some minimal number of pixels found
             if (btCentroidCount > 5) {
-                btPos = new Point((btCentroid.x / btCentroidCount)+2, (btCentroid.y
-                        / btCentroidCount)+2);
+                btPos = new Point((btCentroid.x / btCentroidCount), (btCentroid.y
+                        / btCentroidCount));
                 int btAngle = findAngle(data, wraster, btPos, blueRef);
 //			System.out.println("Blue: (" + btPos.x + ", " + btPos.y +")");
                 if (btPos.x >= 0 && btPos.y >= 0) {
