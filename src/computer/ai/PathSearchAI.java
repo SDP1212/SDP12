@@ -94,15 +94,20 @@ public class PathSearchAI extends AI {
 		} else {
 			hackedLambda = 0.1;
 		}
+		if (ballY < 0.15 || ballY > 0.85) {
+			hackedLambda *= 0.35;
+		}
 		double deltaX = (pitch.getCentreSpot().getX() - goalX) * hackedLambda;
 
 		double x = deltaX + ballX;
 		double y = (ballY - 0.5) / (ballX - goalX) * deltaX + ballY;
 //		kickImmediately = false;
-//		if (ballY < 0.15 || ballY > 0.85) {
+		if (ballY < 0.15 || ballY > 0.85) {
 //			kickImmediately = true;
-//			y = 2 * (ballY - y) + y;
-//		}
+//			x = ballX;
+//			y = ballY;
+			y = 2 * (ballY - y) + y;
+		}
 		ballShape.setPosition(x, y);
 		return new Coordinates(x, y);
 	}
@@ -185,6 +190,20 @@ public class PathSearchAI extends AI {
 		return lineToWayPoint.getLength() < 0.1;
 	}
 
+	private boolean facingTargetGoal() {
+		Coordinates centreGoal = new Coordinates(pitch.getTargetGoal().getLowerPostCoordinates().getX(), pitch.getCentreSpot().getY());
+		Line lineToGoal = new Line (self.getPosition(), centreGoal);
+		
+		double angle = LineTools.angleBetweenLineAndDirection(lineToGoal, self.getOrientation());
+		
+		//Line lineToUpperPost = new Line(self.getPosition(), pitch.getTargetGoal().getUpperPostCoordinates());
+		//Line lineToLowerPost = new Line(self.getPosition(), pitch.getTargetGoal().getLowerPostCoordinates());
+		//double angleToUpperPost = LineTools.angleBetweenLines(lineToGoal, lineToUpperPost);
+		//double angleToLowerPost = LineTools.angleBetweenLines(lineToGoal, lineToLowerPost);
+		//return ((angleToUpperPost <= angle && angle <= angleToLowerPost) || (angleToUpperPost >= angle && angle >= angleToLowerPost))
+		return Math.abs(angle) < Math.PI/2;
+	}
+	
 	@Override
 	public void robotCollided() {
 		getNextWayPoint();
