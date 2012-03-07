@@ -228,8 +228,8 @@ public class ImageProcessor {
 
 		// where 5 is just some minimal number of pixels found
             if (btCentroidCount > 5) {
-                btPos = new Point((btCentroid.x / btCentroidCount)+2, (btCentroid.y
-                        / btCentroidCount)+2);
+                btPos = new Point(btCentroid.x / btCentroidCount, btCentroid.y
+                        / btCentroidCount);
                 int btAngle = findAngle(data, wraster, btPos, blueRef);
 //			System.out.println("Blue: (" + btPos.x + ", " + btPos.y +")");
                 if (btPos.x >= 0 && btPos.y >= 0) {
@@ -293,7 +293,6 @@ public class ImageProcessor {
         }
         
         if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
-            
             int[] temp=new int[3];
 			getPixel(data, btPos.x,btPos.y,temp);
             if(isRef(temp,blueRef,blueRefThresh)){
@@ -301,7 +300,6 @@ public class ImageProcessor {
                 blueRef[1]=temp[1];
                 blueRef[2]=temp[2];
             }
-            
 			temp=new int[3];
             getPixel(data, ytPos.x,ytPos.y,temp);
             if(isRef(temp,yellRef,yellRefThresh)){
@@ -837,7 +835,6 @@ public class ImageProcessor {
         if(destination.length<3)
             return;
         else if(!ENABLE_NOISE_REDUCTION_FILTER){
-            
             data.getPixel(pixelX, pixelY, destination);
             return;
         }

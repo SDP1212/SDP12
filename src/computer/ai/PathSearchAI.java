@@ -191,17 +191,22 @@ public class PathSearchAI extends AI {
 	}
 
 	private boolean facingTargetGoal() {
-		Coordinates centreGoal = new Coordinates(pitch.getTargetGoal().getLowerPostCoordinates().getX(), pitch.getCentreSpot().getY());
-		Line lineToGoal = new Line (self.getPosition(), centreGoal);
-		
-		double angle = LineTools.angleBetweenLineAndDirection(lineToGoal, self.getOrientation());
-		
-		//Line lineToUpperPost = new Line(self.getPosition(), pitch.getTargetGoal().getUpperPostCoordinates());
-		//Line lineToLowerPost = new Line(self.getPosition(), pitch.getTargetGoal().getLowerPostCoordinates());
-		//double angleToUpperPost = LineTools.angleBetweenLines(lineToGoal, lineToUpperPost);
-		//double angleToLowerPost = LineTools.angleBetweenLines(lineToGoal, lineToLowerPost);
-		//return ((angleToUpperPost <= angle && angle <= angleToLowerPost) || (angleToUpperPost >= angle && angle >= angleToLowerPost))
-		return Math.abs(angle) < Math.PI/2;
+		Line lineToUpperPost = new Line(self.getPosition(), pitch.getTargetGoal().getUpperPostCoordinates());
+		Line lineToLowerPost = new Line(self.getPosition(), pitch.getTargetGoal().getLowerPostCoordinates());
+		return (LineTools.angleBetweenLineAndDirection(lineToLowerPost, self.getOrientation())*LineTools.angleBetweenLineAndDirection(lineToUpperPost, self.getOrientation()) < 0);
+//		Coordinates centreGoal = new Coordinates(pitch.getTargetGoal().getLowerPostCoordinates().getX(), pitch.getCentreSpot().getY());
+//		Line lineToGoal = new Line (self.getPosition(), centreGoal);
+//		
+//		double angle = LineTools.angleBetweenLineAndDirection(lineToGoal, self.getOrientation());
+//		
+//		Line lineToUpperPost = new Line(self.getPosition(), pitch.getTargetGoal().getUpperPostCoordinates());
+//		Line lineToLowerPost = new Line(self.getPosition(), pitch.getTargetGoal().getLowerPostCoordinates());
+//		double angleToUpperPost = LineTools.angleBetweenLines(lineToGoal, lineToUpperPost);
+//		double angleToLowerPost = LineTools.angleBetweenLines(lineToGoal, lineToLowerPost);
+//		
+//		
+//		return ((angleToUpperPost <= angle && angle <= angleToLowerPost) || (angleToUpperPost >= angle && angle >= angleToLowerPost));
+//		return Math.abs(angle) < Math.PI/2;
 	}
 	
 	@Override
