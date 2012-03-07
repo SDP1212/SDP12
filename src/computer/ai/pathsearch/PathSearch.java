@@ -213,7 +213,7 @@ public class PathSearch {
 		}
 		
 		if(ballGridPosition.distance(newPoint) < 7){
-			value+= 300;
+			value+= 500;
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x >= ballGridPosition.x)
@@ -224,7 +224,7 @@ public class PathSearch {
 				value+= 65;
 		}
 		if(ourGridPosition.y < 4 || ourGridPosition.y > 20){
-			value+=500;
+			value+=600;
 		}
 
 		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
