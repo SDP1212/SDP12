@@ -40,6 +40,9 @@ public class ImageProcessor {
 	public static int[] yellRef = new int[] {255,255,0};
 	public static int[] blueRef = new int[] {0,0,255};
 
+        private final int[] yellFull = new int[] {255,255,0};
+        private final int[] blueFull = new int[] {0, 0, 255};
+                
 	protected static int height = 480;
 	protected static int width = 640;
 
@@ -228,8 +231,8 @@ public class ImageProcessor {
 
 		// where 5 is just some minimal number of pixels found
             if (btCentroidCount > 5) {
-                btPos = new Point(btCentroid.x / btCentroidCount, btCentroid.y
-                        / btCentroidCount);
+                btPos = new Point((btCentroid.x / btCentroidCount)+2, (btCentroid.y
+                        / btCentroidCount)+2);
                 int btAngle = findAngle(data, wraster, btPos, blueRef);
 //			System.out.println("Blue: (" + btPos.x + ", " + btPos.y +")");
                 if (btPos.x >= 0 && btPos.y >= 0) {
@@ -294,15 +297,39 @@ public class ImageProcessor {
         
         if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
             int[] temp=new int[3];
-            getPixel(data, btPos.x,btPos.y,temp);
+            
+            /*
+             * SCOTT EDITS: 
+             * I've potentially found a way to limit the top left corner jump
+             * If we check the difference between what it currently thinks is yellow
+             * and a global yellow, and that difference is less than 155 (therefore this
+             * pixel is a good yellow) the code will update in regards to it). I've commented
+             * out the code for now, especially because 
+             * 
+             */
+//            if(getColourDifference(blueRef, blueFull) < 155) {
+             getPixel(data, btPos.x,btPos.y,temp);
+//            }
+            
             if(isRef(temp,blueRef,blueRefThresh)){
                 blueRef[0]=temp[0];
                 blueRef[1]=temp[1];
                 blueRef[2]=temp[2];
             }
+            
             temp=new int[3];
+//            if(getColourDifference(yellRef, yellFull)<155) {
             getPixel(data, ytPos.x,ytPos.y,yellRef);
+//            }
+            
             if(isRef(temp,yellRef,yellRefThresh)){
+                /*
+                 * DIMO: I don't think this is ever called - if you print out temp versus yellRef, it is massive. 
+                 * YellRefThresh is small. I've never seen the below print statement. This may be because yellRef is
+                 * updated here, but temp is updated in the comment above
+                 * System.out.println("Yellref updated");
+                 */
+                
                 yellRef[0]=temp[0];
                 yellRef[1]=temp[1];
                 yellRef[2]=temp[2];
@@ -835,6 +862,7 @@ public class ImageProcessor {
         if(destination.length<3)
             return;
         else if(!ENABLE_NOISE_REDUCTION_FILTER){
+            
             data.getPixel(pixelX, pixelY, destination);
             return;
         }
