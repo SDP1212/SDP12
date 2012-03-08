@@ -6,7 +6,6 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import computer.vision.WorldState;
 
 public class Viewer extends Vision implements Runnable {
 
@@ -197,7 +196,7 @@ public class Viewer extends Vision implements Runnable {
 	
 	public void setNewReference(int[] reference, int x, int y){
 		this.refColorPointer=reference;
-		this.refNewPixel=new Point(x, y);
+		this.refNewPixel=ImageProcessor.debarrel(new Point(x, y));
 	}
 
 	public static WorldState getWorldState() {

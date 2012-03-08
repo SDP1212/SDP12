@@ -44,8 +44,12 @@ public class ImageProcessor {
 	protected static int width = 640;
 
 	// --- Barrel Distortion Correction
-	private static final double barrelCorrectionX = -0.016;
-	private static final double barrelCorrectionY = -0.06;
+	private static double xFactor = 0;
+    private static double yFactor = 0;
+
+    public ImageProcessor(BufferedImage image) {
+        this.image = image;
+    }
 
 	public static boolean useBarrelDistortion = false;
 	public static boolean cameraView = true;
@@ -100,6 +104,12 @@ public class ImageProcessor {
 	 */
 	public BufferedImage process(BufferedImage image) {
 
+        
+        //reinit barrel correction
+        if(useBarrelDistortion){
+            xFactor=Math.atan(0.5)/((xupperlimit-xlowerlimit)/2.0);
+            yFactor=Math.atan(((yupperlimit-ylowerlimit)/2.0)/(xupperlimit-xlowerlimit))/((yupperlimit-ylowerlimit)/2.0);
+        }
 //        System.err.print(blueThreshold+"\n"+blueRefThresh+"\n"+yellThreshold+"\n"+yellRefThresh+"\n");
         //		 create raster from given image
 		Raster data;
@@ -150,7 +160,7 @@ public class ImageProcessor {
 				double ballDifference = getColourDifference(redRef, pixelColour);
 
 				// barrel distortion
-				Point out = convertToBarrelCorrected(new Point(i, j));
+				Point out = new Point(i, j);
 
 				// if converted pixel is still within pict then set it on the
 				// new raster
@@ -166,8 +176,7 @@ public class ImageProcessor {
 
 				if (isBrightGreen(pixelColour)) {
 					if (DEBUG_LEVEL > 1)
-						drawPixel(wraster, convertToBarrelCorrected(new Point(
-								i, j)), new int[] { 0, 255, 0 });
+						drawPixel(wraster, out, new int[] { 0, 255, 0 });
 				}
 			}
 		}
@@ -183,7 +192,7 @@ public class ImageProcessor {
                 if(isBlue(pixelColour)){
                     blueBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
                     if (DEBUG_LEVEL > 1)
-                        drawPixel(wraster,convertToBarrelCorrected(new Point(x, y)),new int[] {0,0,127});
+                        drawPixel(wraster,new Point(x, y),new int[] {0,0,127});
                 }
             }
 
@@ -194,7 +203,7 @@ public class ImageProcessor {
                 if(isYellow(pixelColour)){
                     yellowBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
                     if (DEBUG_LEVEL > 1)
-                        drawPixel(wraster,convertToBarrelCorrected(new Point(x, y)),new int[] {127,127,0});
+                        drawPixel(wraster,new Point(x, y),new int[] {127,127,0});
                 }
 //                else if(isRed(pixelColour))redBlob.add(new PixelCoordinates(x, y, useBarrelDistortion, false));
             }
@@ -206,7 +215,7 @@ public class ImageProcessor {
         // Calculate Centroid of blue Co-ordinates
         for(PixelCoordinates pixel : blueBlob){
             // barrel distortion
-            Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
+            Point out = new Point(pixel.getX(), pixel.getY());
             if (DEBUG_LEVEL > 1)
                 drawPixel(wraster, out, new int[] {0,0,255});
             btCentroidCount++;
@@ -218,7 +227,7 @@ public class ImageProcessor {
         
         // Calculate Centroid of yellow Co-ordinates
         for(PixelCoordinates pixel : yellowBlob){
-            Point out = convertToBarrelCorrected(new Point(pixel.getX(), pixel.getY()));
+            Point out = new Point(pixel.getX(), pixel.getY());
             if (DEBUG_LEVEL > 1)
                 drawPixel(wraster, out, new int[] {255,255,0});
             ytCentroidCount++;
@@ -478,7 +487,7 @@ public class ImageProcessor {
 			for (int i = 0; i < len; i++) {
 				Point tmp = Tools.rotatePoint(new Point(x, y), new Point(Xs[i],
 						Ys[i]), bestangle);
-				drawLittleCross(raster, convertToBarrelCorrected(tmp), new int[] {255,0,0});
+				drawLittleCross(raster, tmp, new int[] {255,0,0});
 			}
 		}
 		if (DEBUG_LEVEL > 0) {
@@ -585,51 +594,24 @@ public class ImageProcessor {
 	 * Barrel Distortion Correction 'straightens' the distorted image.
 	 * But doesn't quite work properly. But it is not really needed anyway.
 	 * 
-	 * @param p1
+	 * @param p
 	 *            point coordinates
 	 * @return if useBarrelDistorion is false returns p1, otherwise, returns
 	 *         adjusted coordinates
 	 */
-	public Point convertToBarrelCorrected(Point p1) {
+	public static Point debarrel(Point p) {
 		if (!useBarrelDistortion)
-			return p1;
-		// first normalise pixel
-		double px = (2 * p1.x - width) / (double) width;
-		double py = (2 * p1.y - height) / (double) height;
+			return p;
+        
+        double distance=Math.sqrt(Math.pow(p.x-320,2)+Math.pow(p.y-240,2));
+        
+        double xRatio=distance/((xupperlimit-xlowerlimit)*Math.tan(distance*xFactor));
+        double yRatio=distance/((xupperlimit-xlowerlimit)*Math.tan(distance*yFactor));
+        
+        double x=(p.x-320)*xRatio;
+        double y=(p.y-240)*yRatio;
 
-		// then compute the radius of the pixel you are working with
-		double rad = px * px + py * py;
-
-		// then compute new pixel'
-		double px1 = px * (1 - barrelCorrectionX * rad);
-		double py1 = py * (1 - barrelCorrectionY * rad);
-
-		// then convert back
-		int pixi = (int) ((px1 + 1) * width / 2);
-		int pixj = (int) ((py1 + 1) * height / 2);
-		// System.out.println("New Pixel: (" + pixi + ", " + pixj + ")");
-		return new Point(pixi, pixj);
-	}
-
-	public static Point barrelCorrected(Point p1) {
-		// System.out.println("Pixel: (" + x + ", " + y + ")");
-		// first normalise pixel
-		double px = (2 * p1.x - width) / (double) width;
-		double py = (2 * p1.y - height) / (double) height;
-
-		// System.out.println("Norm Pixel: (" + px + ", " + py + ")");
-		// then compute the radius of the pixel you are working with
-		double rad = px * px + py * py;
-
-		// then compute new pixel'
-		double px1 = px * (1 - barrelCorrectionX * rad);
-		double py1 = py * (1 - barrelCorrectionY * rad);
-
-		// then convert back
-		int pixi = (int) ((px1 + 1) * width / 2);
-		int pixj = (int) ((py1 + 1) * height / 2);
-		// System.out.println("New Pixel: (" + pixi + ", " + pixj + ")");
-		return new Point(pixi, pixj);
+		return new Point((int)(x+320), (int)(y+240));
 	}
 
 	/**
@@ -832,20 +814,27 @@ public class ImageProcessor {
             
         return average;
     }
-    
-    private void getPixel(Raster data, int pixelX, int pixelY, int[] destination){
-        if(destination.length<3)
-            return;
-        else if(!ENABLE_NOISE_REDUCTION_FILTER){
-            
-            data.getPixel(pixelX, pixelY, destination);
-            return;
-        }
-        int[][] kernel=new int[][] {{ 2, 4, 5, 4, 2},
+    static final int[][] kernel=new int[][] {{ 2, 4, 5, 4, 2},
                                     { 4, 9,12, 9, 4},
                                     { 5,12,15,12, 5},
                                     { 4, 9,12, 9, 4},
                                     { 2, 4, 5, 4, 2}};
+    private void getPixel(Raster data, int pixelX, int pixelY, int[] destination){
+        if(destination.length<3)
+            return;
+        Point p=debarrel(new Point(pixelX, pixelY));
+        pixelX=Math.max(xlowerlimit,Math.min(p.x,xupperlimit));
+        pixelY=Math.max(ylowerlimit,Math.min(p.y,yupperlimit));
+        if(!ENABLE_NOISE_REDUCTION_FILTER || 
+                !((btPos.x-rayOfLight<pixelX && pixelX<btPos.x+rayOfLight &&
+                   btPos.y-rayOfLight<pixelY && pixelY<btPos.y+rayOfLight) ||
+                  (ytPos.x-rayOfLight<pixelX && pixelX<ytPos.x+rayOfLight &&
+                   ytPos.y-rayOfLight<pixelY && pixelY<ytPos.y+rayOfLight))){
+            
+            data.getPixel(pixelX, pixelY, destination);
+            return;
+        }
+        
         for(int i=0;i<destination.length;i++)
             destination[i]=0;
         int normalizer=0;
