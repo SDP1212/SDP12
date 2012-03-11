@@ -4,6 +4,7 @@
  */
 package computer.simulator;
 
+import computer.ai.AI;
 import computer.control.ControlInterface;
 import javax.swing.JFrame;
 
@@ -324,6 +325,30 @@ public class Engine implements Runnable{
             // TODO: Remove next two lines for production version:
             i++;
 //            System.out.println("Simulation iteration "+i+" complete.");
+        }
+    }
+    
+    /**
+     * Swaps the current AI of the specified robot with an instance of the
+     * specified AI.
+     * 
+     * @param robot the id of the robot to swap on
+     * @param ai the class of the new AI
+     */
+    public void brainSurgery(short robot,Class ai){
+        if(ai!=null){
+            Robot patient;
+            switch(robot){
+                case Robot.NEMESIS : {
+                    patient=pitch.nemesis;
+                    break;
+                }
+                default : {
+                    patient=pitch.robotinho;
+                    break;
+                }
+            }
+            patient.addAI(ai);
         }
     }
     
