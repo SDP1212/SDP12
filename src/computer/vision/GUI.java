@@ -31,6 +31,7 @@ public class GUI extends javax.swing.JFrame {
 	private int[] refColorPointer=null;
     private boolean moveLimits=false;
     private boolean north=false,east=false,south=false,west=false;
+    private boolean northwall=false,eastwall=false,southwall=false,westwall=false;
     private static final FileFilter visionSaveFileFilter=new FileFilter() {
 
             @Override
@@ -634,26 +635,32 @@ public class GUI extends javax.swing.JFrame {
             return;
         
         int x=evt.getX(),y=evt.getY();
-        north=ImageProcessor.ylowerlimit-2<=y && y<=ImageProcessor.ylowerlimit+2;
-        east=ImageProcessor.xupperlimit-2<=x && x<=ImageProcessor.xupperlimit+2;
-        south=ImageProcessor.yupperlimit-2<=y && y<=ImageProcessor.yupperlimit+2;
-        west=ImageProcessor.xlowerlimit-2<=x && x<=ImageProcessor.xlowerlimit+2;
+        north=ImageProcessor.ylowerlimit-5<=y && y<=ImageProcessor.ylowerlimit+5;
+        east=ImageProcessor.xupperlimit-5<=x && x<=ImageProcessor.xupperlimit+5;
+        south=ImageProcessor.yupperlimit-5<=y && y<=ImageProcessor.yupperlimit+5;
+        west=ImageProcessor.xlowerlimit-5<=x && x<=ImageProcessor.xlowerlimit+5;
+        
+        
+        northwall=ImageProcessor.nePos.y-5<=y && y<=ImageProcessor.nwPos.y+5 && ImageProcessor.DEBUG_LEVEL>0;
+        eastwall=ImageProcessor.nePos.x-5<=x && x<=ImageProcessor.sePos.x+5 && ImageProcessor.DEBUG_LEVEL>0;
+        southwall=ImageProcessor.sePos.y-5<=y && y<=ImageProcessor.swPos.y+5 && ImageProcessor.DEBUG_LEVEL>0;
+        westwall=ImageProcessor.swPos.x-5<=x && x<=ImageProcessor.nwPos.x+5 && ImageProcessor.DEBUG_LEVEL>0;
 
-        if(north && east)
+        if((north && east) || (northwall && eastwall))
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
-        else if(north && west)
+        else if((north && west) || (northwall && westwall))
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
-        else if(south && west)
+        else if((south && west) || (southwall && westwall))
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
-        else if(south && east)
+        else if((south && east) || (southwall && eastwall))
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
-        else if(north)
+        else if(north || northwall)
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-        else if(east)
+        else if(east || eastwall)
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
-        else if(south)
+        else if(south || southwall)
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
-        else if(west)
+        else if(west || westwall)
             onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
         else
             onScreenImage.setCursor(Cursor.getDefaultCursor());
@@ -679,6 +686,24 @@ public class GUI extends javax.swing.JFrame {
                 ImageProcessor.yupperlimit=Math.min(480,evt.getY());
             if(west)
                 ImageProcessor.xlowerlimit=Math.max(0,evt.getX());
+            if(ImageProcessor.DEBUG_LEVEL>0){
+                if(northwall){
+                    ImageProcessor.nwPos.y=Math.max(0,evt.getY());
+                    ImageProcessor.nePos.y=Math.max(0,evt.getY());
+                }
+                if(eastwall){
+                    ImageProcessor.nePos.x=Math.min(640, evt.getX());
+                    ImageProcessor.sePos.x=Math.min(640, evt.getX());
+                }
+                if(southwall){
+                    ImageProcessor.swPos.y=Math.min(480,evt.getY());
+                    ImageProcessor.sePos.y=Math.min(480,evt.getY());
+                }
+                if(westwall){
+                    ImageProcessor.swPos.x=Math.max(0, evt.getX());
+                    ImageProcessor.nwPos.x=Math.max(0, evt.getX());
+                }
+            }
         }
     }//GEN-LAST:event_onScreenImageMouseDragged
 
@@ -709,6 +734,10 @@ public class GUI extends javax.swing.JFrame {
                 out.write(Integer.toString(ImageProcessor.xupperlimit)+'\n');
                 out.write(Integer.toString(ImageProcessor.ylowerlimit)+'\n');
                 out.write(Integer.toString(ImageProcessor.yupperlimit)+'\n');
+                out.write(Integer.toString(ImageProcessor.nwPos.x)+'\n');
+                out.write(Integer.toString(ImageProcessor.nePos.y)+'\n');
+                out.write(Integer.toString(ImageProcessor.sePos.x)+'\n');
+                out.write(Integer.toString(ImageProcessor.swPos.y)+'\n');
                 out.close();
                 if(!file.getName().endsWith(".sdp1212vision")){
                     file.renameTo(new File(file.getParentFile(), file.getName()+".sdp1212vision"));
@@ -749,6 +778,10 @@ public class GUI extends javax.swing.JFrame {
                 ImageProcessor.xupperlimit=in.nextInt();
                 ImageProcessor.ylowerlimit=in.nextInt();
                 ImageProcessor.yupperlimit=in.nextInt();
+                ImageProcessor.nwPos.x=ImageProcessor.swPos.x=in.nextInt();
+                ImageProcessor.nwPos.y=ImageProcessor.nePos.y=in.nextInt();
+                ImageProcessor.nePos.x=ImageProcessor.sePos.x=in.nextInt();
+                ImageProcessor.swPos.y=ImageProcessor.sePos.y=in.nextInt();
                 in.close();
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);

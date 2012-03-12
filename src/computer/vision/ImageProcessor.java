@@ -39,6 +39,7 @@ public class ImageProcessor {
 	public static int[] redRef = new int[] {255,0,0};
 	public static int[] yellRef = new int[] {255,255,0};
 	public static int[] blueRef = new int[] {0,0,255};
+        public static int[] orangeRef = new int[] {255,127,0};
 
 	protected static int height = 480;
 	protected static int width = 640;
@@ -73,6 +74,10 @@ public class ImageProcessor {
 	// this will store object coordinates
 	public static Point btPos = new Point(-1,-1);
 	public static Point ytPos = new Point(-1,-1);
+        public static Point nwPos = new Point(xlowerlimit+10,ylowerlimit+10);
+        public static Point nePos = new Point(xupperlimit-10,ylowerlimit+10);
+        public static Point sePos = new Point(xupperlimit-10,yupperlimit-10);
+        public static Point swPos = new Point(xlowerlimit+10,yupperlimit-10);
 	public static Point lastBallPos = new Point(-1,-1);
 
 	LinkedList<Point> lines = new LinkedList<Point>();
@@ -107,8 +112,8 @@ public class ImageProcessor {
         
         //reinit barrel correction
         if(useBarrelDistortion){
-            xFactor=Math.atan(0.5)/((xupperlimit-xlowerlimit)/2.0);
-            yFactor=Math.atan(((yupperlimit-ylowerlimit)/2.0)/(xupperlimit-xlowerlimit))/((yupperlimit-ylowerlimit)/2.0);
+            xFactor=Math.atan(0.5)/((nePos.x-nwPos.x)/2.0);
+            yFactor=Math.atan(((nePos.y-sePos.y)/2.0)/(nePos.x-nwPos.x))/((nePos.y-sePos.y)/2.0);
         }
 //        System.err.print(blueThreshold+"\n"+blueRefThresh+"\n"+yellThreshold+"\n"+yellRefThresh+"\n");
         //		 create raster from given image
@@ -299,6 +304,10 @@ public class ImageProcessor {
         if(DEBUG_LEVEL>0){
             drawCross(wraster, btPos, blueRef);
             drawCross(wraster, ytPos, yellRef);
+            drawLine(wraster, nwPos, nePos, orangeRef);
+            drawLine(wraster, nePos, sePos, orangeRef);
+            drawLine(wraster, sePos, swPos, orangeRef);
+            drawLine(wraster, swPos, nwPos, orangeRef);
         }
         
         if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
@@ -605,8 +614,8 @@ public class ImageProcessor {
         
         double distance=Math.sqrt(Math.pow(p.x-320,2)+Math.pow(p.y-240,2));
         
-        double xRatio=distance/((xupperlimit-xlowerlimit)*Math.tan(distance*xFactor));
-        double yRatio=distance/((xupperlimit-xlowerlimit)*Math.tan(distance*yFactor));
+        double xRatio=distance/((nePos.x-nwPos.x)*Math.tan(distance*xFactor));
+        double yRatio=distance/((nePos.x-nwPos.x)*Math.tan(distance*yFactor));
         
         double x=(p.x-320)*xRatio;
         double y=(p.y-240)*yRatio;
@@ -658,6 +667,8 @@ public class ImageProcessor {
 				drawPixel(raster, new Point(x0, y0), colour);
 			}
 		}
+        else for(int i=Math.min(p1.y, p2.y);i<Math.max(p1.y, p2.y);i++)
+            drawPixel(raster, new Point(p1.x,i), colour);
 	}
 
 	public void addLineToBeDrawn(Point p1, Point p2, int color) {
