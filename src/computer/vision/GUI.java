@@ -28,6 +28,7 @@ public class GUI extends javax.swing.JFrame {
     public Color blueRefColor=new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2]);
     public Color yellowRefColor=new Color(ImageProcessor.yellRef[0],ImageProcessor.yellRef[1],ImageProcessor.yellRef[2]);
     public Color redRefColor=new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]);
+    public Color grnRefColor=new Color(ImageProcessor.grnRef[0],ImageProcessor.grnRef[1],ImageProcessor.grnRef[2]);
 	private int[] refColorPointer=null;
     private boolean moveLimits=false;
     private boolean north=false,east=false,south=false,west=false;
@@ -83,6 +84,9 @@ public class GUI extends javax.swing.JFrame {
         noiseCheckbox = new javax.swing.JCheckBox();
         saveButton = new javax.swing.JButton();
         loadButton = new javax.swing.JButton();
+        platePanel = new javax.swing.JPanel();
+        grnRefChanger = new javax.swing.JPanel();
+        grnThreshSlider = new javax.swing.JSlider();
 
         buttonGroup2.add(pitchMainRadio);
         buttonGroup2.add(pitchSideRadio);
@@ -247,7 +251,7 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(blueRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(blueRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .addComponent(blueRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                     .addComponent(blueThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
         bluePanelLayout.setVerticalGroup(
@@ -309,7 +313,7 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(yellowRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(yellowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(yellowRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .addComponent(yellowRefThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                     .addComponent(yellThreshSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
         yellowPanelLayout.setVerticalGroup(
@@ -329,11 +333,11 @@ public class GUI extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 redRefChangerMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                refChangerMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 refChangerMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                refChangerMouseEntered(evt);
             }
         });
 
@@ -364,7 +368,7 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(ballPanelLayout.createSequentialGroup()
                 .addComponent(redRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ballSearchSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
+                .addComponent(ballSearchSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
         );
         ballPanelLayout.setVerticalGroup(
             ballPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,46 +400,99 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        platePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Plate Detection"));
+
+        grnRefChanger.setBackground(grnRefColor);
+        grnRefChanger.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        grnRefChanger.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                grnRefChangerMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                refChangerMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                refChangerMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout grnRefChangerLayout = new javax.swing.GroupLayout(grnRefChanger);
+        grnRefChanger.setLayout(grnRefChangerLayout);
+        grnRefChangerLayout.setHorizontalGroup(
+            grnRefChangerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+        grnRefChangerLayout.setVerticalGroup(
+            grnRefChangerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 12, Short.MAX_VALUE)
+        );
+
+        grnThreshSlider.setMaximum(17500);
+        grnThreshSlider.setToolTipText("Yellow Detection Threshold");
+        grnThreshSlider.setValue((int)(ImageProcessor.grnThreshold*100));
+        grnThreshSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                grnThreshSliderStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout platePanelLayout = new javax.swing.GroupLayout(platePanel);
+        platePanel.setLayout(platePanelLayout);
+        platePanelLayout.setHorizontalGroup(
+            platePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(platePanelLayout.createSequentialGroup()
+                .addComponent(grnRefChanger, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(grnThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
+        );
+        platePanelLayout.setVerticalGroup(
+            platePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(grnRefChanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(grnThreshSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
-                    .addComponent(ballPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(yellowPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(debugSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(labelDebug, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(bluePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(modeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(modeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(barrelCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(noiseCheckbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(sliderSaturation, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(yellowPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(debugSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(labelDebug, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(bluePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ballPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(platePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pitchMainRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pitchSideRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
-                    .addComponent(sliderContrast, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(sliderBrightness, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                    .addComponent(modeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(modeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(barrelCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(noiseCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(sliderSaturation, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(pitchMainRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pitchSideRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                    .addComponent(sliderContrast, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(sliderBrightness, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(onScreenImage, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(labelDebug, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(debugSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -445,6 +502,8 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(yellowPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ballPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(platePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(modeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -614,6 +673,7 @@ public class GUI extends javax.swing.JFrame {
         blueRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
         yellowRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
         redRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+        grnRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
         onScreenImage.setCursor(Cursor.getDefaultCursor());
         refColorPointer=null;
 	}//GEN-LAST:event_onScreenImageMouseClicked
@@ -738,6 +798,7 @@ public class GUI extends javax.swing.JFrame {
                 out.write(Integer.toString(ImageProcessor.nePos.y)+'\n');
                 out.write(Integer.toString(ImageProcessor.sePos.x)+'\n');
                 out.write(Integer.toString(ImageProcessor.swPos.y)+'\n');
+                out.write(Double.toString(ImageProcessor.grnThreshold)+'\n');
                 out.close();
                 if(!file.getName().endsWith(".sdp1212vision")){
                     file.renameTo(new File(file.getParentFile(), file.getName()+".sdp1212vision"));
@@ -782,12 +843,30 @@ public class GUI extends javax.swing.JFrame {
                 ImageProcessor.nwPos.y=ImageProcessor.nePos.y=in.nextInt();
                 ImageProcessor.nePos.x=ImageProcessor.sePos.x=in.nextInt();
                 ImageProcessor.swPos.y=ImageProcessor.sePos.y=in.nextInt();
+                grnThreshSlider.setValue((int)((ImageProcessor.grnThreshold=in.nextDouble())*100));
                 in.close();
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);
             }
         }
     }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void grnRefChangerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grnRefChangerMouseClicked
+        if(refColorPointer==null){
+            onScreenImage.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            grnRefChanger.setBorder(new BevelBorder(BevelBorder.LOWERED));
+            refColorPointer=ImageProcessor.grnRef;
+        }
+        else{
+            onScreenImage.setCursor(Cursor.getDefaultCursor());
+            grnRefChanger.setBorder(new BevelBorder(BevelBorder.RAISED));
+            refColorPointer=null;
+        }
+    }//GEN-LAST:event_grnRefChangerMouseClicked
+
+    private void grnThreshSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_grnThreshSliderStateChanged
+        ImageProcessor.grnThreshold = grnThreshSlider.getValue()/100.0;
+    }//GEN-LAST:event_grnThreshSliderStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ballPanel;
@@ -799,6 +878,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JSlider blueThreshSlider;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JSlider debugSlider;
+    private javax.swing.JPanel grnRefChanger;
+    private javax.swing.JSlider grnThreshSlider;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -810,6 +891,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel onScreenImage;
     private javax.swing.JRadioButton pitchMainRadio;
     private javax.swing.JRadioButton pitchSideRadio;
+    private javax.swing.JPanel platePanel;
     private javax.swing.JPanel redRefChanger;
     private javax.swing.JButton saveButton;
     private javax.swing.JSlider sliderBrightness;
@@ -831,6 +913,7 @@ public class GUI extends javax.swing.JFrame {
 			blueRefChanger.setBackground(blueRefColor);
 			yellowRefChanger.setBackground(yellowRefColor);
 			redRefChanger.setBackground(redRefColor);
+            grnRefChanger.setBackground(grnRefColor);
 	}
 
 	public javax.swing.JLabel getImage() {

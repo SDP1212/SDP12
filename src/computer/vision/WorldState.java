@@ -22,10 +22,10 @@ public class WorldState implements computer.simulator.VisionInterface {
 	 */
 	public PixelCoordinates[] getPitchCornerCoordinates() {
         
-        int leftBuffer = ImageProcessor.xlowerlimit;
-        int topBuffer = ImageProcessor.ylowerlimit;
-        int rightBuffer = ImageProcessor.xupperlimit;
-        int bottomBuffer = ImageProcessor.yupperlimit;
+        int leftBuffer = ImageProcessor.nwPos.x;
+        int topBuffer = ImageProcessor.nePos.y;
+        int rightBuffer = ImageProcessor.sePos.x;
+        int bottomBuffer = ImageProcessor.swPos.y;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false;
@@ -97,7 +97,7 @@ public class WorldState implements computer.simulator.VisionInterface {
 
             this.yellowRobotCoordinates = yellowRobotCoordinates;
 	}
-
+    
 	/**
 	 * @return the yellowRobotOrientation
 	 */
@@ -174,10 +174,10 @@ public class WorldState implements computer.simulator.VisionInterface {
 	public PixelCoordinates[] getLeftGoalCoordinates() {
 		// First element is top coordinate, second is bottom.
         
-        int leftBuffer = ImageProcessor.xlowerlimit;
-        int topBuffer = ImageProcessor.ylowerlimit;
-        int rightBuffer = ImageProcessor.xupperlimit;
-        int bottomBuffer = ImageProcessor.yupperlimit;
+        int leftBuffer = ImageProcessor.nwPos.x;
+        int topBuffer = ImageProcessor.nePos.y;
+        int rightBuffer = ImageProcessor.sePos.x;
+        int bottomBuffer = ImageProcessor.swPos.y;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.
@@ -214,10 +214,10 @@ public class WorldState implements computer.simulator.VisionInterface {
 	public PixelCoordinates[] getRightGoalCoordinates() {
 		// First element is top coordinate, second is bottom.
         
-        int leftBuffer = ImageProcessor.xlowerlimit;
-        int topBuffer = ImageProcessor.ylowerlimit;
-        int rightBuffer = ImageProcessor.xupperlimit;
-        int bottomBuffer = ImageProcessor.yupperlimit;
+        int leftBuffer = ImageProcessor.nwPos.x;
+        int topBuffer = ImageProcessor.nePos.y;
+        int rightBuffer = ImageProcessor.sePos.x;
+        int bottomBuffer = ImageProcessor.swPos.y;
         
         boolean isThereBarrelCorrection = false;   // The 2 booleans needed in PixelCoordinates.
         boolean isOrientationCorrected = false; // If fisheye, etc, is implemented deal with these then.

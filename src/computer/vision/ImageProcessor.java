@@ -39,7 +39,7 @@ public class ImageProcessor {
 	public static int[] redRef = new int[] {255,0,0};
 	public static int[] yellRef = new int[] {255,255,0};
 	public static int[] blueRef = new int[] {0,0,255};
-        public static int[] orangeRef = new int[] {255,127,0};
+    public static int[] grnRef = new int[] {0,255,0};
 
 	protected static int height = 480;
 	protected static int width = 640;
@@ -66,6 +66,7 @@ public class ImageProcessor {
     protected static double blueRefThresh=12.5;
 	protected static double yellThreshold=87.5;
     protected static double yellRefThresh=12.5;
+    protected static double grnThreshold=12.5;
 
 	protected static int searchdistance = 200;
 	public static int rayOfLight = 35;
@@ -179,7 +180,7 @@ public class ImageProcessor {
 					ballPos = out;
 				}
 
-				if (isBrightGreen(pixelColour)) {
+				if (isGreen(pixelColour)) {
 					if (DEBUG_LEVEL > 1)
 						drawPixel(wraster, out, new int[] { 0, 255, 0 });
 				}
@@ -279,7 +280,7 @@ public class ImageProcessor {
             findBall(wraster, ballPos);
             
             if (ballPos.x >= 0 && ballPos.y >= 0) {
-                Viewer.getWorldState().setBallCoordinates(new PixelCoordinates(ballPos.x, ballPos.y, useBarrelDistortion, false));
+                Viewer.getWorldState().setBallCoordinates(new PixelCoordinates(lastBallPos.x, lastBallPos.y, useBarrelDistortion, false));
             }
 			
 		int lineColors = 0;
@@ -304,10 +305,10 @@ public class ImageProcessor {
         if(DEBUG_LEVEL>0){
             drawCross(wraster, btPos, blueRef);
             drawCross(wraster, ytPos, yellRef);
-            drawLine(wraster, nwPos, nePos, orangeRef);
-            drawLine(wraster, nePos, sePos, orangeRef);
-            drawLine(wraster, sePos, swPos, orangeRef);
-            drawLine(wraster, swPos, nwPos, orangeRef);
+            drawLine(wraster, nwPos, nePos, new int[] {255,127,0});
+            drawLine(wraster, nePos, sePos, new int[] {255,127,0});
+            drawLine(wraster, sePos, swPos, new int[] {255,127,0});
+            drawLine(wraster, swPos, nwPos, new int[] {255,127,0});
         }
         
         if(!(btPos.x==btPos.y && btPos.y==-1 || ytPos.x==ytPos.y && ytPos.y==-1)){
@@ -361,7 +362,7 @@ public class ImageProcessor {
 				// try last values
 				ballPos = lastBallPos;
 				if (DEBUG_LEVEL > 0)
-					drawCross(raster, ballPos, new int[] {255,0,0});
+					drawCross(raster, lastBallPos, new int[] {255,0,0});
 			}
 			// and if we can't see the ball AND there are no previous values, do
 			// nothing.
@@ -448,7 +449,7 @@ public class ImageProcessor {
 					}
 					break;
 				case 2: // plate: bright green
-					if (isBrightGreen(pointcolour)) {
+					if (isGreen(pointcolour)) {
 						score++;
 					}
 					break;
@@ -583,8 +584,8 @@ public class ImageProcessor {
 	 * The following three functions check if a given colour is classified as
 	 * bright green/yellow/blue respectively.
 	 */
-	boolean isBrightGreen(int[] colour) {
-		return (colour[RED] < 65 && colour[GREEN] > 180 && colour[BLUE] < 170);
+	boolean isGreen(int[] colour) {
+		return (getColourDifference(grnRef, colour)<grnThreshold);
 	}
 
 	boolean isYellow(int[] colour) {
