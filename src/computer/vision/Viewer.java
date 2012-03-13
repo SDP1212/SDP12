@@ -6,7 +6,6 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import computer.vision.WorldState;
 
 public class Viewer extends Vision implements Runnable {
 
@@ -132,6 +131,7 @@ public class Viewer extends Vision implements Runnable {
                     gui.blueRefColor=new Color(ImageProcessor.blueRef[0],ImageProcessor.blueRef[1],ImageProcessor.blueRef[2]);
                     gui.yellowRefColor=new Color(ImageProcessor.yellRef[0],ImageProcessor.yellRef[1],ImageProcessor.yellRef[2]);
                     gui.redRefColor=new Color(ImageProcessor.redRef[0],ImageProcessor.redRef[1],ImageProcessor.redRef[2]);
+                    gui.grnRefColor=new Color(ImageProcessor.grnRef[0],ImageProcessor.grnRef[1],ImageProcessor.grnRef[2]);
                     gui.setRefChangers();
 					gui.setImage(iq);
 				} catch (NullPointerException e) {
@@ -197,7 +197,7 @@ public class Viewer extends Vision implements Runnable {
 	
 	public void setNewReference(int[] reference, int x, int y){
 		this.refColorPointer=reference;
-		this.refNewPixel=new Point(x, y);
+		this.refNewPixel=ImageProcessor.debarrel(new Point(x, y));
 	}
 
 	public static WorldState getWorldState() {

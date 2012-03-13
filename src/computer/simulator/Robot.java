@@ -13,15 +13,16 @@ import java.awt.geom.Line2D;
 /**
  * Used to represent a robot within the world with all its properties and
  * provides methods for taking actions.
- * 
+ *
  * @author Dimo Petroff
  */
 public final class Robot extends SimulatableObject implements ControlInterface{
-    
+
+    public static final short ROBOTINHO=0,NEMESIS=1;
     public static final short YELLOW_PLATE=0,BLUE_PLATE=1;
-    public static final double WHEEL_CIRCUMFERENCE=Math.PI*Coordinates.distanceFromCentimetres(8);
-    public static final double WHEEL_SEPARATION=Coordinates.distanceFromCentimetres(16);
-    
+    public static final double WHEEL_DIAMETER=Coordinates.distanceFromCentimetres(brick.Movement.wheelDiameter);
+    public static final double TRACK_WIDTH=Coordinates.distanceFromCentimetres(brick.Movement.trackWidth);
+
     private Direction orientation;
     private ControlInterface control;
     private short colour;
@@ -33,10 +34,10 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     private double rotMotionState=0;
     private double rotSpeed=2*Math.PI/2; // 1 rotation per 2 seconds
     private int arcMotionState=0;
-    
+
     /**
      * Allocates a Robot object representing a robot in its entirety.
-     * 
+     *
      * @param ai the class of AI to use for this robot
      * @param control the ControlInterface through which to control the brick
      * @param pitch a reference to the pitch to be used with the AI
@@ -49,20 +50,13 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         this.colour=colour;
         this.control=control;
         this.pitch=pitch;
-        if(ai!=null)try{
-            this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(this.pitch,this));
-            if(control!=null)control.addAI(this.brain);
-        }catch (Exception e) {
-            System.err.println("Comm error" + e.getMessage());
-            e.printStackTrace(System.err);
-            throw new Error("FATAL ERROR: Initialization of AI failed. Probably caused by: "+ai.getName()+" is not a valid AI subclass - look at System.err for more details.");
-        }
+        this.addAI(ai);
     }
-    
+
     protected void setOrientation(Direction orientation) {
         this.orientation=orientation;
     }
-    
+
     public Direction getOrientation(){
         return this.orientation;
     }
@@ -71,13 +65,17 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         return this.colour;
     }
 
+    private void setSpeed(double speed){
+        rotSpeed=Math.toRadians(speed);
+        linSpeed=speed*TRACK_WIDTH*Math.PI/360;// Equivallent to: ((speed*TRACK_WIDTH/WHEEL_DIAMETER)/360)*Math.PI*WHEEL_DIAMETER;
+    }
+
     @Override
     public void forward(int speed) {
         if(this.control!=null && this.isReal())control.forward(speed);
         else{
             linMotionState=1;
-            //TODO: look at DifferentialPilot and change below
-            linSpeed=(speed/360.0)*WHEEL_CIRCUMFERENCE;
+            setSpeed(speed);
         }
     }
 
@@ -86,8 +84,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         if(this.control!=null && this.isReal())control.backward(speed);
         else{
             linMotionState=-1;
-            //TODO: look at DifferentialPilot and change below
-            linSpeed=(speed/360.0)*WHEEL_CIRCUMFERENCE;
+            setSpeed(speed);
         }
     }
 
@@ -112,18 +109,19 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     public void rotate(double angle) {
         if(this.control!=null && this.isReal())control.rotate(angle);
         else {
+            stop();
+            setSpeed(100);
             rotMotionState=angle;
-            rotSpeed=Math.toRadians(100);
             commState=WAITING;
         }
     }
-    
+
     @Override
     public void rotateRight(int speed) {
         if(this.control!=null && this.isReal())control.rotateRight(speed);
         else {
             rotMotionState=Double.NEGATIVE_INFINITY;
-            rotSpeed=(WHEEL_CIRCUMFERENCE*speed)/(180*WHEEL_SEPARATION); // Equivallent to: 2*Math.PI/((Math.PI*WHEEL_SEPARATION)/((speed/360.0)*WHEEL_CIRCUMFERENCE));
+            rotSpeed=(speed/360.0)*(WHEEL_DIAMETER/TRACK_WIDTH);
         }
     }
 
@@ -132,7 +130,7 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         if(this.control!=null && this.isReal())control.rotateLeft(speed);
         else {
             rotMotionState=Double.POSITIVE_INFINITY;
-            rotSpeed=(WHEEL_CIRCUMFERENCE*speed)/(180*WHEEL_SEPARATION); // Equivallent to: 2*Math.PI/((Math.PI*WHEEL_SEPARATION)/((speed/360.0)*WHEEL_CIRCUMFERENCE));
+            rotSpeed=(speed/360.0)*(WHEEL_DIAMETER/TRACK_WIDTH);
         }
     }
 
@@ -140,21 +138,24 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     public void rotateTo(int heading) {
         if(this.control!=null && this.isReal())control.rotateTo(heading);
         else throw new UnsupportedOperationException("Simulator does not implement rotateTo() method.");
-    }	
-    
+    }
+
 	@Override
     public void arcLeft(int radius) {
         if(this.control!=null && this.isReal())control.arcLeft(radius);
+        else{
+            arcMotionState=radius;
+        }
 	}
-	
+
 	@Override
     public void arcRight(int radius) {
         if(this.control!=null && this.isReal())control.arcRight(radius);
         else {
-            arcMotionState=radius;
+            arcMotionState=-radius;
         }
-    }	
-	
+    }
+
     @Override
     public void setHeading(int heading) {
         if(this.control!=null && this.isReal())control.setHeading(heading);
@@ -175,17 +176,29 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         else return commState;
     }
 
+    public void addAI(Class ai){
+        if(ai!=null)try{
+            this.addAI((AI)ai.getConstructor(Pitch.class,Robot.class).newInstance(this.pitch,this));
+        }catch (Exception e) {
+            System.err.println("Simulator Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new Error("FATAL ERROR: Initialization of AI failed. Probably caused by: "+ai.getName()+" is not a valid AI subclass - look at System.err for more details.");
+        }
+    }
+
     @Override
     public void addAI(AI ai) {
         this.brain=ai;
+        if(this.control!=null)
+            this.control.addAI(this.brain);
     }
-    
+
     @Override
     protected void animate(long timeDeltaInMilliseconds){
-        
+
         double ROT_FACTOR=rotSpeed*timeDeltaInMilliseconds/1000;
-        double MOV_FACTOR=linSpeed*0.25*timeDeltaInMilliseconds/1000;
-        
+        double MOV_FACTOR=linSpeed*timeDeltaInMilliseconds/1000;
+
         if(rotMotionState!=0){
             if(rotMotionState>0){
                 if(rotMotionState>ROT_FACTOR){
@@ -233,5 +246,5 @@ public final class Robot extends SimulatableObject implements ControlInterface{
                            new Line2D.Double(0.25*centerX, 0.25*centerY, 0.5*centerX, 0),
                            new Ellipse2D.Double(-centerX, -centerY, 2*centerX, 2*centerY)};
     }
-    
+
 }

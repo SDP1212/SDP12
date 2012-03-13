@@ -52,12 +52,12 @@ public class PathSearchAI extends AI {
 				Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 				double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
 				if (angle < 0) {
-					self.rotateLeft(Brick.SLOW / 2);
+					self.rotateLeft(Brick.MEDIUM);
 				} else {
-					self.rotateRight(Brick.SLOW / 2);
+					self.rotateRight(Brick.MEDIUM);
 				}
 			} else if (!onWayPoint()) {
-				self.forward(Brick.SLOW / 2);
+				self.forward(Brick.MEDIUM / 2);
 			} else {
 //				self.stop();
 				getNextWayPoint();
@@ -67,14 +67,14 @@ public class PathSearchAI extends AI {
 				Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
 				double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 				if (angle < 0) {
-					self.rotateLeft(Brick.SLOW / 3);
+					self.rotateLeft(Brick.MEDIUM / 3);
 				} else {
-					self.rotateRight(Brick.SLOW / 3);
+					self.rotateRight(Brick.MEDIUM/ 3);
 				}
 			}
 		} else if (state == SHOT) {
 			if (new Date().getTime() - shotTime.getTime() < 1000) {
-				self.forward(Brick.MEDIUM);
+				self.forward(Brick.FAST);
 			} else {
 				self.kick();
 			}
