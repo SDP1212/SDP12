@@ -164,8 +164,12 @@ public class Movement implements Runnable {
 	synchronized (movementLock) {
 	    Motor.A.forward();
 		Motor.B.forward();
-		Motor.A.setSpeed(Brick.FAST);
-		Motor.B.setSpeed(Brick.SLOW);
+		double rightDisp = radius + trackWidth;
+		double leftDisp = radius;
+		double rightSpeed = Brick.FAST;
+		double leftSpeed = leftDisp / rightDisp * Brick.FAST;
+		Motor.A.setSpeed((float)rightSpeed);
+		Motor.B.setSpeed((float)leftSpeed);
 	    state = ARC;
 	}
     }
@@ -174,8 +178,12 @@ public class Movement implements Runnable {
 	synchronized (movementLock) {
 	    Motor.A.forward();
 		Motor.B.forward();
-		Motor.A.setSpeed(Brick.SLOW);
-		Motor.B.setSpeed(Brick.FAST);
+		double leftDisp = radius + trackWidth;
+		double rightDisp = radius;
+		double leftSpeed = Brick.FAST;
+		double rightSpeed = rightDisp / leftDisp * Brick.FAST;
+		Motor.A.setSpeed((float)rightSpeed);
+		Motor.B.setSpeed((float)leftSpeed);
 	    state = ARC;
 	}
     }
