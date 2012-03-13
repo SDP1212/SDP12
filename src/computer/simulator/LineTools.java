@@ -227,4 +227,11 @@ public class LineTools {
         gamma = (Math.atan2(mVectorY, mVectorX) - Math.atan2(lVectorY, lVectorX)) % Math.PI;
         return gamma;
     }
+	
+	
+	public static double getArcRadius (Coordinates nextWayPoint, Coordinates ourPosition, Direction ourOrientation) {
+		Line l = new Line (ourPosition, nextWayPoint);
+		double angle = angleBetweenLineAndDirection(l,ourOrientation);
+		return 1/2 * (l.getLength() / (Math.sin(angle)));
+	}
 }
