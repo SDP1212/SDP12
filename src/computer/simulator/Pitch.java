@@ -266,6 +266,7 @@ public class Pitch {
             return rightGoal;
         else return null;
     }
+
 	
 	public Goal getEnemyTargetGoal () {
 		if(!leftGoal.isTarget())
