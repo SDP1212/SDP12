@@ -231,7 +231,7 @@ public class LineTools {
 	
 	public static double getArcRadius (Coordinates nextWayPoint, Coordinates ourPosition, Direction ourOrientation) {
 		Line l = new Line (ourPosition, nextWayPoint);
-		double angle = angleBetweenLineAndDirection(l,ourOrientation);
-		return 1/2 * (l.getLength() / (Math.sin(angle)));
+		double angle = Math.abs(angleBetweenLineAndDirection(l,ourOrientation));
+		return 0.5 * (120*l.getLength() / (Math.sin(angle)));
 	}
 }

@@ -34,6 +34,7 @@ public class SmartAI extends AI {
 
 	public SmartAI(Pitch pitch, Robot self) {
 		super(pitch, self);
+		VisorRenderer.extraDrawables.clear();
 		nextWayShape.setPosition(0, 0);
 		ballShape.setPosition(0, 0);
 		VisorRenderer.extraDrawables.add(nextWayShape);
@@ -42,34 +43,40 @@ public class SmartAI extends AI {
 
 	@Override
 	public void run() {
-
-		if (firstRun < 20) {
-			self.forward(Brick.FAST);
-			firstRun++;
-			
-		} else if (facingBall() && nearBall() && unobstructedShot() && firstRun >= 20) {
-//			self.forward(Brick.FAST);
-			self.kick();
-			firstRun = 26;
-		} else if (firstRun >= 20 && firstRun < 25 && !unobstructedShot()) {
-			self.rotateLeft(Brick.SLOW);
-			firstRun++;
-		} else if (firstRun == 25) {
-			self.stop();
-			self.forward(Brick.FAST);
-			self.kick();
-			firstRun++;
+		if (firstRun < 1) {
 			getNextWayPoint();
-		} else {
+			firstRun++;
+		}
+//		if (firstRun < 40) {
+//			self.arcLeft(createRadius(pitch.ball.getPosition()));
+////			self.forward(Brick.FAST);
+//			firstRun++;
+//			
+//		} else if (facingBall() && nearBall() && unobstructedShot() && firstRun >= 40) {
+////			self.forward(Brick.FAST);
+//			self.kick();
+//			firstRun = 46;
+//		} else if (firstRun >= 40 && firstRun < 45 && !unobstructedShot()) {
+//			self.rotateLeft(Brick.SLOW);
+//			firstRun++;
+//		} else if (firstRun == 45) {
+//			self.stop();
+//			self.forward(Brick.FAST);
+//			self.kick();
+//			firstRun++;
+//			getNextWayPoint();
+//		} else {
 			updateState();
 			if (state == SEARCHING && (new Date().getTime() - movementDate.getTime() > 10)) {
 				if (!facingWayPoint()) {
 					Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 					double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
 					if (angle < 0) {
-						self.rotateLeft(Brick.SLOW);
+						self.arcLeft(createRadius(nextWayPoint));
+//						self.rotateLeft(Brick.SLOW);
 					} else {
-						self.rotateRight(Brick.SLOW);
+						self.arcRight(createRadius(nextWayPoint));
+//						self.rotateRight(Brick.SLOW);
 					}
 				} else if (!onWayPoint()) {
 					self.forward(Brick.MEDIUM / 2);
@@ -82,11 +89,11 @@ public class SmartAI extends AI {
 					Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
 					double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 					if (angle < 0) {
-						self.arcLeft(createRadius());
-						//self.rotateLeft(Brick.MEDIUM / 3);
+//						self.arcLeft(createRadius(pitch.getTargetGoal().getCentre()));
+						self.rotateLeft(Brick.MEDIUM / 3);
 					} else {
-						self.arcRight(createRadius());
-//						self.rotateRight(Brick.MEDIUM / 3);
+//						self.arcRight(createRadius(pitch.getTargetGoal().getCentre()));
+						self.rotateRight(Brick.MEDIUM / 3);
 					}
 				}
 			} else if (state == SHOT) {
@@ -98,7 +105,7 @@ public class SmartAI extends AI {
 				self.stop();
 			}
 
-		}
+//		}
 		movementDate = new Date();
 	}
 
@@ -199,7 +206,7 @@ public class SmartAI extends AI {
 	private boolean facingWayPoint() {
 		Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 		double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
-		return Math.abs(angle) < Math.PI / 10;
+		return Math.abs(angle) < Math.PI / 6;
 	}
 
 	private boolean onWayPoint() {
@@ -220,10 +227,13 @@ public class SmartAI extends AI {
 		return (Math.abs(angle) > Math.PI / 6);
 	}
 
-	protected int createRadius () {
-		if (LineTools.getArcRadius(nextWayPoint, self.getPosition(), self.getOrientation()) < 0)
-			self.rotate(180);
-		return 1;
+	protected int createRadius (Coordinates nextPoint) {
+		double radius = LineTools.getArcRadius(nextPoint, self.getPosition(), self.getOrientation());
+//		if (radius > Math.PI/2) {
+//			self.rotate(Math.PI);
+//		}
+		System.out.println("Radius " + (int)radius);
+		return (int)radius;
 	}
 	
 	@Override

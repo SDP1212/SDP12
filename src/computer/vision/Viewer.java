@@ -62,11 +62,11 @@ public class Viewer extends Vision implements Runnable {
 	private void calculateFPS() {
 		int forwsec = (int) System.currentTimeMillis() / 1000;
 		if (prevsec != forwsec) {
-			if (framesThisSecond > 24)
-				System.out.println("FPS:" + framesThisSecond
-						+ "!!! WOOHOO im super fast!");
-			else
-				System.out.println("FPS:" + framesThisSecond);
+//			if (framesThisSecond > 24)
+//				System.out.println("FPS:" + framesThisSecond
+//						+ "!!! WOOHOO im super fast!");
+//			else
+//				System.out.println("FPS:" + framesThisSecond);
 			framesThisSecond = 0;
 			prevsec = Integer.valueOf(forwsec);
 		} else {
