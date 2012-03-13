@@ -34,6 +34,7 @@ public class PathSearchAI extends AI {
 
 	public PathSearchAI(Pitch pitch, Robot self) {
 		super(pitch, self);
+		VisorRenderer.extraDrawables.clear();
 		nextWayShape.setPosition(0, 0);
 		ballShape.setPosition(0, 0);
 		VisorRenderer.extraDrawables.add(nextWayShape);
@@ -208,6 +209,7 @@ public class PathSearchAI extends AI {
 //		return ((angleToUpperPost <= angle && angle <= angleToLowerPost) || (angleToUpperPost >= angle && angle >= angleToLowerPost));
 //		return Math.abs(angle) < Math.PI/2;
 	}
+	
 	
 	@Override
 	public void robotCollided() {
