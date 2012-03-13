@@ -35,6 +35,10 @@ public class Goal {
     public Coordinates getLowerPostCoordinates(){
         return this.lowerPost;
     }
+	
+	public Coordinates getCentre() {
+		return new Coordinates(this.lowerPost.getX(), (this.upperPost.getY() - this.lowerPost.getY()) / 2);
+	}
 
 	@Override
 	public String toString() {
