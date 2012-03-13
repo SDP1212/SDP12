@@ -23,6 +23,10 @@ import computer.simulator.Robot;
 import java.awt.Cursor;
 import java.awt.event.*;
 import javax.swing.JOptionPane;
+import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsDevice;
+import java.awt.Rectangle;
+
 public class MainWindow extends javax.swing.JFrame {
 
     /** Creates new form MainWindow */
@@ -39,6 +43,13 @@ public class MainWindow extends javax.swing.JFrame {
         appController = controller;
         commController = controller.getCommunicationController();
         initComponents();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+        Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+        int x = (int)rect.getMinX();
+        int y = (int)rect.getMaxY()-getHeight();
+        setLocation(x,y);
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 appController.close();
