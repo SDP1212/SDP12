@@ -2,6 +2,7 @@ package computer.ai;
 
 import brick.Brick;
 import computer.simulator.*;
+import computer.vision.WorldState;
 
 public class GoalkeeperAI extends Penalty {
 
@@ -14,42 +15,47 @@ public class GoalkeeperAI extends Penalty {
 	
 	@Override
 	public void run() {
-
-		// Calculates the x distance
-		//int x_Distance = Math.abs(self.getPosition().getX() - pitch.nemesis.getPosition().getX());
-
-		// Or we could just define it as a constant which would be safer...
-                // Assuming distance is about 65.
-		int x_Distance = 65;
-
+		
 		// Need it to keep running until it somehow realises penalty has been taken.
 		// Perhaps check ball position against nemesis position.  If it's too far then go back to match AI?
-		while (true) {
-			// Calculates the y_intercept using the opponent's position and orientaton.
-			int y_intercept = (int) (pitch.nemesis.getPosition().getY() + Math.atan(pitch.nemesis.getOrientation().getDirectionRadians())*x_Distance);
+                    
+                double x_Distance = Math.abs(self.getPosition().getX() - pitch.nemesis.getPosition().getX());
+                //System.out.println("DEBUG: x_distance = " + x_Distance);
+                double y_intercept;
+                
+                // Calculates the y_intercept using the opponent's position and orientaton.
+                if (self.getPosition().getX() > 1) {
+                    y_intercept =  pitch.nemesis.getPosition().getY() + Math.tan(pitch.nemesis.getOrientation().getDirectionRadians())*x_Distance;
+                }  else {
+                    y_intercept =  pitch.nemesis.getPosition().getY() - Math.tan(pitch.nemesis.getOrientation().getDirectionRadians())*x_Distance;
+                }
+                System.out.println("DEBUG: y position = " + self.getPosition().getY() + ", y intercept of the other robot = " + y_intercept); 
+                
+                // Forward/Backward might be wrong way round...  Also check for both pitch sides.
+                if (self.getPosition().getY() < (y_intercept) &&
+                    self.getPosition().getY() < .66){
 
-			// Forward/Backward might be wrong way round...  Also check for both pitch sides.
-			if (self.getPosition().getY() < (y_intercept + 10) &&
-                            self.getPosition().getY() < pitch.getOurGoal().getUpperPostCoordinates().getY()){
-                            
-				self.forward(Brick.MEDIUM);
-                                
-			} else if (self.getPosition().getY() > (y_intercept - 10) &&
-                                   self.getPosition().getY() > pitch.getOurGoal().getLowerPostCoordinates().getY()) {
-                            
-				self.backward(Brick.MEDIUM);
-                                
-			} else {
-				self.stop();
-			}
-		}
+                        self.forward(Brick.SLOW);
+
+                } else if (self.getPosition().getY() > (y_intercept) &&
+                           self.getPosition().getY() > .34) {
+
+                        self.backward(Brick.SLOW);
+
+                } else {
+                        self.stop();
+                }
 	}
 
-        /*
-	protected boolean isNearPost(Coordinates post) {
-		Line lineToPost = new Line(self.getPosition(), post);
-		return lineToPost.getLength() < 0.4;
-	}*/
+        // UNUSED AT THE MOMENT!
+        // inRange(y_intercept,self.getPosition().getY()
+        public boolean inRange(double y_intercept, double robot_y) {
+            if ((robot_y < (y_intercept + 0.04)) &&
+                (robot_y > (y_intercept - 0.04))) {
+                    return true;
+            }
+            return false;
+        }
         
         @Override
 	public void robotCollided() {
