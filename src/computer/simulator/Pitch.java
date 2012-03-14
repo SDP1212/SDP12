@@ -266,6 +266,15 @@ public class Pitch {
             return rightGoal;
         else return null;
     }
+
+	
+	public Goal getEnemyTargetGoal () {
+		if(!leftGoal.isTarget())
+            return leftGoal;
+        else if(!rightGoal.isTarget())
+            return rightGoal;
+        else return null;
+	}
 		
 		public Coordinates getCentreSpot() {
 				return new Coordinates(0.5, 1);
