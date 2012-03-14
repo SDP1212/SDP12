@@ -21,9 +21,20 @@ public class PenaltyShooter extends Penalty {
 		java.util.Random gen = new Random();
 		long date = new Date().getTime();
 		int time = gen.nextInt(3000) + 500;
+                int direction = gen.nextInt(2);
+                int angleplus = gen.nextInt(10)+1;
 		while (new Date().getTime() - date < time) {
-			
+
 		}
+                if(direction==1) {
+                    self.rotate(self.getOrientation().getDirectionRadians()+Math.toRadians(angleplus));
+                } else {
+                    self.rotate(self.getOrientation().getDirectionRadians()-Math.toRadians(angleplus));
+                }
+                long wait = new Date().getTime();
+                while(new Date().getTime() - wait < 1000) {
+                    
+                }
 		self.kick();
 	}
 
