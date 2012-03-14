@@ -232,6 +232,7 @@ public class LineTools {
 	public static double getArcRadius (Coordinates nextWayPoint, Coordinates ourPosition, Direction ourOrientation) {
 		Line l = new Line (ourPosition, nextWayPoint);
 		if (l.getLength() < 0.25) return 0;
+		System.out.println("Distance to waypoint " + l.getLength());
 		double angle = Math.abs(angleBetweenLineAndDirection(l,ourOrientation));
 		return 0.5 * (120*l.getLength() / (Math.sin(angle)));
 	}

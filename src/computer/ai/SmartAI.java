@@ -27,9 +27,6 @@ public class SmartAI extends AI {
 	private TargetBall ballShape = new TargetBall();
 	private int firstRun = 0;
 	private Coordinates nextWayPoint = new Coordinates(1, 0.5);
-	private int runs = 0;
-	private Date dribbleStart = new Date(0);
-	private Date pauseBeforeShoot = new Date(0);
 
 	public SmartAI(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -53,7 +50,7 @@ public class SmartAI extends AI {
 				Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 				double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
 				if (blockedByWall()) {
-					self.backward(Brick.MEDIUM);
+					self.backward(Brick.SLOW);
 				} else {
 					if (angle < 0) {
 						self.arcLeft(createRadius(nextWayPoint));
@@ -128,7 +125,6 @@ public class SmartAI extends AI {
 			case SEARCHING:
 				if (onTarget() && nearBall()) {
 					state = DRIBBLING;
-					dribbleStart = new Date();
 				}
 				break;
 			case DRIBBLING:
@@ -200,9 +196,9 @@ public class SmartAI extends AI {
 		Coordinates nWallPoint = new Coordinates(self.getPosition().getX(), 1);
 		Coordinates sWallPoint = new Coordinates(self.getPosition().getX(), 0);
 		Coordinates closePoint = null;
-		if (new Line(self.getPosition(), nWallPoint).getLength() < 0.2) {
+		if (new Line(self.getPosition(), nWallPoint).getLength() < 0.1) {
 			closePoint = nWallPoint;
-		} else if (new Line(self.getPosition(), sWallPoint).getLength() < 0.2) {
+		} else if (new Line(self.getPosition(), sWallPoint).getLength() < 0.1) {
 			closePoint = sWallPoint;
 		}
 		if (closePoint != null) {
