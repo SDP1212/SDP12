@@ -43,6 +43,8 @@ public class SmartAI extends AI {
 		if (firstRun < 10) {
 			self.forward(Brick.SLOW);
 			firstRun++;
+		} else if (firstRun == 10) {
+			getNextWayPoint();
 		}
 		updateState();
 		if (state == SEARCHING && (new Date().getTime() - movementDate.getTime() > 10)) {
@@ -51,15 +53,18 @@ public class SmartAI extends AI {
 				self.stop();
 			}
 			
-			if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 0)) >0.15) {
+			double xTarget = pitch.getTargetGoal().getLowerPostCoordinates().getX();
+			double xOwn = pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX();
+			
+			if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(xOwn, 0)) >0.15) {
 				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 0)) <=0.15) {
+			} else if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(xOwn, 0)) <=0.15) {
 				self.stop();
 			} 
 			
-			if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 1)) >0.15) {
+			if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(xTarget, 1)) >0.15) {
 				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 1)) <=0.15) {
+			} else if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(xTarget, 1)) <=0.15) {
 				self.stop();
 			} 
 			
@@ -89,9 +94,9 @@ public class SmartAI extends AI {
 				Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
 				double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
 				if (angle < 0) {
-					self.rotateLeft(Brick.MEDIUM / 3);
+					self.rotateLeft(Brick.SLOW / 2);
 				} else {
-					self.rotateRight(Brick.MEDIUM / 3);
+					self.rotateRight(Brick.SLOW / 2);
 				}
 			}
 		} else if (state == SHOT) {
@@ -131,10 +136,6 @@ public class SmartAI extends AI {
 	}
 
 	private void getNextWayPoint() {
-//		System.out.println("Getting waypoint");
-//		System.out.println("Our position: " + self.getPosition());
-//		System.out.println("Nemesis position: " + pitch.nemesis.getPosition());
-
 		nextWayPoint = PathSearch.getNextWaypoint(1, pitch.ball.getPosition(), target(), self.getPosition(), self.getOrientation().getDirectionRadians(), pitch.nemesis.getPosition());
 		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 	}
@@ -260,7 +261,7 @@ public class SmartAI extends AI {
 		Coordinates b = pitch.ball.getPosition();
 		double d1 = b.distance(new Coordinates(pitch.getTargetGoal().getLowerPostCoordinates().getX(), 0));
 		double d2 = b.distance(new Coordinates(pitch.getTargetGoal().getLowerPostCoordinates().getX(), 1));	
-		return (d1 < 0.3 || d2 < 0.3);
+		return (d1 < 0.2 || d2 < 0.2);
 	}
 	
 	@Override
