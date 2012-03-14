@@ -56,7 +56,7 @@ public class MainWindow extends javax.swing.JFrame {
                 System.exit(0);
             }});
             spinnerRadius.setValue(Integer.valueOf(20));
-            for (Class aiClass : new Class[]{SmartAI.class, PathSearchAI.class, Shooter.class, Creeper.class, DumbAI.class, PenaltyGoalie.class, PenaltyShooter.class, GoalkeeperAI.class}) {
+            for (Class aiClass : new Class[]{SmartAI.class, PathSearchAI.class, Shooter.class, Creeper.class, DumbAI.class, PenaltyGoalie.class, PenaltyShooter.class, GoalkeeperAI.class, DefendAndPlayAI.class}) {
                 comboAI.addItem(aiClass);
             }
     }
