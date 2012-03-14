@@ -41,7 +41,7 @@ public class SmartAI extends AI {
 	public void run() {
 //		System.out.println("Blocked: " + blockedByWall());
 		if (firstRun < 10) {
-			self.forward(Brick.SLOW);
+			self.forward(Brick.FAST);
 			firstRun++;
 		} else if (firstRun == 10) {
 			getNextWayPoint();
@@ -84,7 +84,7 @@ public class SmartAI extends AI {
 					}
 				}
 			} else if (!onWayPoint()) {
-				self.forward(Brick.SLOW);
+				self.forward(Brick.MEDIUM);
 			} else {
 				getNextWayPoint();
 			}

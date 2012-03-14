@@ -37,11 +37,15 @@ public class PenaltyShooter extends Penalty {
 			} else {
 				self.rotate(-Math.toRadians(angleplus));
 			}
-			self.forward(Brick.SLOW);
+			
 			long wait = new Date().getTime();
+			while (new Date().getTime() - wait < 1000) {
+			}
+			self.forward(Brick.SLOW);
+			wait = new Date().getTime();
 			while (new Date().getTime() - wait < 250) {
 			}
-
+			System.out.println("kick");
 			self.kick();
 			penalty = true;
 		}
