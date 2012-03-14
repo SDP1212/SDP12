@@ -96,20 +96,17 @@ public class MainWindow extends javax.swing.JFrame {
 
         buttonGroup = new javax.swing.ButtonGroup();
         groupSpeed = new javax.swing.ButtonGroup();
-        goButton = new javax.swing.JButton();
         connectButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        radioRun = new javax.swing.JRadioButton();
-        radioPenalty = new javax.swing.JRadioButton();
-        buttonDribble = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        buttonRunVision = new javax.swing.JButton();
-        comboAI = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
         comboTarget = new javax.swing.JComboBox();
         comboRobot = new javax.swing.JComboBox();
+        comboAI = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        buttonRunVision = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         radioForward = new javax.swing.JRadioButton();
         radioBackward = new javax.swing.JRadioButton();
@@ -120,10 +117,9 @@ public class MainWindow extends javax.swing.JFrame {
         radioArcLeft = new javax.swing.JRadioButton();
         radioArcRight = new javax.swing.JRadioButton();
         spinnerRadius = new javax.swing.JSpinner();
-        buttonOrient = new javax.swing.JButton();
-        spinnerOrient = new javax.swing.JSpinner();
         radioRotate = new javax.swing.JRadioButton();
         spinnerRotate = new javax.swing.JSpinner();
+        goButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -141,13 +137,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        goButton.setText("Go");
-        goButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                goButtonActionPerformed(evt);
-            }
-        });
-
         connectButton.setText("Connect");
         connectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -162,56 +151,6 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        buttonGroup.add(radioRun);
-        radioRun.setText("Run");
-
-        buttonGroup.add(radioPenalty);
-        radioPenalty.setText("Penalty");
-
-        buttonDribble.setText("Dribble");
-        buttonDribble.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonDribbleActionPerformed(evt);
-            }
-        });
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        buttonRunVision.setText("Run Vision");
-        buttonRunVision.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonRunVisionActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("AI");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(193, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addComponent(buttonRunVision)
-                .addContainerGap())
-        );
-
         comboTarget.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Left", "Right" }));
 
         comboRobot.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Blue", "Yellow" }));
@@ -221,6 +160,19 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("AI");
+
+        buttonRunVision.setText("Run Vision");
+        buttonRunVision.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRunVisionActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Attacking");
+
+        jLabel3.setText("We are");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -228,33 +180,45 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(radioRun)
-                            .addComponent(radioPenalty))
-                        .addGap(40, 40, 40)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(comboRobot, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(comboTarget, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
-                        .addComponent(buttonDribble, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                                        .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(comboTarget, 0, 79, Short.MAX_VALUE)))
+                                .addGap(292, 292, 292)))
+                        .addGap(27, 27, 27))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(buttonRunVision, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(355, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(radioRun)
-                    .addComponent(buttonDribble)
+                    .addComponent(jLabel1)
+                    .addComponent(comboAI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
                     .addComponent(comboTarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(radioPenalty)
-                    .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addComponent(buttonRunVision)
                 .addContainerGap())
         );
 
@@ -299,15 +263,15 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup.add(radioArcRight);
         radioArcRight.setText("Arc Right");
 
-        buttonOrient.setText("Orient");
-        buttonOrient.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonOrientActionPerformed(evt);
-            }
-        });
-
         buttonGroup.add(radioRotate);
         radioRotate.setText("Rotate");
+
+        goButton.setText("Go");
+        goButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -337,12 +301,10 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(radioMedium, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(radioSlow)
                             .addComponent(radioFast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(91, 91, 91))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonOrient, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addGap(93, 93, 93))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(goButton, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                        .addGap(276, 276, 276))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -367,15 +329,13 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioArcRight)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(kickRadio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(buttonOrient)
-                            .addComponent(spinnerOrient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(kickRadio))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(goButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Test", jPanel2);
@@ -448,19 +408,16 @@ public class MainWindow extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addGap(287, 287, 287))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                        .addGap(287, 287, 287))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(goButton, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(171, 171, 171))))
+                .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(375, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -468,12 +425,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(connectButton)
                 .addGap(22, 22, 22)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(goButton)
-                    .addComponent(stopButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(stopButton)
+                .addContainerGap())
         );
 
         pack();
@@ -492,11 +447,11 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             speed = Brick.FAST;
         }
-        if (radioForward.isSelected() || radioRun.isSelected()) {
+        if (radioForward.isSelected()) {
             commController.forward(speed);
         } else if (radioBackward.isSelected()) {
             commController.backward(speed);
-        } else if (kickRadio.isSelected() || radioPenalty.isSelected()) {
+        } else if (kickRadio.isSelected()) {
             commController.kick();
         } else if (radioRotate.isSelected()) {
             commController.rotate(Math.toRadians(((Integer)spinnerRotate.getValue()).intValue()));
@@ -534,7 +489,8 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_radioFastActionPerformed
 
     private void buttonRunVisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRunVisionActionPerformed
-        short colour;
+        appController.stopEngine();
+		short colour;
 		short target;
 		if (comboTarget.getSelectedIndex() == 0) {
 			target = Pitch.TARGET_LEFT_GOAL;
@@ -548,14 +504,6 @@ public class MainWindow extends javax.swing.JFrame {
 		}
 		appController.startEngine((Class<AI>)comboAI.getSelectedItem(), target, colour);
     }//GEN-LAST:event_buttonRunVisionActionPerformed
-
-    private void buttonDribbleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDribbleActionPerformed
-        commController.dribble();
-    }//GEN-LAST:event_buttonDribbleActionPerformed
-
-	private void buttonOrientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOrientActionPerformed
-		commController.setHeading(((Integer)spinnerOrient.getValue()).intValue());
-	}//GEN-LAST:event_buttonOrientActionPerformed
 
 	private void comboRobotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboRobotActionPerformed
 		if (comboRobot.getSelectedIndex() == 0) {
@@ -604,9 +552,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    private javax.swing.JButton buttonDribble;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JButton buttonOrient;
     private javax.swing.JButton buttonRunVision;
     private javax.swing.JComboBox comboAI;
     private javax.swing.JComboBox comboRobot;
@@ -623,9 +569,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup groupSpeed;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JRadioButton kickRadio;
     private javax.swing.JMenuBar menuBar;
@@ -637,13 +584,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioFast;
     private javax.swing.JRadioButton radioForward;
     private javax.swing.JRadioButton radioMedium;
-    private javax.swing.JRadioButton radioPenalty;
     private javax.swing.JRadioButton radioRotate;
-    private javax.swing.JRadioButton radioRun;
     private javax.swing.JRadioButton radioSlow;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
-    private javax.swing.JSpinner spinnerOrient;
     private javax.swing.JSpinner spinnerRadius;
     private javax.swing.JSpinner spinnerRotate;
     private javax.swing.JButton stopButton;
