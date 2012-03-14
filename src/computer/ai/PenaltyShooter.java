@@ -1,5 +1,6 @@
 package computer.ai;
 
+import brick.Brick;
 import computer.simulator.*;
 import java.util.Date;
 import java.util.Random;
@@ -32,9 +33,11 @@ public class PenaltyShooter extends Penalty {
                     self.rotate(self.getOrientation().getDirectionRadians()-Math.toRadians(angleplus));
                 }
                 long wait = new Date().getTime();
-                while(new Date().getTime() - wait < 1000) {
-                    
+                self.forward(Brick.SLOW);    
+                while(new Date().getTime() - wait < 250) {
+                   
                 }
+                
 		self.kick();
 	}
 
