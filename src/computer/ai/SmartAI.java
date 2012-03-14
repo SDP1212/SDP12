@@ -39,7 +39,6 @@ public class SmartAI extends AI {
 
 	@Override
 	public void run() {
-//		System.out.println("Blocked: " + blockedByWall());
 		if (firstRun < 10) {
 			self.forward(Brick.FAST);
 			firstRun++;
@@ -55,16 +54,19 @@ public class SmartAI extends AI {
 			
 			double xTarget = pitch.getTargetGoal().getLowerPostCoordinates().getX();
 			double xOwn = pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX();
+			double distanceFromCorner0 = self.getPosition().distance(new Coordinates(xOwn, 0));
+			double distanceFromCorner1 = self.getPosition().distance(new Coordinates(xTarget, 1));
 			
-			if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(xOwn, 0)) >0.15) {
+			
+			if (ballInOurCorner() == 0 && distanceFromCorner0 > 0.15) {
 				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(xOwn, 0)) <=0.15) {
+			} else if (ballInOurCorner() == 0 &&  distanceFromCorner0 <= 0.15) {
 				self.stop();
 			} 
 			
-			if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(xTarget, 1)) >0.15) {
+			if (ballInOurCorner() == 1 &&  distanceFromCorner1 > 0.15) {
 				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(xTarget, 1)) <=0.15) {
+			} else if (ballInOurCorner() == 1 &&  distanceFromCorner1 <= 0.15) {
 				self.stop();
 			} 
 			
