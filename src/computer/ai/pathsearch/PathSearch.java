@@ -212,8 +212,8 @@ public class PathSearch {
 			value+= 400;
 		}
 		
-		if(ballGridPosition.distance(newPoint) < 7){
-			value+= 300;
+		if(ballGridPosition.distance(newPoint) < 5){
+			value+= 500;
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x >= ballGridPosition.x)
@@ -223,12 +223,12 @@ public class PathSearch {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 6 && newPoint.x <= ballGridPosition.x)
 				value+= 65;
 		}
-		if(ourGridPosition.y < 4 || ourGridPosition.y > 20){
-			value+=700;
+		if(ourGridPosition.y < 3 || ourGridPosition.y > 21){
+			value+=500;
 		}
 		
-		if(ourGridPosition.x < 4 || ourGridPosition.x > 44) {
-			value+=600;
+		if(ourGridPosition.x < 3 || ourGridPosition.x > 45) {
+			value+=500;
 		}
 
 		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {

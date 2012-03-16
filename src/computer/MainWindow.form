@@ -198,13 +198,13 @@
                                       <Group type="103" groupAlignment="1" attributes="0">
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="29" max="32767" attributes="0"/>
+                                              <EmptySpace pref="14" max="32767" attributes="0"/>
                                               <Component id="comboRobot" min="-2" max="-2" attributes="1"/>
                                           </Group>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="comboTarget" pref="79" max="32767" attributes="1"/>
+                                              <Component id="comboTarget" pref="64" max="32767" attributes="1"/>
                                           </Group>
                                       </Group>
                                       <EmptySpace min="-2" pref="292" max="-2" attributes="0"/>
