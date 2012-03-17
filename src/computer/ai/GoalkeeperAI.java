@@ -49,7 +49,6 @@ public class GoalkeeperAI extends Penalty {
             }
 	}
 
-        // UNUSED AT THE MOMENT!
         public boolean inRange(double y_intercept, double robot_y) {
             if (robot_y < (y_intercept + 0.04) &&
                 robot_y > (y_intercept - 0.04)) {

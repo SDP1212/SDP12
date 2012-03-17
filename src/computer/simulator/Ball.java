@@ -23,7 +23,7 @@ public class Ball extends SimulatableObject{
     
     protected Ball(Coordinates coordinates, boolean real){
         this.setPosition(coordinates.getX(), coordinates.getY());
-        this.updateVelocity(1);
+        this.updateVelocity(40);
         this.real=real;
     }
     
