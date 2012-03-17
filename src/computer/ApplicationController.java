@@ -22,6 +22,7 @@ public class ApplicationController {
     private Thread engineThread;
 	private Viewer viewer;
 	private short ourColour = Robot.BLUE_PLATE;
+	private Engine engine;
 
     /**
      * Main method. All it does is instantiate a new ApplicationController
@@ -99,13 +100,13 @@ public class ApplicationController {
     }
     
     public void startEngine(Class<AI> ai, short target, short nemesisColour) {
-        Engine engine = new Engine(getWorldState(), getCommunicationController(), false, false, false, target, nemesisColour, ai, DumbAI.class);
+        engine = new Engine(getWorldState(), getCommunicationController(), false, false, false, target, nemesisColour, ai, DumbAI.class);
         engineThread = new Thread(engine);
         engineThread.start();
     }
     
     public void stopEngine() {
-        if (engineThread != null && engineThread.isAlive()) {
+        if (isEngineRunning()) {
             engineThread.interrupt();
         }
     }
@@ -126,5 +127,14 @@ public class ApplicationController {
 	 */
 	public void setOurColour(short ourColour) {
 		this.ourColour = ourColour;
+	}
+	
+	public boolean isEngineRunning() {
+		return engineThread != null && engineThread.isAlive();
+	}
+	
+	public void changeAI(short robot, Class ai) {
+		System.out.println("CHANGING");
+		engine.brainSurgery(robot, ai);
 	}
 }

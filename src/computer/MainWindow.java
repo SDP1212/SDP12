@@ -489,7 +489,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_radioFastActionPerformed
 
     private void buttonRunVisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRunVisionActionPerformed
-        appController.stopEngine();
+//        appController.stopEngine();
 		short colour;
 		short target;
 		if (comboTarget.getSelectedIndex() == 0) {
