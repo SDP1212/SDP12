@@ -2,15 +2,15 @@ package computer.ai;
 
 import brick.Brick;
 import computer.simulator.*;
-import computer.vision.WorldState;
 
 import computer.ai.pathsearch.PathSearch;
 import java.util.Date;
 /**
- *
+ * 
  * @author Callum Laird
- * @author Scott Hofman
- * @author s0907806 - SmartAI
+ * @author Scott Hofmam
+ * @author Lavanya Jeyratnam
+ * @author Evgeniya Sotirova
  */
 
 public class DefendAndPlayAI extends Penalty {
@@ -20,7 +20,7 @@ public class DefendAndPlayAI extends Penalty {
 	boolean penaltyMode = true;
         double ball_nemesis_distance;
         Coordinates ball_position;
-        boolean turn_to_target_goal = true;
+        boolean transitive_behaviour = true;
         
         protected static final int SEARCHING = 0;
 	protected static final int DRIBBLING = 1;
@@ -31,7 +31,6 @@ public class DefendAndPlayAI extends Penalty {
 	private TargetBall nextWayShape = new TargetBall();
 	private TargetBall ballShape = new TargetBall();
 	private Coordinates nextWayPoint = new Coordinates(1, 0.5);
-        private Date dribbleStart = new Date(0);
         
 	public DefendAndPlayAI(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -60,7 +59,6 @@ public class DefendAndPlayAI extends Penalty {
                 // Perhaps check ball position against nemesis position.  If it's too far then go back to match AI?
 
                 double x_Distance = Math.abs(self.getPosition().getX() - pitch.nemesis.getPosition().getX());
-                //System.out.println("DEBUG: x_distance = " + x_Distance);
                 double y_intercept;
 
                 // Calculates the y_intercept using the opponent's position and orientaton.
@@ -69,10 +67,8 @@ public class DefendAndPlayAI extends Penalty {
                 }  else {
                     y_intercept =  pitch.nemesis.getPosition().getY() - Math.tan(pitch.nemesis.getOrientation().getDirectionRadians())*x_Distance;
                 }
-                //System.out.println("DEBUG: y position = " + self.getPosition().getY() + ", y intercept of the other robot = " + y_intercept); 
-
+                
                 if (!inRange(y_intercept, self.getPosition().getY())) {
-                    // Forward/Backward might be wrong way round...  Also check for both pitch sides.
                     if (self.getPosition().getY() < (y_intercept) &&
                         self.getPosition().getY() < .66){
 
@@ -92,81 +88,70 @@ public class DefendAndPlayAI extends Penalty {
             } else {
                 
                 // Initial transitive behaviour from penalty to match - turns away from own goal.
-                if (turn_to_target_goal) {
+                if (transitive_behaviour) {
                     if (facingTargetGoal()) {
                         nextWayPoint = pitch.ball.getPosition();
-                        turn_to_target_goal = false;
+                        transitive_behaviour = false;
                     } else {
                         // Conditions for either side of pitch.
                         if (self.getPosition().getX() < 1.0) {
-                            self.rotateRight((int) (Brick.MEDIUM*1.25));
+                            self.rotateRight((int) (Brick.MEDIUM));
                         } else {
-                            self.rotateLeft((int) (Brick.MEDIUM*1.25));
+                            self.rotateLeft((int) (Brick.MEDIUM));
                         }
                     }
+                
+                // Normal match behaviour
                 } else {
-                    System.out.println("Blocked: " + blockedByWall());
+                    
                     updateState();
                     if (state == SEARCHING && (new Date().getTime() - movementDate.getTime() > 10)) {
-			
-			if (ballInEnemyCorner()) {
-				self.stop();
-			}
-			
-			if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 0)) >0.15) {
-				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 0 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 0)) <=0.15) {
-				self.stop();
-			} 
-			
-			if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 1)) >0.15) {
-				nextWayPoint = pitch.ball.getPosition();
-			} else if (ballInOurCorner() == 1 && self.getPosition().distance(new Coordinates(pitch.getEnemyTargetGoal().getLowerPostCoordinates().getX(), 1)) <=0.15) {
-				self.stop();
-			} 
-			
-			
-			if (!facingWayPoint()) {
-				Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
-				double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
-				if (blockedByWall()) {
-					self.backward(Brick.MEDIUM);
-				} else {
-					if (angle < 0) {
-						self.arcLeft(createRadius(nextWayPoint));
-					} else {
-						self.arcRight(createRadius(nextWayPoint));
-					}
-				}
-			} else if (!onWayPoint()) {
-				self.forward(Brick.FAST);
-			} else {
-				getNextWayPoint();
-			}
 
-		} else if (state == DRIBBLING) {
-			if (!facingBall()) {
-				Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
-				double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
-				if (angle < 0) {
-					self.rotateLeft(Brick.MEDIUM / 3);
-				} else {
-					self.rotateRight(Brick.MEDIUM / 3);
-				}
-			}
-		} else if (state == SHOT) {
-			if (new Date().getTime() - shotTime.getTime() < 1000) {
-				self.forward(Brick.FAST);
-			} else {
-				self.kick();
-			}
-			self.stop();
-		}
-		movementDate = new Date();
-	
+                        if (!facingWayPoint()) {
+                            Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
+                            double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
+                            if (blockedByWall()) {
+                                self.backward(Brick.SLOW);
+                            } else {
+                                if (self.getPosition().distance(nextWayPoint) > 0.3) { // Arcing
+                                    if (angle < 0) {
+                                        self.arcLeft(createRadius(nextWayPoint));
+                                    } else {
+                                        self.arcRight(createRadius(nextWayPoint));
+                                    }
+                                } else { // Normal rotation
+                                    if (angle < 0) {
+                                        self.rotateLeft(Brick.SLOW);
+                                    } else {
+                                        self.rotateRight(Brick.SLOW);
+                                    }
+                                }
+                            }
+                        } else if (!onWayPoint()) {
+                            self.forward(Brick.MEDIUM);
+                        }
+
+                    } else if (state == DRIBBLING) {
+                        if (!facingBall()) {
+                            Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
+                            double angle = LineTools.angleBetweenLineAndDirection(lineToBall, self.getOrientation());
+                            if (angle < 0) {
+                                self.rotateLeft(Brick.SLOW / 2);
+                            } else {
+                                self.rotateRight(Brick.SLOW / 2);
+                            }
+                        }
+
+                    } else if (state == SHOT) {
+                        if (new Date().getTime() - shotTime.getTime() < 1000) {
+                            self.forward(Brick.FAST);
+                        } else {
+                            self.kick();
+                        }
+                    }
+                    movementDate = new Date();
                 }
             }
-            
 	}
 
         public boolean inRange(double y_intercept, double robot_y) {
@@ -218,30 +203,31 @@ public class DefendAndPlayAI extends Penalty {
 		nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 	}
 
-	private void updateState() {
-		switch (state) {
-			case SEARCHING:
-				if (onTarget() && nearBall() && unobstructedShot()) {
-					state = DRIBBLING;
-					dribbleStart = new Date();
-				}
-				break;
-			case DRIBBLING:
-				Date now = new Date();
-				if (!nearBall()) {
-					state = SEARCHING;
-				} else if (facingBall()) {
-					state = SHOT;
-					shotTime = new Date();
-				}
-				break;
-			case SHOT:
-				if (new Date().getTime() - shotTime.getTime() >= 2000) {
-					state = SEARCHING;
-				}
-				break;
-		}
-	}
+        private void updateState() {
+            switch (state) {
+                case SEARCHING:
+                    System.out.println("Searching");
+                    if (onTarget() && nearBall()) {
+                        state = DRIBBLING;
+                    }
+                    break;
+                case DRIBBLING:
+                    System.out.println("Dribbling");
+                    if (!nearBall()) {
+                        state = SEARCHING;
+                    } else if (facingBall() && facingTargetGoal()) { // changed by callum and lavanya
+                        state = SHOT;
+                        shotTime = new Date();
+                    }
+                    break;
+                case SHOT:
+                    System.out.println("Shot");
+                    if (new Date().getTime() - shotTime.getTime() >= 2000) {
+                        state = SEARCHING;
+                    }
+                    break;
+            }
+        }
 
 	protected boolean onTarget() {
 		Line lineToTarget = new Line(self.getPosition(), target());
