@@ -157,18 +157,6 @@ public final class Robot extends SimulatableObject implements ControlInterface{
     }
 
     @Override
-    public void setHeading(int heading) {
-        if(this.control!=null && this.isReal())control.setHeading(heading);
-        else throw new UnsupportedOperationException("Simulator does not implement setHeading() method.");
-    }
-
-    @Override
-    public void unlockHeading() {
-        if(this.control!=null && this.isReal())control.unlockHeading();
-        else throw new UnsupportedOperationException("Simulator does not implement unlockHeading() method.");
-    }
-
-    @Override
     public int getCommState() {
         if(this.control!=null && this.isReal()) {
             return control.getCommState();

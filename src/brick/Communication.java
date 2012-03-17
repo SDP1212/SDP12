@@ -200,14 +200,6 @@ public class Communication implements Runnable {
 						movement.kick();
 						break;
 
-					case Brick.LOCKHEADING:
-						movement.setHeading(arg);
-						break;
-
-					case Brick.UNLOCKHEADING:
-						movement.unlockHeading();
-						break;
-
 					case Brick.QUIT: // close connection
 						break;
 

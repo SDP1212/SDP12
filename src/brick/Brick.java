@@ -35,13 +35,12 @@ public class Brick {
 	
     public final static int ARCLEFT = 0x0d;
 	public final static int ARCRIGHT = 0x0e;
-	
-	public final static int LOCKHEADING = 0x0b;
-	public final static int UNLOCKHEADING = 0x0c;
-    
+
     public final static int SLOW = 180;
     public final static int MEDIUM = 360;
     public final static int FAST = 720;
+	
+	public final static int SETSPEED = 0x0a;
     
     public final static int OPCODE = 0X000000FF;
     public final static int ARG = 0XFFFFFF00;

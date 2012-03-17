@@ -146,15 +146,6 @@ public class Communication implements Runnable, ControlInterface {
 		sendMessage(Brick.ROTATETO | (heading << 8));
 //		System.out.println("Message: " + Integer.toBinaryString(Brick.ROTATETO | (heading << 8)));
 	}
-
-	public void setHeading(int heading) {
-		sendMessage(Brick.LOCKHEADING | ((heading - 90) << 8));
-	}
-
-	public void unlockHeading() {
-		sendMessage(Brick.UNLOCKHEADING);
-	}
-	
 	
     
     public void dribble() {
