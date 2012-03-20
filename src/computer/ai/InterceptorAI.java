@@ -28,16 +28,15 @@ public class InterceptorAI extends AI {
 	private TargetBall ballShape = new TargetBall();
 	private int firstRun = 1;
 	private Coordinates nextWayPoint = new Coordinates(1, 0.5);
-	
 	private Coordinates ballPosition0;
 	private Coordinates ballFuturePos;
 	private int time0 = 1;
-	private int timeDelta = 5;
+	private int timeDelta = 7;
 	private int timeToBall = 0;
+	private double robotSpeed = 1.0 / 100;
 	private Coordinates ballV = new Coordinates(0, 0);
-	private Coordinates robotV = new Coordinates(1.0/75, 1.0/75);
+	private Coordinates robotV = new Coordinates(0, 0);
 	private Coordinates robotPosition0;
-	
 
 	public InterceptorAI(Pitch pitch, Robot self) {
 		super(pitch, self);
@@ -54,38 +53,46 @@ public class InterceptorAI extends AI {
 			ballFuturePos = pitch.ball.getPosition();
 			ballPosition0 = pitch.ball.getPosition();
 			robotPosition0 = self.getPosition();
-			
 			nextWayPoint = ballFuturePos;
 			nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
 		}
-		if (firstRun > time0 + timeDelta) {
-			//calculate the velocity of the ball
-			ballV.set((pitch.ball.getPosition().getX() - ballPosition0.getX()) / (firstRun - time0), (pitch.ball.getPosition().getY() - ballPosition0.getY()) / (firstRun - time0));
-			//calculate the velocity of the robot
-			robotV.set((self.getPosition().getX() - robotPosition0.getX()) / (firstRun - time0),(self.getPosition().getY() - robotPosition0.getY()) / (firstRun - time0));
-			System.out.println("robotV  "+robotV);
+				if (firstRun > time0 + timeDelta) {
+			if (ballPosition0.distance(pitch.ball.getPosition()) < 0.05) {
+				ballV.set(0, 0);
+			} else {
+				//calculate the velocity of the ball
+				ballV.set((pitch.ball.getPosition().getX() - ballPosition0.getX()) / (firstRun - time0), (pitch.ball.getPosition().getY() - ballPosition0.getY()) / (firstRun - time0));
+			}
+			if (robotPosition0.distance(self.getPosition()) < 0.2) {
+//				robotV.set(1.0/75, 1.0/75);
+				robotSpeed = 1.0 / 100;
+			} else {
+				//calculate the velocity of the robot
+				robotV.set((self.getPosition().getX() - robotPosition0.getX()) / (firstRun - time0), (self.getPosition().getY() - robotPosition0.getY()) / (firstRun - time0));
+				robotSpeed = robotV.distance(new Coordinates(0, 0));
+			}
 			//calculate time to get to ball
-			timeToBall = (int) ((self.getPosition().getX() - ballPosition0.getX()) / (ballV.getX() - robotV.getX() * Math.cos(self.getOrientation().getDirectionRadians())));
+			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotSpeed * Math.cos(self.getOrientation().getDirectionRadians())));
+//			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotV.getX() * Math.cos(self.getOrientation().getDirectionRadians())));
 
-//			timeToBall+=3;
 			ballFuturePos.set(ballPosition0.getX() + ballV.getX() * timeToBall, ballPosition0.getY() + ballV.getY() * timeToBall);
 			bumpingIntoWalls(ballFuturePos);
-			
+
 			nextWayPoint = ballFuturePos;
 			nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
-			System.out.println("update nextwaypoint" + nextWayPoint.getX() + ", " + nextWayPoint.getY());
-			
+//			System.out.println("update nextwaypoint" + nextWayPoint.getX() + ", " + nextWayPoint.getY());
+
 			ballPosition0 = pitch.ball.getPosition();
 			time0 = firstRun;
 			robotPosition0 = self.getPosition();
-			
+
 		}
-
 		updateState();
-		if(state == BEGIN){
-			self.stop();
-		} else if ((state == SEARCHING) && ((new Date().getTime() - movementDate.getTime() > 10))) {
+//		updateVelocities();
 
+		if (state == BEGIN) {
+			self.stop();
+		} else if ((state == SEARCHING) && ((new Date().getTime() - movementDate.getTime() > 5))) {
 			if (!facingWayPoint()) {
 				Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 				double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
@@ -95,23 +102,32 @@ public class InterceptorAI extends AI {
 					Line robotToTargetPoint = new Line(self.getPosition(), nextWayPoint);
 					boolean sideOfBall = LineTools.sideOfLine(pitch.ball.getPosition(), robotToTargetPoint) > 0;
 					boolean sideOfRobot = LineTools.angleBetweenLineAndDirection(robotToTargetPoint, self.getOrientation()) > 0;
-//					System.out.println("sideOfBall: " + sideOfBall + "; sideOfRobot: " + sideOfRobot);
-					if (self.getPosition().distance(nextWayPoint) > 0.3 && !((sideOfBall && sideOfRobot)||(!sideOfBall && !sideOfRobot))) { // Arcing
+					if (self.getPosition().distance(nextWayPoint) > 0.3 && !((sideOfBall && sideOfRobot) || (!sideOfBall && !sideOfRobot))) { // Arcing
 						if (angle < 0) {
 							self.arcLeft(createRadius(nextWayPoint));
 						} else {
 							self.arcRight(createRadius(nextWayPoint));
 						}
 					} else { // Normal rotation
-						if (angle < 0) {
-							self.rotateLeft(Brick.SLOW);
+						if (Math.abs(angle) > Math.PI / 6) {
+							if (angle < 0) {
+								self.rotateLeft(Brick.MEDIUM);
+							} else {
+								self.rotateRight(Brick.MEDIUM);
+							}
 						} else {
-							self.rotateRight(Brick.SLOW);
+							if (angle < 0) {
+								self.rotateLeft(Brick.SLOW);
+							} else {
+								self.rotateRight(Brick.SLOW);
+							}
 						}
 					}
 				}
 			} else if (!onWayPoint()) {
 				self.forward(Brick.FAST);
+			} else if (onWayPoint()) {
+				self.stop();
 			}
 
 		} else if (state == DRIBBLING) {
@@ -135,6 +151,41 @@ public class InterceptorAI extends AI {
 		}
 		movementDate = new Date();
 		firstRun++;
+	}
+
+	protected void updateVelocities() {
+
+		if (firstRun > time0 + timeDelta) {
+			if (ballPosition0.distance(pitch.ball.getPosition()) < 0.05) {
+				ballV.set(0, 0);
+			} else {
+				//calculate the velocity of the ball
+				ballV.set((pitch.ball.getPosition().getX() - ballPosition0.getX()) / (firstRun - time0), (pitch.ball.getPosition().getY() - ballPosition0.getY()) / (firstRun - time0));
+			}
+			if (robotPosition0.distance(self.getPosition()) < 0.2) {
+//				robotV.set(1.0/75, 1.0/75);
+				robotSpeed = 1.0 / 75;
+			} else {
+				//calculate the velocity of the robot
+				robotV.set((self.getPosition().getX() - robotPosition0.getX()) / (firstRun - time0), (self.getPosition().getY() - robotPosition0.getY()) / (firstRun - time0));
+				robotSpeed = robotV.distance(new Coordinates(0, 0));
+			}
+			//calculate time to get to ball
+			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotSpeed * Math.cos(self.getOrientation().getDirectionRadians())));
+//			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotV.getX() * Math.cos(self.getOrientation().getDirectionRadians())));
+
+			ballFuturePos.set(ballPosition0.getX() + ballV.getX() * timeToBall, ballPosition0.getY() + ballV.getY() * timeToBall);
+			bumpingIntoWalls(ballFuturePos);
+
+			nextWayPoint = ballFuturePos;
+			nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
+//			System.out.println("update nextwaypoint" + nextWayPoint.getX() + ", " + nextWayPoint.getY());
+
+			ballPosition0 = pitch.ball.getPosition();
+			time0 = firstRun;
+			robotPosition0 = self.getPosition();
+
+		}
 	}
 
 	protected Coordinates target() {
@@ -172,7 +223,7 @@ public class InterceptorAI extends AI {
 		switch (state) {
 			case BEGIN:
 				System.out.println("Begin");
-				if(ballPosition0.distance(pitch.ball.getPosition()) > 0.05){
+				if (ballPosition0.distance(pitch.ball.getPosition()) > 0.05) {
 					state = SEARCHING;
 				}
 				break;
@@ -274,7 +325,7 @@ public class InterceptorAI extends AI {
 
 	protected int createRadius(Coordinates nextPoint) {
 		double radius = LineTools.getArcRadius(nextPoint, self.getPosition(), self.getOrientation());
-		System.out.println("Radius " + (int) radius);
+//		System.out.println("Radius " + (int) radius);
 		return (int) radius;
 	}
 
@@ -302,13 +353,21 @@ public class InterceptorAI extends AI {
 		getNextWayPoint();
 		System.out.println("Collision");
 	}
-	
-	public void bumpingIntoWalls(Coordinates point){
-		while(point.getX()>2 || point.getX()<0 || point.getY()>1 || point.getY() <0){
-			if(point.getX() > 2) point.setX(4-point.getX());
-			if(point.getX() < 0) point.setX(-point.getX());
-			if(point.getY() > 1) point.setY(2 - point.getY());
-			if(point.getY() < 0) point.setY(-point.getY());
-		}	
+
+	public void bumpingIntoWalls(Coordinates point) {
+		while (point.getX() > 2 || point.getX() < 0 || point.getY() > 1 || point.getY() < 0) {
+			if (point.getX() > 2) {
+				point.setX(4 - point.getX());
+			}
+			if (point.getX() < 0) {
+				point.setX(-point.getX());
+			}
+			if (point.getY() > 1) {
+				point.setY(2 - point.getY());
+			}
+			if (point.getY() < 0) {
+				point.setY(-point.getY());
+			}
+		}
 	}
 }

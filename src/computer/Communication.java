@@ -220,7 +220,7 @@ public class Communication implements Runnable, ControlInterface {
                         break;
                     case (Brick.OK):
                         commState = READY;
-                        System.out.println("Acknowledged");
+//                        System.out.println("Acknowledged");
                         break;
 //                    case (Brick.SENSING):
 //                        System.out.println("Sensing");
