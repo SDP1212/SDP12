@@ -31,9 +31,9 @@ public class InterceptorAI extends AI {
 	private Coordinates ballPosition0;
 	private Coordinates ballFuturePos;
 	private int time0 = 1;
-	private int timeDelta = 7;
+	private int timeDelta = 3;
 	private int timeToBall = 0;
-	private double robotSpeed = 1.0 / 100;
+	private double robotSpeed = 1.0 / 75;
 	private Coordinates ballV = new Coordinates(0, 0);
 	private Coordinates robotV = new Coordinates(0, 0);
 	private Coordinates robotPosition0;
@@ -55,9 +55,10 @@ public class InterceptorAI extends AI {
 			robotPosition0 = self.getPosition();
 			nextWayPoint = self.getPosition();
 			nextWayShape.setPosition(nextWayPoint.getX(), nextWayPoint.getY());
+			self.setSpeed(Brick.FAST);
 		}
 		if (firstRun > time0 + timeDelta) {
-			if (ballPosition0.distance(pitch.ball.getPosition()) < 0.05) {
+			if (ballPosition0.distance(pitch.ball.getPosition()) < 0.03) {
 				ballV.set(0, 0);
 			} else {
 				//calculate the velocity of the ball
@@ -72,7 +73,7 @@ public class InterceptorAI extends AI {
 				robotSpeed = robotV.distance(new Coordinates(0, 0));
 			}
 			//calculate time to get to ball
-			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotSpeed * Math.cos(self.getOrientation().getDirectionRadians())));
+			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotSpeed ));
 //			timeToBall = (int) ((robotPosition0.getX() - ballPosition0.getX()) / (ballV.getX() - robotV.getX() * Math.cos(self.getOrientation().getDirectionRadians())));
 			double distanceToWaypoint = new Line(self.getPosition(), nextWayPoint).getLength();
 			System.out.println("Waypoint: " + nextWayPoint);
@@ -107,25 +108,28 @@ public class InterceptorAI extends AI {
 					boolean sideOfBall = LineTools.sideOfLine(pitch.ball.getPosition(), robotToTargetPoint) > 0;
 					boolean sideOfRobot = LineTools.angleBetweenLineAndDirection(robotToTargetPoint, self.getOrientation()) > 0;
 //					System.out.println("sideOfball: "+sideOfBall+"; sideOfrobot: "+sideOfRobot);
-					if (self.getPosition().distance(nextWayPoint) > 0.3 && !((sideOfBall && sideOfRobot) || (!sideOfBall && !sideOfRobot))) { // Arcing
+					int radius = createRadius(nextWayPoint);
+//					if (self.getPosition().distance(nextWayPoint) > 0.3 && !((sideOfBall && sideOfRobot) || (!sideOfBall && !sideOfRobot))) { // Arcing
 						if (angle < 0) {
+//							self.setSpeed(Brick.FAST);
 							self.arcLeft(createRadius(nextWayPoint));
 						} else {
+//							self.setSpeed(Brick.FAST);
 							self.arcRight(createRadius(nextWayPoint));
 						}
-					} else { // Normal rotation
-						int speed;
-						if (Math.abs(angle) > Math.PI / 6) {
-							speed = Brick.SLOW;
-						} else {
-							speed = Brick.SLOW;
-						}
-						if (angle < 0) {
-							self.rotateRight(speed);
-						} else {
-							self.rotateLeft(speed);
-						}
-					}
+//					} else { // Normal rotation
+//						int speed;
+//						if (Math.abs(angle) > Math.PI / 6) {
+//							speed = Brick.SLOW;
+//						} else {
+//							speed = Brick.SLOW;
+//						}
+//						if (angle < 0) {
+//							self.rotateRight(speed);
+//						} else {
+//							self.rotateLeft(speed);
+//						}
+//					}
 				}
 			} else if (!onWayPoint()) {
 				self.forward(Brick.FAST);
@@ -296,7 +300,7 @@ public class InterceptorAI extends AI {
 
 	private boolean onWayPoint() {
 		Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
-		return lineToWayPoint.getLength() < 0.1;
+		return lineToWayPoint.getLength() < 0.2;
 	}
 
 	private boolean facingTargetGoal() {
