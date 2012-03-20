@@ -156,6 +156,13 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         }
     }
 
+	@Override
+	public void setSpeed(int speed) {
+		if(this.control!=null && this.isReal())control.setSpeed(speed);
+	}
+	
+	
+
     @Override
     public int getCommState() {
         if(this.control!=null && this.isReal()) {

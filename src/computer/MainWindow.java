@@ -120,6 +120,8 @@ public class MainWindow extends javax.swing.JFrame {
         radioRotate = new javax.swing.JRadioButton();
         spinnerRotate = new javax.swing.JSpinner();
         goButton = new javax.swing.JButton();
+        spinnerSpeed = new javax.swing.JSpinner();
+        buttonSpeed = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -190,12 +192,12 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                                         .addComponent(comboRobot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(comboTarget, 0, 79, Short.MAX_VALUE)))
+                                        .addComponent(comboTarget, 0, 64, Short.MAX_VALUE)))
                                 .addGap(292, 292, 292)))
                         .addGap(27, 27, 27))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -273,6 +275,13 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        buttonSpeed.setText("Set Speed");
+        buttonSpeed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSpeedActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -297,11 +306,18 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(spinnerRadius)
                             .addComponent(spinnerRotate, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(radioMedium, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(radioSlow)
-                            .addComponent(radioFast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(93, 93, 93))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(radioMedium, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(radioSlow)
+                                    .addComponent(radioFast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(93, 93, 93))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(buttonSpeed)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spinnerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(goButton, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                         .addGap(276, 276, 276))))
@@ -332,7 +348,10 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(kickRadio))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(spinnerRadius, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spinnerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonSpeed))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(goButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -512,6 +531,10 @@ public class MainWindow extends javax.swing.JFrame {
 			appController.setOurColour(Robot.YELLOW_PLATE);
 		}
 	}//GEN-LAST:event_comboRobotActionPerformed
+
+	private void buttonSpeedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSpeedActionPerformed
+		commController.setSpeed(((Integer)spinnerSpeed.getValue()).intValue());
+	}//GEN-LAST:event_buttonSpeedActionPerformed
     
     /**
      * @param args the command line arguments
@@ -554,6 +577,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton buttonRunVision;
+    private javax.swing.JButton buttonSpeed;
     private javax.swing.JComboBox comboAI;
     private javax.swing.JComboBox comboRobot;
     private javax.swing.JComboBox comboTarget;
@@ -590,6 +614,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JSpinner spinnerRadius;
     private javax.swing.JSpinner spinnerRotate;
+    private javax.swing.JSpinner spinnerSpeed;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
 }

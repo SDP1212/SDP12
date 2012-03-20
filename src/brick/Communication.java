@@ -199,6 +199,10 @@ public class Communication implements Runnable {
 					case Brick.KICK:
 						movement.kick();
 						break;
+						
+					case Brick.SETSPEED:
+						movement.setSpeed(arg);
+						break;
 
 					case Brick.QUIT: // close connection
 						break;

@@ -37,6 +37,8 @@ public interface ControlInterface {
     public void arcLeft(int radius);
 	
 	public void arcRight(int radius);
+	
+	public void setSpeed(int speed);
     
     public int getCommState();
     
