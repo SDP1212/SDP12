@@ -65,11 +65,6 @@ public final class Robot extends SimulatableObject implements ControlInterface{
         return this.colour;
     }
 
-    private void setSpeed(double speed){
-        rotSpeed=Math.toRadians(speed);
-        linSpeed=speed*TRACK_WIDTH*Math.PI/360;// Equivallent to: ((speed*TRACK_WIDTH/WHEEL_DIAMETER)/360)*Math.PI*WHEEL_DIAMETER;
-    }
-
     @Override
     public void forward(int speed) {
         if(this.control!=null && this.isReal())control.forward(speed);
@@ -159,6 +154,10 @@ public final class Robot extends SimulatableObject implements ControlInterface{
 	@Override
 	public void setSpeed(int speed) {
 		if(this.control!=null && this.isReal())control.setSpeed(speed);
+        else{
+            rotSpeed=Math.toRadians(speed);
+            linSpeed=speed*TRACK_WIDTH*Math.PI/360;// Equivallent to: ((speed*TRACK_WIDTH/WHEEL_DIAMETER)/360)*Math.PI*WHEEL_DIAMETER;
+        }
 	}
 	
 	
