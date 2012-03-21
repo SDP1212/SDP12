@@ -49,6 +49,51 @@ public class InterceptorAI extends AI {
 
 	@Override
 	public void run() {
+            
+            /*
+             * Scott's 1 AM Edits - since I can't test, here's some code to get started with tomorrow
+             * Kicker line: y = m (x - Kx) + Ky
+             * Robot XLine: y = Ry
+             * Robot YLine: x = Rx
+             * 
+             * Intersection1: (Rx, y=m(Rx-Kx)+Ky)
+             * Intersection2: (((Ry-Ky)/m)+Kx, Ry)
+             * Check that both points are on the pitch (if neither are, use current stuff. If one is, use it)
+             * (If both are, use the one further away (giving us enough time to get to the ball)
+             * (If near our robot, its facing us - pick a point along the line of the kicker)
+             * 
+             * 
+             */
+            
+            /*
+            Coordinates intersectone;
+            Coordinates intersecttwo;
+            if(pitch.nemesis.getOrientation().getDirectionRadians() != 90 || pitch.nemesis.getOrientation().getDirectionRadians() != 270) {
+                intersectone = new Coordinates(self.getPosition().getX(), (Math.tan(pitch.nemesis.getOrientation().getDirectionRadians()) * (self.getPosition().getX() - pitch.nemesis.getPosition().getX())) - pitch.nemesis.getPosition().getY());
+            } else {
+                //Off the pitch
+                intersectone = new Coordinates(3, 3);
+            }
+            if(Math.tan(pitch.nemesis.getOrientation().getDirectionRadians()) != 0) {
+                intersecttwo = new Coordinates(((self.getPosition().getY() - pitch.nemesis.getPosition().getY()) / Math.tan(pitch.nemesis.getOrientation().getDirectionRadians())) + pitch.nemesis.getPosition().getX() , self.getPosition().getY());
+            } else {
+                //Off the pitch
+                intersecttwo = new Coordinates(3,3);
+            }
+            if(intersectone.getY() > 2 || intersectone.getY() < 0) { //Since the Xpoint will always be good
+                //Turn to face intersecttwo
+            } else if (intersecttwo.getX() > 2 || intersecttwo.getX() < 0) {//Since the Ypoint will always be good
+                //Turn to face intersectone
+            } else { //Both points are valid
+                if (self.getPosition().distance(intersectone) < (self.getPosition().distance(intersecttwo))) {
+                    //Turn to face intersecttwo
+                } else {
+                    //Turn to face intersectone
+                }
+            }
+            
+            */
+            
 		if (firstRun == 1) {
 			ballFuturePos = pitch.ball.getPosition();
 			ballPosition0 = pitch.ball.getPosition();
