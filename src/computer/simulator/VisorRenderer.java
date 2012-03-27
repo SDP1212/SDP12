@@ -56,8 +56,8 @@ public class VisorRenderer extends JPanel{
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
         Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
-        int x = (int)rect.getMaxX();
-        int y = (int)rect.getMaxY()-getHeight();
+        int x = (int)rect.getMaxX()-dimension.width;
+        int y = (int)rect.getMaxY()-dimension.height;
         frame.setMinimumSize(dimension);
         frame.setLocation(x, y);
     }
