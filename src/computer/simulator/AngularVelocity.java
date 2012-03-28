@@ -1,7 +1,6 @@
 package computer.simulator;
 
 import java.util.Date;
-import sun.security.krb5.internal.crypto.crc32;
 
 /**
  *
@@ -23,6 +22,7 @@ public class AngularVelocity {
 	 */
 	public AngularVelocity(Direction previousDirection, Direction currentDirection, Date previousTime, Date currentTime) {
 		velocity = (currentDirection.radians - previousDirection.radians) / (currentTime.getTime() - previousTime.getTime());
+//		System.out.println("Velocity " + velocity + " previous " + previousDirection.radians + " at " + previousTime + " Current " + currentDirection.radians + " at " + currentTime + " over " + (currentTime.getTime() - previousTime.getTime()));
 		this.currentTime = currentTime;
 		this.currentDirection = currentDirection;
 	}
@@ -35,6 +35,8 @@ public class AngularVelocity {
 	 * @return 
 	 */
 	public Direction directionAt(Date futureTime) {
-		return new Direction(velocity * (futureTime.getTime() - currentTime.getTime()) + currentDirection.radians);
+//		System.out.println("Future " + futureTime + " Interval " + ((futureTime.getTime() - currentTime.getTime()) + currentDirection.radians));
+//		System.out.println("Future angle " + velocity * (futureTime.getTime() - currentTime.getTime()) + currentDirection.radians);
+		return new Direction((velocity * (futureTime.getTime() - currentTime.getTime()) + currentDirection.radians + (2 * Math.PI)) % (2 * Math.PI));
 	}
 }

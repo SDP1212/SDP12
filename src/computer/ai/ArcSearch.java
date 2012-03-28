@@ -24,16 +24,17 @@ public class ArcSearch extends AI {
     protected static final int SHOT = 2;
     protected static int state = SEARCHING;
     private Date shotTime = new Date(0);
-    private Date movementDate = new Date(0); //pevious Date
+    private Date movementDate = new Date(0); //previous Date
     private Date currentDate;
     private Direction previousDirection;
     private static AngularVelocity angularV;
-    private static int deltaTimeForDirPrediction = 0;
+    private static int deltaTimeForDirPrediction = 10;
     
     private TargetBall nextWayShape = new TargetBall();
     private TargetBall ballShape = new TargetBall();
     private boolean firstRun = true;
     private Coordinates nextWayPoint = new Coordinates(1, 0.5);
+	private boolean rotating = false;
 
     public ArcSearch(Pitch pitch, Robot self) {
         super(pitch, self);
@@ -50,6 +51,7 @@ public class ArcSearch extends AI {
             getNextWayPoint();
             firstRun = false;
             previousDirection = new Direction(self.getOrientation().radians);
+			self.setSpeed(Brick.MEDIUM);
         }
         updateState();
         currentDate = new Date();
@@ -77,10 +79,13 @@ public class ArcSearch extends AI {
                         } else {
                             self.rotateRight(Brick.SLOW);
                         }
+						rotating = true;
                     }
                 }
             } else if (!onWayPoint()) {
+				rotating = false;
                 self.forward(Brick.MEDIUM);
+//				self.stop();
             } else {
                 getNextWayPoint();
             }
@@ -94,11 +99,13 @@ public class ArcSearch extends AI {
                 } else {
                     self.rotateRight(Brick.SLOW / 2);
                 }
+				rotating = true;
             }
 
         } else if (state == SHOT) {
             if (new Date().getTime() - shotTime.getTime() < 1000) {
                 self.forward(Brick.FAST);
+				rotating = false;
             } else {
                 self.kick();
             }
@@ -170,7 +177,7 @@ public class ArcSearch extends AI {
         Line lineToTarget = new Line(self.getPosition(), target());
         double distanceToBall = new Line(self.getPosition(), pitch.ball.getPosition()).getLength();
 //		return lineToTarget.getLength() < Math.max(Math.sqrt(distanceToBall), 0.1);
-        return lineToTarget.getLength() < 0.1;
+        return lineToTarget.getLength() < 0.15;
     }
 
     protected boolean facingTarget() {
@@ -200,9 +207,21 @@ public class ArcSearch extends AI {
     }
 
     private boolean facingWayPoint() {
-        Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
-        double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, angularV.directionAt(new Date(currentDate.getTime() + deltaTimeForDirPrediction)));
-        return Math.abs(angle) < Math.PI / 6;
+		Direction direction = null;
+		
+//		if (rotating) {
+			
+			direction = angularV.directionAt(new Date(currentDate.getTime() + deltaTimeForDirPrediction));
+			System.out.println("Predicted angle " + direction.radians + " Current angle " + self.getOrientation().radians);
+			
+//		} else {
+//			System.out.println("Actual");
+//			direction = self.getOrientation();
+//		}
+		Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
+		double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, direction);
+		if (Math.abs(angle) < Math.PI / 10) System.out.println("FACING");
+		return Math.abs(angle) < Math.PI / 10;
     }
 
     private boolean onWayPoint() {
