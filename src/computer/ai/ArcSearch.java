@@ -15,7 +15,7 @@ import java.util.Date;
 
 /**
  *
- * @author s0907806
+ * 
  */
 public class ArcSearch extends AI {
 
@@ -59,7 +59,17 @@ public class ArcSearch extends AI {
 
             angularV = new AngularVelocity(previousDirection, self.getOrientation(), movementDate, currentDate);
 
-            if (!facingWayPoint()) {
+            // If we're on the waypoint we don't care about facing it.
+            if (onWayPoint()) {
+                getNextWayPoint();
+                
+            // Here we're not on it but are facing it, so we just want to move to it.
+            } else if (facingWayPoint()) {
+                rotating = false;
+                self.forward(Brick.MEDIUM);
+                
+            // Here we're neither facing nor are on the waypoint, so we need to turn to it.
+            } else {
                 Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
                 double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, self.getOrientation());
                 if (blockedByWall()) {
@@ -68,10 +78,8 @@ public class ArcSearch extends AI {
                     if (self.getPosition().distance(nextWayPoint) > 0.3) { // Arcing
                         if (angle < 0) {
                             self.arcLeft(createRadius(nextWayPoint));
-                            //						self.rotateLeft(Brick.SLOW);
                         } else {
                             self.arcRight(createRadius(nextWayPoint));
-                            //						self.rotateRight(Brick.SLOW);
                         }
                     } else { // Normal rotation
                         if (angle < 0) {
@@ -79,17 +87,12 @@ public class ArcSearch extends AI {
                         } else {
                             self.rotateRight(Brick.SLOW);
                         }
-						rotating = true;
+                        rotating = true;
                     }
                 }
-            } else if (!onWayPoint()) {
-				rotating = false;
-                self.forward(Brick.MEDIUM);
-//				self.stop();
-            } else {
-                getNextWayPoint();
             }
-
+            
+      
         } else if (state == DRIBBLING) {
             if (!facingBall()) {
                 Line lineToBall = new Line(self.getPosition(), pitch.ball.getPosition());
@@ -99,13 +102,13 @@ public class ArcSearch extends AI {
                 } else {
                     self.rotateRight(Brick.SLOW / 2);
                 }
-				rotating = true;
+                rotating = true;
             }
 
         } else if (state == SHOT) {
             if (new Date().getTime() - shotTime.getTime() < 1000) {
                 self.forward(Brick.FAST);
-				rotating = false;
+		rotating = false;
             } else {
                 self.kick();
             }
@@ -176,7 +179,6 @@ public class ArcSearch extends AI {
     protected boolean onTarget() {
         Line lineToTarget = new Line(self.getPosition(), target());
         double distanceToBall = new Line(self.getPosition(), pitch.ball.getPosition()).getLength();
-//		return lineToTarget.getLength() < Math.max(Math.sqrt(distanceToBall), 0.1);
         return lineToTarget.getLength() < 0.15;
     }
 
@@ -208,17 +210,11 @@ public class ArcSearch extends AI {
 
     private boolean facingWayPoint() {
 		Direction direction = null;
+                
+		direction = angularV.directionAt(new Date(currentDate.getTime() + deltaTimeForDirPrediction));
+		System.out.println("Predicted angle " + direction.radians + " Current angle " + self.getOrientation().radians);
 		
-//		if (rotating) {
-			
-			direction = angularV.directionAt(new Date(currentDate.getTime() + deltaTimeForDirPrediction));
-			System.out.println("Predicted angle " + direction.radians + " Current angle " + self.getOrientation().radians);
-			
-//		} else {
-//			System.out.println("Actual");
-//			direction = self.getOrientation();
-//		}
-		Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
+                Line lineToWayPoint = new Line(self.getPosition(), nextWayPoint);
 		double angle = LineTools.angleBetweenLineAndDirection(lineToWayPoint, direction);
 		if (Math.abs(angle) < Math.PI / 10) System.out.println("FACING");
 		return Math.abs(angle) < Math.PI / 10;
